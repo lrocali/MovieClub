@@ -11,6 +11,10 @@ public class Movie {
     private String id;
     public String imgSrc;
     public float rating;
+    public String date;
+    public String time;
+    public String venue;
+    public String location;
 
     public Movie (String _title, String _year, String _shortPlot, String _fullPlot) {
         title = _title;
@@ -20,6 +24,11 @@ public class Movie {
         id = generateId(_title);
         imgSrc = getImgName(_title);
         rating = 0;
+
+        date = "c ";
+        time = "x ";
+        venue = "d ";
+        location = "e ";
 
     }
 
@@ -32,6 +41,5 @@ public class Movie {
         imgsrc = imgsrc.replaceAll(" ", "");
         return imgsrc;
     }
-
 
 }

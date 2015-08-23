@@ -7,16 +7,19 @@
         android:orientation="vertical" android:layout_width="match_parent"
         android:layout_height="fill_parent">
 
-        <android.support.v7.widget.Toolbar
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right"
+            android:id="@+id/btnEditMovie"
+            android:textSize="12sp"
+            android:background="@null"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:textColor="#FFF"
+            android:text="Edit"/>
 
-            android:id="@+id/my_awesome_toolbar"
-            android:background="?attr/colorPrimary"
-            android:layout_height="10dp"
-            android:layout_width="match_parent"
-            android:minHeight="10dp"
 
-
-            />
 
             <!--android:layout_height="@dimen/abc_action_bar_
 default_height_material"
@@ -88,7 +91,6 @@ default_height_material"
             android:id="@+id/edtDate"
             android:layout_below="@+id/movieRatingBar"
             android:layout_alignEnd="@+id/movieRatingBar"
-            android:text="Date"
             android:onClick="dateOnClicked" />
 
         <EditText
@@ -98,7 +100,6 @@ default_height_material"
             android:id="@+id/edtTime"
             android:layout_below="@+id/edtDate"
             android:layout_alignEnd="@+id/edtDate"
-            android:text="Time"
             android:onClick="timeOnClicked" />
 
         <EditText
@@ -119,7 +120,7 @@ default_height_material"
 
         <ListView
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="300dp"
             android:id="@+id/listInvitees"
             android:layout_below="@+id/edtLocation"
             android:layout_alignStart="@+id/imgPoster" />

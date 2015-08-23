@@ -12,12 +12,17 @@ import android.support.v7.app.AppCompatDelegate;
 import android.support.v7.view.ActionMode;
 import android.support.v7.widget.Toolbar;
 import android.support.v7.app.ActionBarActivity;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.TimePicker;
@@ -41,8 +46,13 @@ public class MovieSelected extends Activity implements AppCompatCallback{
     private TextView lblshortPlot;
     private ImageView imgPoster;
     private RatingBar rtbRating;
+
     private EditText edtDate;
     private EditText edtTime;
+    private EditText edtVenue;
+    private EditText edtLocation;
+
+    private boolean editState = false;
 
     @Override
     public void onSupportActionModeStarted(ActionMode mode) {
@@ -61,42 +71,44 @@ public class MovieSelected extends Activity implements AppCompatCallback{
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
-        //setTheme(R.style.AppTheme);
-        //let's create the delegate, passing the activity at both arguments
-        delegate = AppCompatDelegate.create(this, this);
-
-        //the installViewFactory method replaces the default widgets
-        //with the AppCompat-tinted versions
-       delegate.installViewFactory();
 
         super.onCreate(savedInstanceState);
+        this.setContentView(R.layout.selected_movie);
 
-        //we need to call the onCreate() of the AppCompatDelegate
-        delegate.onCreate(savedInstanceState);
-
-        //we use the delegate to inflate the layout
-       delegate.setContentView(R.layout.selected_movie);
-     //   this.setContentView(R.layout.selected_movie);
-
-        //Finally, let's add the Toolbar
-        //Toolbar toolbar= (Toolbar) findViewById(R.id.my_awesome_toolbar);
-        //delegate.setSupportActionBar(toolbar);
+        Intent i = getIntent();
+        // getting attached intent data
+        String movieIdStr = i.getStringExtra("movieId");
+        movieId = Integer.parseInt(movieIdStr);
 
         lblTitle = (TextView) findViewById(R.id.lblTitle);
         lblYear = (TextView) findViewById(R.id.lblYear);
         lblshortPlot = (TextView) findViewById(R.id.lblPlot);
         imgPoster = (ImageView) findViewById(R.id.imgPoster);
         rtbRating = (RatingBar) findViewById(R.id.movieRatingBar);
+
         edtDate = (EditText) findViewById(R.id.edtDate);
         edtTime = (EditText) findViewById(R.id.edtTime);
+        edtVenue = (EditText) findViewById(R.id.edtVenue);
+        edtLocation = (EditText) findViewById(R.id.edtLocation);
 
-        Intent i = getIntent();
-        // getting attached intent data
-        String movieIdStr = i.getStringExtra("movieId");
-        // displaying selected product name
-        //Log.v(TAG,movieIdStr);
 
-        movieId = Integer.parseInt(movieIdStr);
+
+        edtDate.setEnabled(false);
+        edtTime.setEnabled(false);
+        edtVenue.setEnabled(false);
+        edtLocation.setEnabled(false);
+        rtbRating.setEnabled(false);
+
+        Log.v(TAG, model.movies[movieId].date);
+        edtDate.setText(model.movies[movieId].date);
+        edtTime.setText(model.movies[movieId].time);
+        edtVenue.setText(model.movies[movieId].venue);
+        edtLocation.setText(model.movies[movieId].location);
+
+
+
+
+
 
         lblTitle.setText(model.movies[movieId].title);
         lblYear.setText(model.movies[movieId].year);
@@ -107,10 +119,49 @@ public class MovieSelected extends Activity implements AppCompatCallback{
         Log.v(TAG,model.movies[movieId].imgSrc);
         String mDrawableName = model.movies[movieId].imgSrc;
         int resID = res.getIdentifier(mDrawableName , "drawable", getPackageName());
-        Drawable drawable = res.getDrawable(resID );
+        Drawable drawable = res.getDrawable(resID);
         imgPoster.setImageDrawable(drawable);
         Log.v(TAG, "0");
         //setCurrentDateOnView();
+
+        String[] list = new String[] {"a","b","c"};
+        ListView lv = (ListView) findViewById(R.id.listInvitees);
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, list);
+        lv.setAdapter(adapter);
+
+        final Button btnEditMovie = (Button) findViewById(R.id.btnEditMovie);
+        btnEditMovie.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                Log.v(TAG, "EDIT");
+
+                if (!editState) {
+                    edtDate.setEnabled(true);
+                    edtTime.setEnabled(true);
+                    edtVenue.setEnabled(true);
+                    edtLocation.setEnabled(true);
+                    rtbRating.setEnabled(true);
+
+                    btnEditMovie.setText("Done");
+                    editState = true;
+
+                } else {
+                    model.movies[movieId].date = edtDate.getText().toString();
+                    model.movies[movieId].time = edtTime.getText().toString() + "TTTT";
+                    model.movies[movieId].venue = edtVenue.getText().toString();
+                    model.movies[movieId].location = edtLocation.getText().toString();
+                    Log.v(TAG, model.movies[movieId].date);
+                    edtDate.setEnabled(false);
+                    edtTime.setEnabled(false);
+                    edtVenue.setEnabled(false);
+                    edtLocation.setEnabled(false);
+                    rtbRating.setEnabled(false);
+
+                    btnEditMovie.setText("Edit");
+                    editState = false;
+                }
+            }
+        });
+
 
         rtbRating.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
             public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
@@ -192,7 +243,8 @@ public class MovieSelected extends Activity implements AppCompatCallback{
 
     }
 */
-    DatePickerDialog.OnDateSetListener date = new DatePickerDialog.OnDateSetListener() {
+    DatePickerDialog.OnDateSetListener date
+        = new DatePickerDialog.OnDateSetListener() {
         @Override
         public void onDateSet( DatePicker view, int year, int monthOfYear, int dayOfMonth ) {
             c.set( Calendar.YEAR, year );
@@ -221,7 +273,7 @@ public class MovieSelected extends Activity implements AppCompatCallback{
     public void setCurrentDateOnView() {
         Log.v(TAG," 1");
         String dateFormat = "MM/dd/yyyy";
-        SimpleDateFormat sdf = new SimpleDateFormat( dateFormat, Locale.US );
+        SimpleDateFormat sdf = new SimpleDateFormat( dateFormat, Locale.US);
         edtDate.setText(sdf.format( c.getTime() ) );
         Log.v(TAG, "2");
         String timeFormat = "hh:mm a";
