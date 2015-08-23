@@ -7,6 +7,26 @@
         android:orientation="vertical" android:layout_width="match_parent"
         android:layout_height="fill_parent">
 
+        <android.support.v7.widget.Toolbar
+
+            android:id="@+id/my_awesome_toolbar"
+            android:background="?attr/colorPrimary"
+            android:layout_height="10dp"
+            android:layout_width="match_parent"
+            android:minHeight="10dp"
+
+
+            />
+
+            <!--android:layout_height="@dimen/abc_action_bar_
+default_height_material"
+            android:layout_width="match_parent"
+            android:minHeight="@dimen/abc_action_bar_
+default_height_material"
+            android:background="?attr/colorPrimary"-->
+
+
+
         <TextView android:id="@+id/lblTitle"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"

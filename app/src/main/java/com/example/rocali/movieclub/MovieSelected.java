@@ -7,6 +7,11 @@ import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatCallback;
+import android.support.v7.app.AppCompatDelegate;
+import android.support.v7.view.ActionMode;
+import android.support.v7.widget.Toolbar;
+import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
@@ -24,7 +29,7 @@ import java.util.Locale;
 /**
  * Created by rocali on 8/24/15.
  */
-public class MovieSelected extends Activity {
+public class MovieSelected extends Activity implements AppCompatCallback{
 
     private static final String TAG = "MyActivity";
     private int movieId;
@@ -39,14 +44,101 @@ public class MovieSelected extends Activity {
     private EditText edtDate;
     private EditText edtTime;
 
+    @Override
+    public void onSupportActionModeStarted(ActionMode mode) {
+    }
 
+    @Override
+    public void onSupportActionModeFinished(ActionMode mode) {
+    }
+
+    @Override
+    public ActionMode onWindowStartingSupportActionMode(ActionMode.Callback callback) {
+        return null;
+    }
+    private AppCompatDelegate delegate;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
+        //setTheme(R.style.AppTheme);
+        //let's create the delegate, passing the activity at both arguments
+        delegate = AppCompatDelegate.create(this, this);
+
+        //the installViewFactory method replaces the default widgets
+        //with the AppCompat-tinted versions
+       delegate.installViewFactory();
+
+        super.onCreate(savedInstanceState);
+
+        //we need to call the onCreate() of the AppCompatDelegate
+        delegate.onCreate(savedInstanceState);
+
+        //we use the delegate to inflate the layout
+       delegate.setContentView(R.layout.selected_movie);
+     //   this.setContentView(R.layout.selected_movie);
+
+        //Finally, let's add the Toolbar
+        //Toolbar toolbar= (Toolbar) findViewById(R.id.my_awesome_toolbar);
+        //delegate.setSupportActionBar(toolbar);
+
+        lblTitle = (TextView) findViewById(R.id.lblTitle);
+        lblYear = (TextView) findViewById(R.id.lblYear);
+        lblshortPlot = (TextView) findViewById(R.id.lblPlot);
+        imgPoster = (ImageView) findViewById(R.id.imgPoster);
+        rtbRating = (RatingBar) findViewById(R.id.movieRatingBar);
+        edtDate = (EditText) findViewById(R.id.edtDate);
+        edtTime = (EditText) findViewById(R.id.edtTime);
+
+        Intent i = getIntent();
+        // getting attached intent data
+        String movieIdStr = i.getStringExtra("movieId");
+        // displaying selected product name
+        //Log.v(TAG,movieIdStr);
+
+        movieId = Integer.parseInt(movieIdStr);
+
+        lblTitle.setText(model.movies[movieId].title);
+        lblYear.setText(model.movies[movieId].year);
+        lblshortPlot.setText(model.movies[movieId].shortPlot);
+        rtbRating.setRating(model.movies[movieId].rating);
+
+        Resources res = getResources();
+        Log.v(TAG,model.movies[movieId].imgSrc);
+        String mDrawableName = model.movies[movieId].imgSrc;
+        int resID = res.getIdentifier(mDrawableName , "drawable", getPackageName());
+        Drawable drawable = res.getDrawable(resID );
+        imgPoster.setImageDrawable(drawable);
+        Log.v(TAG, "0");
+        //setCurrentDateOnView();
+
+        rtbRating.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
+            public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
+                model.movies[movieId].rating = rating;
+                Log.v(TAG, String.valueOf(rating));
+
+            }
+        });
+    }
+/*
     @Override
     public void onCreate(Bundle savedInstanceState) {
 
-        super.onCreate(savedInstanceState);
-        this.setContentView(R.layout.selected_movie);
+        //super.onCreate(savedInstanceState);
 
-        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
+
+        //let's create the delegate, passing the activity at both arguments (Activity, AppCompatCallback)
+        delegate = AppCompatDelegate.create(this,this);
+
+        //we need to call the onCreate() of the AppCompatDelegate
+        delegate.onCreate(savedInstanceState);
+
+        delegate.setContentView(R.layout.selected_movie);
+        //Finally, let's add the Toolbar
+        Toolbar toolbar= (Toolbar) findViewById(R.id.my_awesome_toolbar);
+        delegate.setSupportActionBar(toolbar);
+
+        //getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
         //Toolbar toolbar = (Toolbar) findViewById(Resoure.id.toolbar);
 
         //setSupportActionBar(toolbar);
@@ -94,12 +186,12 @@ public class MovieSelected extends Activity {
         ListView lv = (ListView) findViewById(R.id.listInvitees);
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, list);
         lv.setAdapter(adapter);
-*/
+
 
 
 
     }
-
+*/
     DatePickerDialog.OnDateSetListener date = new DatePickerDialog.OnDateSetListener() {
         @Override
         public void onDateSet( DatePicker view, int year, int monthOfYear, int dayOfMonth ) {

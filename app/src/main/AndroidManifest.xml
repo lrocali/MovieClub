@@ -17,7 +17,8 @@
             </intent-filter>
         </activity>
         <activity android:name=".MovieSelected"
-            android:label="Movie selected"></activity>
+            android:label="Movie selected"
+            android:theme="@style/Theme.AppCompat" ></activity>
     </application>
 
 </manifest>
