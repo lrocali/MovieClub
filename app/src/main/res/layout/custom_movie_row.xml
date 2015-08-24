@@ -43,9 +43,10 @@
         android:layout_height="wrap_content"
         style="?android:attr/ratingBarStyleSmall"
         android:id="@+id/rtbListMovie"
-        android:stepSize="0.1"
+        android:stepSize="0.5"
         android:layout_below="@+id/txtYear"
-        android:layout_toEndOf="@+id/imgPosterList" />
+        android:layout_toEndOf="@+id/imgPosterList"
+        android:maxWidth="400dp" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -54,7 +55,8 @@
         android:id="@+id/txtNInvitees"
         android:textSize="15dp"
         android:layout_below="@+id/txtLocation"
-        android:layout_alignStart="@+id/txtLocation" />
+        android:layout_alignStart="@+id/txtLocation"
+        android:layout_marginBottom="10dp" />
 
     <TextView
         android:layout_width="wrap_content"

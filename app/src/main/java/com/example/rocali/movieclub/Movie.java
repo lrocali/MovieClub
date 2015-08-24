@@ -26,25 +26,25 @@ public class Movie {
         year = _year;
         shortPlot = _shortPlot;
         fullPlot = _fullPlot;
-        id = generateId(_title);
+        id = generateId(_title,_year);
         imgSrc = getImgName(_title);
         rating = 0;
 
-        /*
-        date = "No date yet";
-        time = "No time yet";
-        venue = "No venue yet";
-        location = "No location yet";
-        invitees.add("user1");
-        invitees.add("user2");
-        invitees.add("user3");
-        invitees.add("user4");
-        invitees.add("user5");*/
-
     }
 
-    private String generateId(String title) {
-        return title.toUpperCase();
+    private String generateId(String title,String year) {
+        String alphabet = "0123456789ABCDEFGHIJKLMNOPQRSTUVXWYZ";
+        int n = alphabet.length();
+        int baseTitle = title.length();
+        int baseYear = Integer.parseInt(year);
+        int base = baseTitle % n;
+        String id = "";
+        for (int i = 0; i < 10; i++) {
+            id = id + alphabet.charAt(base);
+            base = (base  * i +  baseYear)  % n;
+        }
+
+        return id;
     }
 
     private String getImgName(String title) {

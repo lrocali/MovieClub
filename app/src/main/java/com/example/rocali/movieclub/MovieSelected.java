@@ -7,13 +7,6 @@ import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatCallback;
-import android.support.v7.app.AppCompatDelegate;
-import android.support.v7.view.ActionMode;
-import android.support.v7.widget.Toolbar;
-import android.support.v7.app.ActionBarActivity;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -37,7 +30,7 @@ import java.util.Locale;
 /**
  * Created by rocali on 8/24/15.
  */
-public class MovieSelected extends Activity implements AppCompatCallback{
+public class MovieSelected extends Activity {
 
     private static final String TAG = "MyActivity";
     private int movieId;
@@ -67,159 +60,88 @@ public class MovieSelected extends Activity implements AppCompatCallback{
     private boolean editState = false;
 
     @Override
-    public void onSupportActionModeStarted(ActionMode mode) {
-    }
-
-    @Override
-    public void onSupportActionModeFinished(ActionMode mode) {
-    }
-
-    @Override
-    public ActionMode onWindowStartingSupportActionMode(ActionMode.Callback callback) {
-        return null;
-    }
-    private AppCompatDelegate delegate;
-
-    @Override
     protected void onCreate(Bundle savedInstanceState) {
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
 
+        //initial
         super.onCreate(savedInstanceState);
         this.setContentView(R.layout.selected_movie);
 
+        //get intent to know movieid
         Intent i = getIntent();
-        // getting attached intent data
         String movieIdStr = i.getStringExtra("movieId");
         movieId = Integer.parseInt(movieIdStr);
 
+        //find noneditables
         lblTitle = (TextView) findViewById(R.id.lblTitle);
         lblYear = (TextView) findViewById(R.id.lblYear);
         lblshortPlot = (TextView) findViewById(R.id.lblPlot);
         imgPoster = (ImageView) findViewById(R.id.imgPoster);
         rtbRating = (RatingBar) findViewById(R.id.movieRatingBar);
 
+        //find editables
         edtDate = (EditText) findViewById(R.id.edtDate);
         edtTime = (EditText) findViewById(R.id.edtTime);
         edtVenue = (EditText) findViewById(R.id.edtVenue);
         edtLocation = (EditText) findViewById(R.id.edtLocation);
         edtInvited = (EditText) findViewById(R.id.edtInvited);
-
         btnEditMovie = (Button) findViewById(R.id.btnEditMovie);
         btnAddInvited = (Button) findViewById(R.id.btnAddInvited);
         btnParty = (Button) findViewById((R.id.btnParty));
 
+        //hide party button
         btnParty.setVisibility(View.INVISIBLE);
 
-
+        //disableEditables
         enableEditables(false);
-        /*
-        edtDate.setEnabled(false);
-        edtTime.setEnabled(false);
-        edtVenue.setEnabled(false);
-        edtLocation.setEnabled(false);
-        //rtbRating.setEnabled(false);
-        edtInvited.setEnabled(false);
-        btnAddInvited.setEnabled(false);
-*/
 
-        edtDate.setText(model.movies[movieId].date);
-        edtTime.setText(model.movies[movieId].time);
-        edtVenue.setText(model.movies[movieId].venue);
-        edtLocation.setText(model.movies[movieId].location);
-
-
-
-
-       //
-       // setListViewHeightBasedOnItems(listInvitees);
-
-
+        //set noneditable information
         lblTitle.setText(model.movies[movieId].title);
         lblYear.setText(model.movies[movieId].year);
         lblshortPlot.setText(model.movies[movieId].shortPlot);
         rtbRating.setRating(model.movies[movieId].rating);
 
+        //set editable/party information if it has created
+        if (model.movies[movieId].scheduled) {
+            edtDate.setText(model.movies[movieId].date);
+            edtTime.setText(model.movies[movieId].time);
+            edtVenue.setText(model.movies[movieId].venue);
+            edtLocation.setText(model.movies[movieId].location);
+        }
+
+        //Set image
         Resources res = getResources();
-        Log.v(TAG,model.movies[movieId].imgSrc);
         String mDrawableName = model.movies[movieId].imgSrc;
         int resID = res.getIdentifier(mDrawableName , "drawable", getPackageName());
         Drawable drawable = res.getDrawable(resID);
         imgPoster.setImageDrawable(drawable);
-        Log.v(TAG, "0");
-        //setCurrentDateOnView();
+
+        //set invitees list
         getListElements();
-/*
-        list = model.movies[movieId].invitees;
-        listInvitees = (ListView) findViewById(R.id.listInvitees);
-        adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, list);
-        listInvitees.setAdapter(adapter);
 
-        //Set list view height
-        ViewGroup.LayoutParams listViewParams = (ViewGroup.LayoutParams)listInvitees.getLayoutParams();
-        listViewParams.height = list.size()*150;
-        listInvitees.requestLayout();
-*/
-
-
+        //if the movie has no scheduled party
         if (!model.movies[movieId].scheduled) {
             btnEditMovie.setText("Create an event");
         }
+
         btnEditMovie.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                Log.v(TAG, "EDIT");
-
                 if (!editState) {
+                    setCurrentDateOnView();
                     enableEditables(true);
-                    /*
-                    edtDate.setEnabled(true);
-                    edtTime.setEnabled(true);
-                    edtVenue.setEnabled(true);
-                    edtLocation.setEnabled(true);
-                    edtInvited.setEnabled(true);
-                    btnAddInvited.setEnabled(true);
-*/
                     btnEditMovie.setText("Cancel");
                     editState = true;
                     model.movies[movieId].scheduled = true;
-
                 } else {
                     enableEditables(false);
-                    /*
-                    edtDate.setEnabled(false);
-                    edtTime.setEnabled(false);
-                    edtVenue.setEnabled(false);
-                    edtLocation.setEnabled(false);
-                    edtInvited.setEnabled(false);
-                    btnAddInvited.setEnabled(false);
-*/
                     btnEditMovie.setText("Edit");
                     editState = false;
-                    /*
-                    model.movies[movieId].date = edtDate.getText().toString();
-                    model.movies[movieId].time = edtTime.getText().toString();
-                    model.movies[movieId].venue = edtVenue.getText().toString();
-                    model.movies[movieId].location = edtLocation.getText().toString();
-                    Log.v(TAG, model.movies[movieId].date);
-                    edtDate.setEnabled(false);
-                    edtTime.setEnabled(false);
-                    edtVenue.setEnabled(false);
-                    edtLocation.setEnabled(false);
-                    rtbRating.setEnabled(false);
-
-                    btnEditMovie.setText("Edit");
-                    editState = false;
-                    */
                 }
             }
         });
-
-
-
-
         btnAddInvited.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 model.movies[movieId].invitees.add(edtInvited.getText().toString());
-                //adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, list);
                 getListElements();
                 if (edtDate.getText().toString() != null &&
                         edtTime.getText().toString() != null &&
@@ -228,36 +150,22 @@ public class MovieSelected extends Activity implements AppCompatCallback{
 
                     btnParty.setVisibility(View.VISIBLE);
                 }
-                Log.v(TAG, "ADD" + edtInvited.getText().toString());
             }
         });
-
-
-
         btnParty.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 model.movies[movieId].date = edtDate.getText().toString();
                 model.movies[movieId].time = edtTime.getText().toString();
                 model.movies[movieId].venue = edtVenue.getText().toString();
                 model.movies[movieId].location = edtLocation.getText().toString();
+
                 Log.v(TAG, model.movies[movieId].date);
                 enableEditables(false);
-                /*
-                edtDate.setEnabled(false);
-                edtTime.setEnabled(false);
-                edtVenue.setEnabled(false);
-                edtLocation.setEnabled(false);
-                edtInvited.setEnabled(false);
-                btnAddInvited.setEnabled(false);
-                //rtbRating.setEnabled(false);*/
-
 
                 btnEditMovie.setText("Edit");
                 editState = false;
-                Log.v(TAG, "PARTY");
             }
         });
-
         rtbRating.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
             public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
                 model.movies[movieId].rating = rating;

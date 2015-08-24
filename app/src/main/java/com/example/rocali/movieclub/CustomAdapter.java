@@ -14,9 +14,6 @@ public class CustomAdapter extends BaseAdapter{
     public Model model = Model.getInstance();
 
     int [] movieImgSrcs;
-    //String [] movieTitles;
-    //String [] movieYears;
-    //String [] moviewShortPlots;
 
     Context context;
 
@@ -82,16 +79,20 @@ public class CustomAdapter extends BaseAdapter{
         holder.title.setText(model.movies[position].title);
         holder.year.setText(model.movies[position].year);
         holder.shortPlot.setText(model.movies[position].shortPlot);
+        if (model.movies[position].rating != 0) {
+            holder.rating.setRating(model.movies[position].rating);
+        }
         if (model.movies[position].scheduled == true) {
             holder.dateAndTime.setText(model.movies[position].date + " - " + model.movies[position].time);
             holder.location.setText("At " + model.movies[position].location);
             int nInv = model.movies[position].invitees.size();
             holder.nInvitees.setText("Invitees: " + String.valueOf(nInv));
-            holder.rating.setRating(model.movies[position].rating);
+
         } else {
             holder.dateAndTime.setText("Movie not scheduled yet, be the first!");
             holder.location.setText(" ");
             holder.nInvitees.setText(" ");
+
         }
 
         rowView.setOnClickListener(new OnClickListener() {

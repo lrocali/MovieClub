@@ -67,39 +67,6 @@ public class Model {
 
     }
 
-    public String [] getMovieTitles() {
-        int numOfMovies = movies.length;
-        String [] titles = new String[numOfMovies];
-        int i;
-        for(i = 0; i<numOfMovies; i++) {
-            titles[i] = movies[i].title;
-            Log.v(TAG, movies[i].imgSrc);
-        }
-        return  titles;
-    }
-
-    public String [] getMovieYears() {
-        int numOfMovies = movies.length;
-        String [] years = new String[numOfMovies];
-        int i;
-        for(i = 0; i<numOfMovies; i++) {
-            years[i] = movies[i].year;
-            //Log.v(TAG, movies[i].imgSrc);
-        }
-        return  years;
-    }
-
-    public String [] getMovieShortPlots() {
-        int numOfMovies = movies.length;
-        String [] shortPlots = new String[numOfMovies];
-        int i;
-        for(i = 0; i<numOfMovies; i++) {
-            shortPlots[i] = movies[i].shortPlot;
-            //Log.v(TAG, movies[i].imgSrc);
-        }
-        return  shortPlots;
-    }
-
     public int [] getImgResources(Context context) {
         int numOfMovies = movies.length;
         int [] imgs = new int[numOfMovies];
@@ -108,8 +75,6 @@ public class Model {
             Resources res = context.getResources();
             String mDrawableName = movies[i].imgSrc;
             imgs[i]  = res.getIdentifier(mDrawableName , "drawable", context.getPackageName());
-            //imgs[i] = getResources().getIdentifier(<resource name>, movies[i].title, getPackageName());
-            Log.v(TAG, movies[i].imgSrc);
         }
         return  imgs;
     }

@@ -15,41 +15,29 @@ import android.widget.ListView;
 
 public class MovieList extends ListActivity {
 
-    private static final String TAG = "MyActivity";
-    public Model model = Model.getInstance();
-    //String[] movieTitles = model.getMovieTitles();
-
-    //int [] movieImgSrcs ;
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_movie_list);
-
-        //Resources res = getResources();
-        //String packageName = getPackageName();
-        //movieImgSrcs = model.getImgResources(this);
-        // use your custom layout
-
-        //ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, movieTitles);
-        //setListAdapter(adapter);
+    }
+    @Override
+    public void onResume() {
+        super.onResume();
+        //populate list view
         ListView lv = getListView();
         lv.setAdapter(new CustomAdapter(this));
 
-
-        // listening to single list item on click
         lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View view,
                                     int position, long id) {
-                // Launching new Activity on selecting single List Item
                 Intent i = new Intent(getApplicationContext(), MovieSelected.class);
-                // sending data to new activity
+                // sending movie id to new activity
                 i.putExtra("movieId", position + "");
                 startActivity(i);
 
             }
         });
-
     }
+
+
 }
