@@ -19,6 +19,7 @@ public class Movie {
     public String venue;
     public String location;
     public List<String> invitees = new ArrayList<String>();
+    public boolean scheduled = false;
 
     public Movie (String _title, String _year, String _shortPlot, String _fullPlot) {
         title = _title;
@@ -29,6 +30,7 @@ public class Movie {
         imgSrc = getImgName(_title);
         rating = 0;
 
+        /*
         date = "No date yet";
         time = "No time yet";
         venue = "No venue yet";
@@ -37,7 +39,7 @@ public class Movie {
         invitees.add("user2");
         invitees.add("user3");
         invitees.add("user4");
-        invitees.add("user5");
+        invitees.add("user5");*/
 
     }
 

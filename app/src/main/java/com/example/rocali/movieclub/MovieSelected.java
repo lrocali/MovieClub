@@ -55,6 +55,10 @@ public class MovieSelected extends Activity implements AppCompatCallback{
     private EditText edtVenue;
     private EditText edtLocation;
     private EditText edtInvited;
+    private Button btnEditMovie;
+    private Button btnAddInvited;
+    private Button btnParty;
+
 
     private List<String> list;
     private ListView listInvitees;
@@ -100,12 +104,23 @@ public class MovieSelected extends Activity implements AppCompatCallback{
         edtLocation = (EditText) findViewById(R.id.edtLocation);
         edtInvited = (EditText) findViewById(R.id.edtInvited);
 
+        btnEditMovie = (Button) findViewById(R.id.btnEditMovie);
+        btnAddInvited = (Button) findViewById(R.id.btnAddInvited);
+        btnParty = (Button) findViewById((R.id.btnParty));
 
+        btnParty.setVisibility(View.INVISIBLE);
+
+
+        enableEditables(false);
+        /*
         edtDate.setEnabled(false);
         edtTime.setEnabled(false);
         edtVenue.setEnabled(false);
         edtLocation.setEnabled(false);
-        rtbRating.setEnabled(false);
+        //rtbRating.setEnabled(false);
+        edtInvited.setEnabled(false);
+        btnAddInvited.setEnabled(false);
+*/
 
         edtDate.setText(model.movies[movieId].date);
         edtTime.setText(model.movies[movieId].time);
@@ -144,24 +159,44 @@ public class MovieSelected extends Activity implements AppCompatCallback{
         listViewParams.height = list.size()*150;
         listInvitees.requestLayout();
 */
-        final Button btnEditMovie = (Button) findViewById(R.id.btnEditMovie);
+
+
+        if (!model.movies[movieId].scheduled) {
+            btnEditMovie.setText("Create an event");
+        }
         btnEditMovie.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 Log.v(TAG, "EDIT");
 
                 if (!editState) {
+                    enableEditables(true);
+                    /*
                     edtDate.setEnabled(true);
                     edtTime.setEnabled(true);
                     edtVenue.setEnabled(true);
                     edtLocation.setEnabled(true);
-                    rtbRating.setEnabled(true);
-
-                    btnEditMovie.setText("Done");
+                    edtInvited.setEnabled(true);
+                    btnAddInvited.setEnabled(true);
+*/
+                    btnEditMovie.setText("Cancel");
                     editState = true;
+                    model.movies[movieId].scheduled = true;
 
                 } else {
+                    enableEditables(false);
+                    /*
+                    edtDate.setEnabled(false);
+                    edtTime.setEnabled(false);
+                    edtVenue.setEnabled(false);
+                    edtLocation.setEnabled(false);
+                    edtInvited.setEnabled(false);
+                    btnAddInvited.setEnabled(false);
+*/
+                    btnEditMovie.setText("Edit");
+                    editState = false;
+                    /*
                     model.movies[movieId].date = edtDate.getText().toString();
-                    model.movies[movieId].time = edtTime.getText().toString() + "TTTT";
+                    model.movies[movieId].time = edtTime.getText().toString();
                     model.movies[movieId].venue = edtVenue.getText().toString();
                     model.movies[movieId].location = edtLocation.getText().toString();
                     Log.v(TAG, model.movies[movieId].date);
@@ -173,17 +208,53 @@ public class MovieSelected extends Activity implements AppCompatCallback{
 
                     btnEditMovie.setText("Edit");
                     editState = false;
+                    */
                 }
             }
         });
 
-        final Button btnAddInvited = (Button) findViewById(R.id.btnAddInvited);
+
+
+
         btnAddInvited.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 model.movies[movieId].invitees.add(edtInvited.getText().toString());
                 //adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, list);
                 getListElements();
-                Log.v(TAG, "ADD"+edtInvited.getText().toString());
+                if (edtDate.getText().toString() != null &&
+                        edtTime.getText().toString() != null &&
+                        edtVenue.getText().toString() != null &&
+                        edtLocation.getText().toString() != null) {
+
+                    btnParty.setVisibility(View.VISIBLE);
+                }
+                Log.v(TAG, "ADD" + edtInvited.getText().toString());
+            }
+        });
+
+
+
+        btnParty.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                model.movies[movieId].date = edtDate.getText().toString();
+                model.movies[movieId].time = edtTime.getText().toString();
+                model.movies[movieId].venue = edtVenue.getText().toString();
+                model.movies[movieId].location = edtLocation.getText().toString();
+                Log.v(TAG, model.movies[movieId].date);
+                enableEditables(false);
+                /*
+                edtDate.setEnabled(false);
+                edtTime.setEnabled(false);
+                edtVenue.setEnabled(false);
+                edtLocation.setEnabled(false);
+                edtInvited.setEnabled(false);
+                btnAddInvited.setEnabled(false);
+                //rtbRating.setEnabled(false);*/
+
+
+                btnEditMovie.setText("Edit");
+                editState = false;
+                Log.v(TAG, "PARTY");
             }
         });
 
@@ -195,6 +266,15 @@ public class MovieSelected extends Activity implements AppCompatCallback{
             }
         });
     }
+    public void enableEditables(boolean trueOrFalse){
+        edtDate.setEnabled(trueOrFalse);
+        edtTime.setEnabled(trueOrFalse);
+        edtVenue.setEnabled(trueOrFalse);
+        edtLocation.setEnabled(trueOrFalse);
+        edtInvited.setEnabled(trueOrFalse);
+        btnAddInvited.setEnabled(trueOrFalse);
+    }
+
 
     public void getListElements() {
         list = model.movies[movieId].invitees;
@@ -208,40 +288,6 @@ public class MovieSelected extends Activity implements AppCompatCallback{
         listInvitees.requestLayout();
     }
 
-    public static boolean setListViewHeightBasedOnItems(ListView listView) {
-
-        ListAdapter listAdapter = listView.getAdapter();
-        if (listAdapter != null) {
-
-            int numberOfItems = listAdapter.getCount();
-
-            // Get total height of all items.
-            int totalItemsHeight = 0;
-            int itemPos;
-            for (itemPos = 0; itemPos < numberOfItems; itemPos++) {
-                View item = listAdapter.getView(itemPos, null, listView);
-                item.measure(0, 0);
-                totalItemsHeight += item.getMeasuredHeight();
-            }
-
-            // Get total height of all item dividers.
-            int totalDividersHeight = listView.getDividerHeight() *
-                    (numberOfItems - 1);
-
-            // Set list height.
-            ViewGroup.LayoutParams params = listView.getLayoutParams();
-            params.height = totalItemsHeight + totalDividersHeight;
-            listView.setLayoutParams(params);
-            listView.requestLayout();
-            Log.v(TAG, "1DEU");
-            return true;
-
-        } else {
-            Log.v(TAG, "2FALHOU");
-            return false;
-        }
-
-    }
 
     DatePickerDialog.OnDateSetListener date
         = new DatePickerDialog.OnDateSetListener() {

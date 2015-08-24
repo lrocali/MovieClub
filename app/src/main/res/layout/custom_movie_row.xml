@@ -29,4 +29,50 @@
         android:layout_below="@+id/txtTitle"
         android:layout_toEndOf="@+id/imgPosterList" />
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="shortPlot"
+        android:id="@+id/txtShortPlot"
+        android:layout_below="@+id/rtbListMovie"
+        android:layout_toEndOf="@+id/imgPosterList" />
+
+    <RatingBar
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        style="?android:attr/ratingBarStyleSmall"
+        android:id="@+id/rtbListMovie"
+        android:stepSize="0.1"
+        android:layout_below="@+id/txtYear"
+        android:layout_toEndOf="@+id/imgPosterList" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Invitees: 4"
+        android:id="@+id/txtNInvitees"
+        android:textSize="15dp"
+        android:layout_below="@+id/txtLocation"
+        android:layout_alignStart="@+id/txtLocation" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Date/Time"
+        android:id="@+id/txtDateTime"
+        android:textSize="15dp"
+        android:layout_below="@+id/txtShortPlot"
+        android:layout_toEndOf="@+id/imgPosterList"
+        android:layout_marginTop="10dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="At Location"
+        android:id="@+id/txtLocation"
+        android:textSize="15dp"
+        android:layout_below="@+id/txtDateTime"
+        android:layout_toEndOf="@+id/imgPosterList" />
+
 </RelativeLayout>

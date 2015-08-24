@@ -7,14 +7,16 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
+import android.widget.RatingBar;
 import android.widget.TextView;
 
 public class CustomAdapter extends BaseAdapter{
     public Model model = Model.getInstance();
 
     int [] movieImgSrcs;
-    String [] movieTitles;
-    String [] movieYears;
+    //String [] movieTitles;
+    //String [] movieYears;
+    //String [] moviewShortPlots;
 
     Context context;
 
@@ -22,9 +24,11 @@ public class CustomAdapter extends BaseAdapter{
     public CustomAdapter(MovieList movieList) {
         // TODO Auto-generated constructor stub
         context=movieList;
+
         movieImgSrcs =model.getImgResources(context);
-        movieTitles=model.getMovieTitles();
-        movieYears = model.getMovieYears();
+        //movieTitles=model.getMovieTitles();
+        //movieYears = model.getMovieYears();
+        //moviewShortPlots = model.getMovieShortPlots();
 
         inflater = ( LayoutInflater )context.
                 getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -32,7 +36,7 @@ public class CustomAdapter extends BaseAdapter{
     @Override
     public int getCount() {
         // TODO Auto-generated method stub
-        return movieTitles.length;
+        return model.movies.length;
     }
 
     @Override
@@ -52,6 +56,11 @@ public class CustomAdapter extends BaseAdapter{
         ImageView poster;
         TextView title;
         TextView year;
+        TextView shortPlot;
+        TextView dateAndTime;
+        TextView location;
+        TextView nInvitees;
+        RatingBar rating;
     }
     @Override
     public View getView(final int position, View convertView, ViewGroup parent) {
@@ -63,10 +72,27 @@ public class CustomAdapter extends BaseAdapter{
         holder.poster = (ImageView) rowView.findViewById(R.id.imgPosterList);
         holder.title = (TextView) rowView.findViewById(R.id.txtTitle);
         holder.year = (TextView) rowView.findViewById(R.id.txtYear);
+        holder.shortPlot = (TextView) rowView.findViewById(R.id.txtShortPlot);
+        holder.dateAndTime = (TextView) rowView.findViewById(R.id.txtDateTime);
+        holder.location = (TextView) rowView.findViewById(R.id.txtLocation);
+        holder.nInvitees = (TextView) rowView.findViewById(R.id.txtNInvitees);
+        holder.rating = (RatingBar) rowView.findViewById(R.id.rtbListMovie);
 
         holder.poster.setImageResource(movieImgSrcs[position]);
-        holder.title.setText(movieTitles[position]);
-        holder.year.setText(movieYears[position]);
+        holder.title.setText(model.movies[position].title);
+        holder.year.setText(model.movies[position].year);
+        holder.shortPlot.setText(model.movies[position].shortPlot);
+        if (model.movies[position].scheduled == true) {
+            holder.dateAndTime.setText(model.movies[position].date + " - " + model.movies[position].time);
+            holder.location.setText("At " + model.movies[position].location);
+            int nInv = model.movies[position].invitees.size();
+            holder.nInvitees.setText("Invitees: " + String.valueOf(nInv));
+            holder.rating.setRating(model.movies[position].rating);
+        } else {
+            holder.dateAndTime.setText("Movie not scheduled yet, be the first!");
+            holder.location.setText(" ");
+            holder.nInvitees.setText(" ");
+        }
 
         rowView.setOnClickListener(new OnClickListener() {
             @Override

@@ -12,12 +12,10 @@
             android:layout_height="wrap_content"
             android:layout_gravity="right"
             android:id="@+id/btnEditMovie"
-            android:textSize="12sp"
-            android:background="@null"
             android:layout_alignParentEnd="true"
             android:layout_alignParentRight="true"
-            android:textColor="#FFF"
-            android:text="Edit"/>
+            android:text="Edit"
+            android:layout_margin="5dp" />
 
 
 
@@ -40,7 +38,7 @@ default_height_material"
             android:layout_alignParentLeft="true"
             android:layout_marginLeft="0dp"
             android:layout_alignParentTop="true"
-            android:layout_marginTop="20dp" />
+            android:layout_marginTop="40dp" />
 
         <ImageView
             android:src="@drawable/cityofgod"
@@ -169,7 +167,8 @@ default_height_material"
             android:text="List of invitees"
             android:id="@+id/lblInvitees"
             android:layout_below="@+id/textView4"
-            android:layout_centerHorizontal="true" />
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="10dp" />
 
         <EditText
             android:layout_width="wrap_content"
@@ -178,7 +177,8 @@ default_height_material"
             android:ems="10"
             android:id="@+id/edtInvited"
             android:layout_below="@+id/listInvitees"
-            android:layout_alignParentEnd="true" />
+            android:layout_alignParentEnd="true"
+            android:layout_marginBottom="40dp" />
 
         <Button
             android:layout_width="wrap_content"
@@ -187,6 +187,15 @@ default_height_material"
             android:id="@+id/btnAddInvited"
             android:layout_alignEnd="@+id/textView"
             android:layout_below="@+id/listInvitees"/>
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Party!"
+            android:id="@+id/btnParty"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:layout_margin="20dp" />
 
     </RelativeLayout>
 </ScrollView>

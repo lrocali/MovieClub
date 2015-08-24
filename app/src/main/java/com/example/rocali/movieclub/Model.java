@@ -53,6 +53,18 @@ public class Model {
                         "A team of explorers travel through a wormhole in space in an attempt to ensure humanity's survival.",
                         "full full plot2")
         };
+        movies[0].invitees.add("a");
+        movies[0].invitees.add("ab");
+        movies[0].invitees.add("ac");
+        movies[0].invitees.add("acd");
+        movies[0].invitees.add("acc");
+        movies[0].date = "10/10/10";
+        movies[0].time = "08:15PM";
+        movies[0].venue = "Restaurant";
+        movies[0].location = "12 Bol St";
+        movies[0].rating = 4;
+        movies[0].scheduled = true;
+
     }
 
     public String [] getMovieTitles() {
@@ -75,6 +87,17 @@ public class Model {
             //Log.v(TAG, movies[i].imgSrc);
         }
         return  years;
+    }
+
+    public String [] getMovieShortPlots() {
+        int numOfMovies = movies.length;
+        String [] shortPlots = new String[numOfMovies];
+        int i;
+        for(i = 0; i<numOfMovies; i++) {
+            shortPlots[i] = movies[i].shortPlot;
+            //Log.v(TAG, movies[i].imgSrc);
+        }
+        return  shortPlots;
     }
 
     public int [] getImgResources(Context context) {
