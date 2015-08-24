@@ -40,7 +40,7 @@ default_height_material"
             android:layout_alignParentLeft="true"
             android:layout_marginLeft="0dp"
             android:layout_alignParentTop="true"
-            android:layout_marginTop="0dp" />
+            android:layout_marginTop="20dp" />
 
         <ImageView
             android:src="@drawable/cityofgod"
@@ -120,10 +120,11 @@ default_height_material"
 
         <ListView
             android:layout_width="wrap_content"
-            android:layout_height="300dp"
+            android:layout_height="match_parent"
             android:id="@+id/listInvitees"
-            android:layout_below="@+id/edtLocation"
-            android:layout_alignStart="@+id/imgPoster" />
+            android:layout_below="@+id/lblInvitees"
+            android:layout_alignStart="@+id/imgPoster"
+            android:layout_marginTop="20dp" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -160,6 +161,32 @@ default_height_material"
             android:id="@+id/textView4"
             android:layout_alignBottom="@+id/edtLocation"
             android:layout_alignEnd="@+id/textView2" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="List of invitees"
+            android:id="@+id/lblInvitees"
+            android:layout_below="@+id/textView4"
+            android:layout_centerHorizontal="true" />
+
+        <EditText
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:inputType="textEmailAddress"
+            android:ems="10"
+            android:id="@+id/edtInvited"
+            android:layout_below="@+id/listInvitees"
+            android:layout_alignParentEnd="true" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Add Invited"
+            android:id="@+id/btnAddInvited"
+            android:layout_alignEnd="@+id/textView"
+            android:layout_below="@+id/listInvitees"/>
 
     </RelativeLayout>
 </ScrollView>

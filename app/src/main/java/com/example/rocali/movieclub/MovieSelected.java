@@ -16,12 +16,14 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.RatingBar;
 import android.widget.TextView;
@@ -29,6 +31,7 @@ import android.widget.TimePicker;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.List;
 import java.util.Locale;
 
 /**
@@ -51,6 +54,11 @@ public class MovieSelected extends Activity implements AppCompatCallback{
     private EditText edtTime;
     private EditText edtVenue;
     private EditText edtLocation;
+    private EditText edtInvited;
+
+    private List<String> list;
+    private ListView listInvitees;
+    private ArrayAdapter<String> adapter;
 
     private boolean editState = false;
 
@@ -90,7 +98,7 @@ public class MovieSelected extends Activity implements AppCompatCallback{
         edtTime = (EditText) findViewById(R.id.edtTime);
         edtVenue = (EditText) findViewById(R.id.edtVenue);
         edtLocation = (EditText) findViewById(R.id.edtLocation);
-
+        edtInvited = (EditText) findViewById(R.id.edtInvited);
 
 
         edtDate.setEnabled(false);
@@ -99,7 +107,6 @@ public class MovieSelected extends Activity implements AppCompatCallback{
         edtLocation.setEnabled(false);
         rtbRating.setEnabled(false);
 
-        Log.v(TAG, model.movies[movieId].date);
         edtDate.setText(model.movies[movieId].date);
         edtTime.setText(model.movies[movieId].time);
         edtVenue.setText(model.movies[movieId].venue);
@@ -108,6 +115,8 @@ public class MovieSelected extends Activity implements AppCompatCallback{
 
 
 
+       //
+       // setListViewHeightBasedOnItems(listInvitees);
 
 
         lblTitle.setText(model.movies[movieId].title);
@@ -123,12 +132,18 @@ public class MovieSelected extends Activity implements AppCompatCallback{
         imgPoster.setImageDrawable(drawable);
         Log.v(TAG, "0");
         //setCurrentDateOnView();
+        getListElements();
+/*
+        list = model.movies[movieId].invitees;
+        listInvitees = (ListView) findViewById(R.id.listInvitees);
+        adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, list);
+        listInvitees.setAdapter(adapter);
 
-        String[] list = new String[] {"a","b","c"};
-        ListView lv = (ListView) findViewById(R.id.listInvitees);
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, list);
-        lv.setAdapter(adapter);
-
+        //Set list view height
+        ViewGroup.LayoutParams listViewParams = (ViewGroup.LayoutParams)listInvitees.getLayoutParams();
+        listViewParams.height = list.size()*150;
+        listInvitees.requestLayout();
+*/
         final Button btnEditMovie = (Button) findViewById(R.id.btnEditMovie);
         btnEditMovie.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -162,6 +177,15 @@ public class MovieSelected extends Activity implements AppCompatCallback{
             }
         });
 
+        final Button btnAddInvited = (Button) findViewById(R.id.btnAddInvited);
+        btnAddInvited.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                model.movies[movieId].invitees.add(edtInvited.getText().toString());
+                //adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, list);
+                getListElements();
+                Log.v(TAG, "ADD"+edtInvited.getText().toString());
+            }
+        });
 
         rtbRating.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
             public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
@@ -171,78 +195,54 @@ public class MovieSelected extends Activity implements AppCompatCallback{
             }
         });
     }
-/*
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
 
-        //super.onCreate(savedInstanceState);
+    public void getListElements() {
+        list = model.movies[movieId].invitees;
+        listInvitees = (ListView) findViewById(R.id.listInvitees);
+        adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, list);
+        listInvitees.setAdapter(adapter);
 
+        //Set list view height
+        ViewGroup.LayoutParams listViewParams = (ViewGroup.LayoutParams)listInvitees.getLayoutParams();
+        listViewParams.height = list.size()*150;
+        listInvitees.requestLayout();
+    }
 
-        //let's create the delegate, passing the activity at both arguments (Activity, AppCompatCallback)
-        delegate = AppCompatDelegate.create(this,this);
+    public static boolean setListViewHeightBasedOnItems(ListView listView) {
 
-        //we need to call the onCreate() of the AppCompatDelegate
-        delegate.onCreate(savedInstanceState);
+        ListAdapter listAdapter = listView.getAdapter();
+        if (listAdapter != null) {
 
-        delegate.setContentView(R.layout.selected_movie);
-        //Finally, let's add the Toolbar
-        Toolbar toolbar= (Toolbar) findViewById(R.id.my_awesome_toolbar);
-        delegate.setSupportActionBar(toolbar);
+            int numberOfItems = listAdapter.getCount();
 
-        //getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
-        //Toolbar toolbar = (Toolbar) findViewById(Resoure.id.toolbar);
-
-        //setSupportActionBar(toolbar);
-
-        lblTitle = (TextView) findViewById(R.id.lblTitle);
-        lblYear = (TextView) findViewById(R.id.lblYear);
-        lblshortPlot = (TextView) findViewById(R.id.lblPlot);
-        imgPoster = (ImageView) findViewById(R.id.imgPoster);
-        rtbRating = (RatingBar) findViewById(R.id.movieRatingBar);
-        edtDate = (EditText) findViewById(R.id.edtDate);
-        edtTime = (EditText) findViewById(R.id.edtTime);
-
-        Intent i = getIntent();
-        // getting attached intent data
-        String movieIdStr = i.getStringExtra("movieId");
-        // displaying selected product name
-        //Log.v(TAG,movieIdStr);
-
-        movieId = Integer.parseInt(movieIdStr);
-
-        lblTitle.setText(model.movies[movieId].title);
-        lblYear.setText(model.movies[movieId].year);
-        lblshortPlot.setText(model.movies[movieId].shortPlot);
-        rtbRating.setRating(model.movies[movieId].rating);
-
-        Resources res = getResources();
-        Log.v(TAG,model.movies[movieId].imgSrc);
-        String mDrawableName = model.movies[movieId].imgSrc;
-        int resID = res.getIdentifier(mDrawableName , "drawable", getPackageName());
-        Drawable drawable = res.getDrawable(resID );
-        imgPoster.setImageDrawable(drawable);
-        Log.v(TAG, "0");
-        //setCurrentDateOnView();
-
-        rtbRating.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
-            public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
-                model.movies[movieId].rating = rating;
-                Log.v(TAG, String.valueOf(rating));
-
+            // Get total height of all items.
+            int totalItemsHeight = 0;
+            int itemPos;
+            for (itemPos = 0; itemPos < numberOfItems; itemPos++) {
+                View item = listAdapter.getView(itemPos, null, listView);
+                item.measure(0, 0);
+                totalItemsHeight += item.getMeasuredHeight();
             }
-        });
 
-/*
-        String[] list = new String[] {"a","b","c"};
-        ListView lv = (ListView) findViewById(R.id.listInvitees);
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, list);
-        lv.setAdapter(adapter);
+            // Get total height of all item dividers.
+            int totalDividersHeight = listView.getDividerHeight() *
+                    (numberOfItems - 1);
 
+            // Set list height.
+            ViewGroup.LayoutParams params = listView.getLayoutParams();
+            params.height = totalItemsHeight + totalDividersHeight;
+            listView.setLayoutParams(params);
+            listView.requestLayout();
+            Log.v(TAG, "1DEU");
+            return true;
 
-
+        } else {
+            Log.v(TAG, "2FALHOU");
+            return false;
+        }
 
     }
-*/
+
     DatePickerDialog.OnDateSetListener date
         = new DatePickerDialog.OnDateSetListener() {
         @Override

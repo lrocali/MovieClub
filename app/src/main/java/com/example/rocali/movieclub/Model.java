@@ -1,5 +1,7 @@
 package com.example.rocali.movieclub;
 
+import android.content.Context;
+import android.content.res.Resources;
 import android.util.Log;
 
 /**
@@ -62,5 +64,30 @@ public class Model {
             Log.v(TAG, movies[i].imgSrc);
         }
         return  titles;
+    }
+
+    public String [] getMovieYears() {
+        int numOfMovies = movies.length;
+        String [] years = new String[numOfMovies];
+        int i;
+        for(i = 0; i<numOfMovies; i++) {
+            years[i] = movies[i].year;
+            //Log.v(TAG, movies[i].imgSrc);
+        }
+        return  years;
+    }
+
+    public int [] getImgResources(Context context) {
+        int numOfMovies = movies.length;
+        int [] imgs = new int[numOfMovies];
+        int i;
+        for(i = 0; i<numOfMovies; i++) {
+            Resources res = context.getResources();
+            String mDrawableName = movies[i].imgSrc;
+            imgs[i]  = res.getIdentifier(mDrawableName , "drawable", context.getPackageName());
+            //imgs[i] = getResources().getIdentifier(<resource name>, movies[i].title, getPackageName());
+            Log.v(TAG, movies[i].imgSrc);
+        }
+        return  imgs;
     }
 }
