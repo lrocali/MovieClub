@@ -11,21 +11,22 @@ import android.widget.RatingBar;
 import android.widget.TextView;
 
 public class CustomAdapter extends BaseAdapter{
+
+    //model
     public Model model = Model.getInstance();
 
+    //array of img resources
     int [] movieImgSrcs;
+    Context context;    //To be sent to get the img resource
 
-    Context context;
 
     private static LayoutInflater inflater=null;
     public CustomAdapter(MovieList movieList) {
         // TODO Auto-generated constructor stub
-        context=movieList;
 
-        movieImgSrcs =model.getImgResources(context);
-        //movieTitles=model.getMovieTitles();
-        //movieYears = model.getMovieYears();
-        //moviewShortPlots = model.getMovieShortPlots();
+        //Get context to be sent to model to get img resources
+        context = movieList;
+        movieImgSrcs = model.getImgResources(context);
 
         inflater = ( LayoutInflater )context.
                 getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -48,7 +49,8 @@ public class CustomAdapter extends BaseAdapter{
         return position;
     }
 
-    public class Holder
+    //Class to hold the elements of the row
+    public class RowInfo
     {
         ImageView poster;
         TextView title;
@@ -59,49 +61,56 @@ public class CustomAdapter extends BaseAdapter{
         TextView nInvitees;
         RatingBar rating;
     }
+
     @Override
     public View getView(final int position, View convertView, ViewGroup parent) {
         // TODO Auto-generated method stub
-        Holder holder=new Holder();
+        //Creating row info
+        RowInfo rowInfo = new RowInfo();
         View rowView;
         rowView = inflater.inflate(R.layout.custom_movie_row, null);
 
-        holder.poster = (ImageView) rowView.findViewById(R.id.imgPosterList);
-        holder.title = (TextView) rowView.findViewById(R.id.txtTitle);
-        holder.year = (TextView) rowView.findViewById(R.id.txtYear);
-        holder.shortPlot = (TextView) rowView.findViewById(R.id.txtShortPlot);
-        holder.dateAndTime = (TextView) rowView.findViewById(R.id.txtDateTime);
-        holder.location = (TextView) rowView.findViewById(R.id.txtLocation);
-        holder.nInvitees = (TextView) rowView.findViewById(R.id.txtNInvitees);
-        holder.rating = (RatingBar) rowView.findViewById(R.id.rtbListMovie);
+        //Finding elements of the row and keeping on the rowInfo class
+        rowInfo.poster = (ImageView) rowView.findViewById(R.id.imgPosterList);
+        rowInfo.title = (TextView) rowView.findViewById(R.id.txtTitle);
+        rowInfo.year = (TextView) rowView.findViewById(R.id.txtYear);
+        rowInfo.shortPlot = (TextView) rowView.findViewById(R.id.txtShortPlot);
+        rowInfo.dateAndTime = (TextView) rowView.findViewById(R.id.txtDateTime);
+        rowInfo.location = (TextView) rowView.findViewById(R.id.txtLocation);
+        rowInfo.nInvitees = (TextView) rowView.findViewById(R.id.txtNInvitees);
+        rowInfo.rating = (RatingBar) rowView.findViewById(R.id.rtbListMovie);
 
-        holder.poster.setImageResource(movieImgSrcs[position]);
-        holder.title.setText(model.movies[position].title);
-        holder.year.setText(model.movies[position].year);
-        holder.shortPlot.setText(model.movies[position].shortPlot);
+        //Seting information of the movie (never change)
+        rowInfo.poster.setImageResource(movieImgSrcs[position]);
+        rowInfo.title.setText(model.movies[position].title);
+        rowInfo.year.setText(model.movies[position].year);
+        rowInfo.shortPlot.setText(model.movies[position].shortPlot);
+
+        //Set ratting in case of the user had ratted the movie before
         if (model.movies[position].rating != 0) {
-            holder.rating.setRating(model.movies[position].rating);
+            rowInfo.rating.setRating(model.movies[position].rating);
         }
+        //Setting the information of the party schedulled
         if (model.movies[position].scheduled == true) {
-            holder.dateAndTime.setText(model.movies[position].date + " - " + model.movies[position].time);
-            holder.location.setText("At " + model.movies[position].location);
+            rowInfo.dateAndTime.setText(model.movies[position].date + " - " + model.movies[position].time);
+            rowInfo.location.setText("At " + model.movies[position].location);
             int nInv = model.movies[position].invitees.size();
-            holder.nInvitees.setText("Invitees: " + String.valueOf(nInv));
+            rowInfo.nInvitees.setText("Invitees: " + String.valueOf(nInv));
 
         } else {
-            holder.dateAndTime.setText("Movie not scheduled yet, be the first!");
-            holder.location.setText(" ");
-            holder.nInvitees.setText(" ");
+            //In case of there is no schedulled party for the movie
+            rowInfo.dateAndTime.setText("Movie not scheduled yet, be the first!");
+            rowInfo.location.setText(" ");
+            rowInfo.nInvitees.setText(" ");
 
         }
 
+        //If the user click on the row, its called the new view with the movie details
         rowView.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
                 // TODO Auto-generated method stub
-                //Toast.makeText(context, "You Clicked "+result[position], Toast.LENGTH_SHORT).show();
                 Intent i = new Intent(context.getApplicationContext(), MovieSelected.class);
-                // sending data to new activity
                 i.putExtra("movieId", position + "");
                 context.startActivity(i);
             }

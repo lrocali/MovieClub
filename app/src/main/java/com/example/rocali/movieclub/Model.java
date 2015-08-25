@@ -10,8 +10,9 @@ import android.util.Log;
 public class Model {
 
     private static final String TAG = "MyActivity";
-    public Movie [] movies;
 
+    //Singleton Model
+    public Movie [] movies;
     public static Model instance = null;
 
     public static Model getInstance(){
@@ -23,6 +24,7 @@ public class Model {
 
 
     public Model () {
+        //List of movie
         movies = new Movie [] {
                 new Movie("The Shawshank Redemption",
                         "1994",
@@ -53,6 +55,8 @@ public class Model {
                         "A team of explorers travel through a wormhole in space in an attempt to ensure humanity's survival.",
                         "full full plot2")
         };
+
+        //Simulating pre-schedulled party
         movies[0].invitees.add("a");
         movies[0].invitees.add("ab");
         movies[0].invitees.add("ac");
@@ -67,6 +71,7 @@ public class Model {
 
     }
 
+    //Get array of int of image resources
     public int [] getImgResources(Context context) {
         int numOfMovies = movies.length;
         int [] imgs = new int[numOfMovies];
