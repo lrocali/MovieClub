@@ -1,4 +1,4 @@
-package com.example.rocali.movieclub;
+package com.example.rocali.movieclub.Controllers;
 
 import android.app.Activity;
 import android.app.DatePickerDialog;
@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
@@ -16,11 +15,13 @@ import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.TimePicker;
+
+import com.example.rocali.movieclub.Models.Model;
+import com.example.rocali.movieclub.R;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -32,28 +33,35 @@ import java.util.Locale;
  */
 public class MovieSelected extends Activity {
 
-    private static final String TAG = "MyActivity";
+    //movie attributes
     private int movieId;
     public Model model = Model.getInstance();
+    private static final String TAG = "MyActivity";
+
+    //to date and time field
     final Calendar c = Calendar.getInstance();
 
+    //non editable attributes
     private TextView lblTitle;
     private TextView lblYear;
-    private TextView lblshortPlot;
+    private TextView lblFullPlot;
     private ImageView imgPoster;
-    private RatingBar rtbRating;
 
+    //editable atributtes
+    private RatingBar rtbRating;
     private EditText edtDate;
     private EditText edtTime;
     private EditText edtVenue;
     private EditText edtLocation;
     private EditText edtInvited;
+
+    //buttons
     private Button btnEditMovie;
     private Button btnAddInvited;
     private Button btnParty;
 
-
-    private List<String> list;
+    //iniviteeslist atributtes
+    private List<String> inviteesList;
     private ListView listInvitees;
     private ArrayAdapter<String> adapter;
 
@@ -62,6 +70,8 @@ public class MovieSelected extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
+
+
 
         //initial
         super.onCreate(savedInstanceState);
@@ -75,7 +85,7 @@ public class MovieSelected extends Activity {
         //find noneditables
         lblTitle = (TextView) findViewById(R.id.lblTitle);
         lblYear = (TextView) findViewById(R.id.lblYear);
-        lblshortPlot = (TextView) findViewById(R.id.lblPlot);
+        lblFullPlot = (TextView) findViewById(R.id.lblPlot);
         imgPoster = (ImageView) findViewById(R.id.imgPoster);
         rtbRating = (RatingBar) findViewById(R.id.movieRatingBar);
 
@@ -89,8 +99,9 @@ public class MovieSelected extends Activity {
         btnAddInvited = (Button) findViewById(R.id.btnAddInvited);
         btnParty = (Button) findViewById((R.id.btnParty));
 
-        //hide party button
-        btnParty.setVisibility(View.INVISIBLE);
+        //hide party button if they will create the event
+        if (!model.movies[movieId].scheduled)
+            btnParty.setVisibility(View.INVISIBLE);
 
         //disableEditables
         enableEditables(false);
@@ -98,7 +109,7 @@ public class MovieSelected extends Activity {
         //set noneditable information
         lblTitle.setText(model.movies[movieId].title);
         lblYear.setText(model.movies[movieId].year);
-        lblshortPlot.setText(model.movies[movieId].shortPlot);
+        lblFullPlot.setText(model.movies[movieId].fullPlot);
         rtbRating.setRating(model.movies[movieId].rating);
 
         //set editable/party information if it has created
@@ -124,10 +135,11 @@ public class MovieSelected extends Activity {
             btnEditMovie.setText("Create an event");
         }
 
+        //edit movie button
         btnEditMovie.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
+                //if on edit state
                 if (!editState) {
-                    setCurrentDateOnView();
                     enableEditables(true);
                     btnEditMovie.setText("Cancel");
                     editState = true;
@@ -139,10 +151,14 @@ public class MovieSelected extends Activity {
                 }
             }
         });
+
+        //add invite button
         btnAddInvited.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 model.movies[movieId].invitees.add(edtInvited.getText().toString());
+                //get/refresh list of invitees
                 getListElements();
+                //if all the field had been entered the party button is visible
                 if (edtDate.getText().toString() != null &&
                         edtTime.getText().toString() != null &&
                         edtVenue.getText().toString() != null &&
@@ -152,28 +168,35 @@ public class MovieSelected extends Activity {
                 }
             }
         });
+
+        //party/create event button
         btnParty.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
+                //set information on the model
                 model.movies[movieId].date = edtDate.getText().toString();
                 model.movies[movieId].time = edtTime.getText().toString();
                 model.movies[movieId].venue = edtVenue.getText().toString();
                 model.movies[movieId].location = edtLocation.getText().toString();
 
-                Log.v(TAG, model.movies[movieId].date);
+                //disable editables
                 enableEditables(false);
 
+                //change name of the button and it state
                 btnEditMovie.setText("Edit");
                 editState = false;
             }
         });
+
+        //set action to rating bar
         rtbRating.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
             public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
                 model.movies[movieId].rating = rating;
-                Log.v(TAG, String.valueOf(rating));
 
             }
         });
     }
+
+    //Function to enable or disable the editable atributtes
     public void enableEditables(boolean trueOrFalse){
         edtDate.setEnabled(trueOrFalse);
         edtTime.setEnabled(trueOrFalse);
@@ -183,16 +206,16 @@ public class MovieSelected extends Activity {
         btnAddInvited.setEnabled(trueOrFalse);
     }
 
-
+    //Function to get/refresh the list of invitess when a new invited is added
     public void getListElements() {
-        list = model.movies[movieId].invitees;
+        inviteesList = model.movies[movieId].invitees;
         listInvitees = (ListView) findViewById(R.id.listInvitees);
-        adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, list);
+        adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, inviteesList);
         listInvitees.setAdapter(adapter);
 
         //Set list view height
         ViewGroup.LayoutParams listViewParams = (ViewGroup.LayoutParams)listInvitees.getLayoutParams();
-        listViewParams.height = list.size()*150;
+        listViewParams.height = inviteesList.size()*150;
         listInvitees.requestLayout();
     }
 
@@ -216,7 +239,7 @@ public class MovieSelected extends Activity {
         public void onTimeSet( TimePicker view, int hourOfDay, int minute ) {
             c.set( Calendar.HOUR_OF_DAY, hourOfDay );
             c.set( Calendar.MINUTE, minute );
-            setCurrentDateOnView();
+            setCurrentTimeOnView();
         }
     };
     public void timeOnClicked( View view ) {
@@ -224,12 +247,15 @@ public class MovieSelected extends Activity {
                 c.get( Calendar.HOUR ), c.get( Calendar.MINUTE ), false ).show();
     }
 
+    //Set current information on date filed, just a default value
     public void setCurrentDateOnView() {
-        Log.v(TAG," 1");
         String dateFormat = "MM/dd/yyyy";
         SimpleDateFormat sdf = new SimpleDateFormat( dateFormat, Locale.US);
-        edtDate.setText(sdf.format( c.getTime() ) );
-        Log.v(TAG, "2");
+        edtDate.setText(sdf.format( c.getTime()));
+    }
+
+    //Set current information on time filed, just a default value
+    public void setCurrentTimeOnView() {
         String timeFormat = "hh:mm a";
         SimpleDateFormat stf = new SimpleDateFormat( timeFormat, Locale.US );
         edtTime.setText(stf.format(c.getTime()));

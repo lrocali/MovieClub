@@ -1,4 +1,4 @@
-package com.example.rocali.movieclub;
+package com.example.rocali.movieclub.Controllers;
 import android.content.Context;
 import android.content.Intent;
 import android.view.LayoutInflater;
@@ -9,6 +9,9 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
+
+import com.example.rocali.movieclub.Models.Model;
+import com.example.rocali.movieclub.R;
 
 public class CustomAdapter extends BaseAdapter{
 
@@ -113,6 +116,15 @@ public class CustomAdapter extends BaseAdapter{
                 Intent i = new Intent(context.getApplicationContext(), MovieSelected.class);
                 i.putExtra("movieId", position + "");
                 context.startActivity(i);
+            }
+        });
+
+        //set action to rating bar
+        rowInfo.rating.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
+            public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
+                model.movies[position].rating = rating;
+
+
             }
         });
         return rowView;

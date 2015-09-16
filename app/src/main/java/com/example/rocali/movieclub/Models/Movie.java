@@ -1,4 +1,4 @@
-package com.example.rocali.movieclub;
+package com.example.rocali.movieclub.Models;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -7,12 +7,14 @@ import java.util.List;
  * Created by rocali on 8/24/15.
  */
 public class Movie {
+    //no editable atributes
     public String title;
     public String year;
     public String shortPlot;
     public String fullPlot;
     private String id;
     public String imgSrc;
+    //editable atributes
     public float rating;
     public String date;
     public String time;
@@ -21,6 +23,7 @@ public class Movie {
     public List<String> invitees = new ArrayList<String>();
     public boolean scheduled = false;
 
+    //initialize movie with pre-defined and no editable atributes
     public Movie (String _title, String _year, String _shortPlot, String _fullPlot) {
         title = _title;
         year = _year;
@@ -32,6 +35,7 @@ public class Movie {
 
     }
 
+    //generate id of 10 letters based on the number of letters on title and number of the year
     private String generateId(String title,String year) {
         String alphabet = "0123456789ABCDEFGHIJKLMNOPQRSTUVXWYZ";
         int n = alphabet.length();
@@ -47,6 +51,7 @@ public class Movie {
         return id;
     }
 
+    //"Generate" the name of the img file, which is the title in lowercase and no spaces
     private String getImgName(String title) {
         String imgsrc = title.toLowerCase();
         imgsrc = imgsrc.replaceAll(" ", "");
