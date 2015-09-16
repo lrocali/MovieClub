@@ -9,7 +9,7 @@
         android:layout_width="90dp"
         android:layout_height="125dp"
         android:src="@drawable/cityofgod"
-        android:layout_margin="0dp"
+        android:layout_margin="10dp"
         android:layout_marginTop="5dp"
         android:layout_marginRight="5dp"
         android:layout_marginBottom="5dp" />
@@ -21,7 +21,8 @@
         android:textSize="25dp"
         android:text="Title"
         android:layout_alignParentTop="true"
-        android:layout_toEndOf="@+id/imgPosterList" />
+        android:layout_toEndOf="@+id/imgPosterList"
+        android:layout_marginTop="10dp" />
 
     <TextView
         android:layout_width="wrap_content"

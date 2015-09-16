@@ -1,6 +1,6 @@
 <resources>
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar"  >
+    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar"  >
         <item name="windowActionBar">false</item>
         <!-- Customize your theme here. -->
         <!-- colorPrimary is used for coloring the Toolbar -->
@@ -13,7 +13,9 @@
              which is used to tint widgets -->
         <item name="colorAccent">#FFAB40</item>
     </style>
-    <style name="AppThemeInicial" parent="Theme.AppCompat.Light.DarkActionBar"  >
+    <style name="AppThemeInicial" parent="Theme.AppCompat.Light.DarkActionBar"
+
+        >
 
     </style>
 
