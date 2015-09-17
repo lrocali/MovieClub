@@ -69,18 +69,20 @@ default_height_material"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:text="Short/Full Plot"
             android:id="@+id/lblPlot"
-            android:layout_below="@+id/lblYear"
-            android:layout_alignStart="@+id/lblYear"
-            android:paddingRight="5dp" />
+            android:paddingRight="5dp"
+            android:layout_alignStart="@+id/imgPoster"
+            android:layout_below="@+id/imgPoster"
+            android:padding="5dp" />
 
         <RatingBar
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/movieRatingBar"
-            android:layout_below="@+id/imgPoster"
-            android:layout_alignParentEnd="true"
+            android:layout_below="@+id/lblPlot"
+            android:layout_alignParentEnd="false"
             android:layout_marginRight="5dp"
-            android:layout_marginTop="20dp" />
+            android:layout_marginTop="20dp"
+            android:layout_centerHorizontal="true" />
 
         <EditText
             android:layout_width="wrap_content"
@@ -88,8 +90,9 @@ default_height_material"
             android:ems="10"
             android:id="@+id/edtDate"
             android:layout_below="@+id/movieRatingBar"
-            android:layout_alignEnd="@+id/movieRatingBar"
-            android:onClick="dateOnClicked" />
+            android:onClick="dateOnClicked"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentStart="false" />
 
         <EditText
             android:layout_width="wrap_content"
@@ -114,7 +117,8 @@ default_height_material"
             android:id="@+id/edtLocation"
             android:layout_below="@+id/edtVenue"
             android:layout_alignStart="@+id/edtVenue"
-            android:layout_alignEnd="@+id/movieRatingBar" />
+            android:layout_alignEnd="@+id/movieRatingBar"
+            android:layout_alignParentEnd="true" />
 
         <ListView
             android:layout_width="wrap_content"
@@ -130,8 +134,9 @@ default_height_material"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:text="Date"
             android:id="@+id/textView"
-            android:layout_alignBottom="@+id/edtDate"
-            android:layout_toStartOf="@+id/movieRatingBar" />
+            android:layout_above="@+id/edtTime"
+            android:layout_below="@+id/movieRatingBar"
+            android:layout_toLeftOf="@+id/edtDate" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -140,7 +145,8 @@ default_height_material"
             android:text="Time"
             android:id="@+id/textView2"
             android:layout_alignBottom="@+id/edtTime"
-            android:layout_toStartOf="@+id/movieRatingBar" />
+            android:layout_below="@+id/textView"
+            android:layout_toLeftOf="@+id/edtTime" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -148,8 +154,9 @@ default_height_material"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:text="Venue"
             android:id="@+id/textView3"
-            android:layout_above="@+id/edtLocation"
-            android:layout_alignEnd="@+id/textView2" />
+            android:layout_below="@+id/textView2"
+            android:layout_toLeftOf="@+id/edtVenue"
+            android:layout_alignBottom="@+id/edtVenue" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -157,8 +164,9 @@ default_height_material"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:text="Location"
             android:id="@+id/textView4"
-            android:layout_alignBottom="@+id/edtLocation"
-            android:layout_alignEnd="@+id/textView2" />
+            android:layout_below="@+id/textView3"
+            android:layout_toLeftOf="@+id/edtLocation"
+            android:layout_alignBottom="@+id/edtLocation" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -195,7 +203,8 @@ default_height_material"
             android:id="@+id/btnParty"
             android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true"
-            android:layout_margin="20dp" />
+            android:layout_margin="20dp"
+            android:layout_below="@+id/btnAddInvited" />
 
     </RelativeLayout>
 </ScrollView>

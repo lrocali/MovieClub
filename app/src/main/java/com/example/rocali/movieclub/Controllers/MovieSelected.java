@@ -98,7 +98,7 @@ public class MovieSelected extends Activity {
         btnParty = (Button) findViewById((R.id.btnParty));
 
 
-        if (movieId > 0) {
+        if (movieId >= 0) {
             //hide party button if they will create the event
             if (!model.movies[movieId].scheduled)
                 btnParty.setVisibility(View.INVISIBLE);
