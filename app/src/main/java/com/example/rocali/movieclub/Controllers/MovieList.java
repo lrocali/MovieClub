@@ -72,7 +72,8 @@ public class MovieList extends ListActivity {
         //populate list view
         ListView lv = getListView();
         if (searching) {
-            Toast.makeText(this, "SEARCHING", Toast.LENGTH_LONG).show();
+            //Toast.makeText(this, "SEARCHING", Toast.LENGTH_LONG).show();
+
             String[] values = new String[] { "Android List View",
                     "Adapter implementation",
                     "Simple List View In Android",
@@ -101,7 +102,7 @@ public class MovieList extends ListActivity {
                 }
             });
         } else {
-            Toast.makeText(this, "NOT SEARCHING", Toast.LENGTH_LONG).show();
+            //Toast.makeText(this, "NOT SEARCHING", Toast.LENGTH_LONG).show();
 
             lv.setAdapter(new CustomAdapter(this));
 
@@ -188,6 +189,7 @@ public class MovieList extends ListActivity {
         return true;
     }*/
 
+    /*
     @Override
     protected void onNewIntent(Intent intent) {
         setIntent(intent);
@@ -197,13 +199,13 @@ public class MovieList extends ListActivity {
     private void handleIntent(Intent intent) {
         if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
             String query = intent.getStringExtra(SearchManager.QUERY);
-
+            populateListView(true);
             //txtQuery.setText("Search Query: " + query);
 
         } else {
             populateListView(false);
         }
-    }
+    }*/
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -224,7 +226,10 @@ public class MovieList extends ListActivity {
                 //myAdapter.getFilter().filter(newText);
 
                 Log.v(TAG, "on text chnge text: " + newText);
-                //Toast.makeText(getApplicationContext(), "CHANGE", Toast.LENGTH_SHORT).show()
+
+
+                if (newText.contains(" "))
+                    Toast.makeText(getApplicationContext(), newText, Toast.LENGTH_SHORT).show();
 
                 populateListView(true);
 
@@ -240,6 +245,7 @@ public class MovieList extends ListActivity {
                 return true;
             }
         };
+
         searchView.setOnCloseListener(new SearchView.OnCloseListener() {
 
             @Override
@@ -249,7 +255,6 @@ public class MovieList extends ListActivity {
                 return false;
             }
         });
-
 
         searchView.setOnQueryTextListener(textChangeListener);
 
