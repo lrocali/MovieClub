@@ -39,6 +39,7 @@ public class Model {
         return (network == NetworkInfo.State.CONNECTED || network == NetworkInfo.State.CONNECTING);
     }
 
+    /*
     public void searchMovie(String url) {
         new searchMovieThread().execute(url);
     }
@@ -94,7 +95,7 @@ public class Model {
 
         }
     }
-
+*/
     public Model () {
         //List of movie
 

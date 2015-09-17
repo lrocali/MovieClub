@@ -32,7 +32,8 @@ public class MovieList extends ListActivity {
 
     public Model model = Model.getInstance();
     private static final String TAG = "MyActivity";
-    public JSONObject movie = null;
+    public JSONObject moviesSearch = null;
+    public String[] values = new String[]{};
 
     // Progress Dialog Object
     private ProgressDialog prgDialog;
@@ -56,7 +57,7 @@ public class MovieList extends ListActivity {
 
         if (model.isNetworkConnectionAvailable(this)) {
             Log.v(TAG, "CONECTED");
-            model.searchMovie("http://www.omdbapi.com/?t=Fight+Club&y=&plot=short&r=json");
+            //model.searchMovie("http://www.omdbapi.com/?t=Fight+Club&y=&plot=short&r=json");
             //Toast.makeText(getApplicationContext(), "File already exist under SD card, playing Music", Toast.LENGTH_LONG).show();
         }
             Log.v(TAG, "NOT CONECTED");
@@ -73,7 +74,7 @@ public class MovieList extends ListActivity {
         ListView lv = getListView();
         if (searching) {
             //Toast.makeText(this, "SEARCHING", Toast.LENGTH_LONG).show();
-
+/*
             String[] values = new String[] { "Android List View",
                     "Adapter implementation",
                     "Simple List View In Android",
@@ -83,7 +84,7 @@ public class MovieList extends ListActivity {
                     "List View Array Adapter",
                     "Android Example List View"
             };
-
+*/
             ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
                     android.R.layout.simple_list_item_1, android.R.id.text1, values);
 
@@ -120,6 +121,7 @@ public class MovieList extends ListActivity {
 
     }
 
+
     // Async Task Class
     class searchMovieThread extends AsyncTask<String, String, String> {
 
@@ -138,7 +140,7 @@ public class MovieList extends ListActivity {
             int count;
             try {
                 JsonClass json = new JsonClass();
-                movie = json.getJSONFromUrl(f_url[0]);
+                moviesSearch = json.getJSONFromUrl(f_url[0]);
             } catch (Exception e) {
                 Log.e("Error: ", e.getMessage());
             }
@@ -162,7 +164,7 @@ public class MovieList extends ListActivity {
             Log.v(TAG, "POST EXECUTE");
             String title = null;
             try {
-                title = movie.getString("Title");
+                title = moviesSearch.getString("Title");
                 Log.v(TAG,title);
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -228,8 +230,11 @@ public class MovieList extends ListActivity {
                 Log.v(TAG, "on text chnge text: " + newText);
 
 
-                if (newText.contains(" "))
+                if (newText.contains(" ")) {
                     Toast.makeText(getApplicationContext(), newText, Toast.LENGTH_SHORT).show();
+                    String url = "http://www.omdbapi.com/?s=Fight&y=&plot=short&r=json";
+                    new searchMovieThread().execute(url);
+                }
 
                 populateListView(true);
 
