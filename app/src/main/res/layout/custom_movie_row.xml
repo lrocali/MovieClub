@@ -8,7 +8,7 @@
         android:id="@+id/imgPosterList"
         android:layout_width="90dp"
         android:layout_height="125dp"
-        android:src="@drawable/cityofgod"
+        android:src="@drawable/defaultimg"
         android:layout_margin="10dp"
         android:layout_marginTop="5dp"
         android:layout_marginRight="5dp"

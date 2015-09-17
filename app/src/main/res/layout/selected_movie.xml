@@ -41,7 +41,7 @@ default_height_material"
             android:layout_marginTop="40dp" />
 
         <ImageView
-            android:src="@drawable/cityofgod"
+            android:src="@drawable/defaultimg"
             android:layout_width="180dp"
             android:layout_height="250dp"
             android:id="@+id/imgPoster"
@@ -61,7 +61,8 @@ default_height_material"
             android:layout_alignTop="@+id/imgPoster"
             android:layout_toEndOf="@+id/imgPoster"
             android:layout_marginTop="0dp"
-            android:layout_marginLeft="10dp" />
+            android:layout_marginLeft="10dp"
+            android:layout_margin="5dp" />
 
         <TextView
             android:layout_width="fill_parent"
@@ -205,6 +206,62 @@ default_height_material"
             android:layout_centerHorizontal="true"
             android:layout_margin="20dp"
             android:layout_below="@+id/btnAddInvited" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="Genre"
+            android:id="@+id/lblGenre"
+            android:layout_below="@+id/lblYear"
+            android:layout_toEndOf="@+id/imgPoster"
+            android:layout_margin="5dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="Runtime"
+            android:id="@+id/lblRuntime"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:layout_below="@+id/lblGenre"
+            android:layout_toEndOf="@+id/imgPoster" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="Country"
+            android:id="@+id/lblCountry"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:layout_below="@+id/lblRuntime"
+            android:layout_toEndOf="@+id/imgPoster"
+            android:layout_margin="5dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="Votes"
+            android:id="@+id/lblVotes"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:layout_below="@+id/lblCountry"
+            android:layout_toEndOf="@+id/imgPoster" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="Rating"
+            android:id="@+id/lblRating"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:layout_below="@+id/lblVotes"
+            android:layout_toEndOf="@+id/imgPoster"
+            android:layout_margin="5dp" />
 
     </RelativeLayout>
 </ScrollView>

@@ -19,7 +19,7 @@ public class CustomAdapter extends BaseAdapter{
     public Model model = Model.getInstance();
 
     //array of img resources
-    int [] movieImgSrcs;
+    //int [] movieImgSrcs;
     Context context;    //To be sent to get the img resource
 
 
@@ -29,7 +29,7 @@ public class CustomAdapter extends BaseAdapter{
 
         //Get context to be sent to model to get img resources
         context = movieList;
-        movieImgSrcs = model.getImgResources(context);
+        //movieImgSrcs = model.getImgResources(context);
 
         inflater = ( LayoutInflater )context.
                 getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -84,10 +84,10 @@ public class CustomAdapter extends BaseAdapter{
         rowInfo.rating = (RatingBar) rowView.findViewById(R.id.rtbListMovie);
 
         //Seting information of the movie (never change)
-        rowInfo.poster.setImageResource(movieImgSrcs[position]);
+       // rowInfo.poster.setImageResource(movieImgSrcs[position]);
         rowInfo.title.setText(model.movies[position].title);
         rowInfo.year.setText(model.movies[position].year);
-        rowInfo.shortPlot.setText(model.movies[position].shortPlot);
+        rowInfo.shortPlot.setText(model.movies[position].plot);
 
         //Set ratting in case of the user had ratted the movie before
         if (model.movies[position].rating != 0) {

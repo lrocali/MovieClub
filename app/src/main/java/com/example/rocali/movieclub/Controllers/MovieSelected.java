@@ -5,8 +5,12 @@ import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
@@ -23,6 +27,8 @@ import android.widget.TimePicker;
 import com.example.rocali.movieclub.Models.Model;
 import com.example.rocali.movieclub.R;
 
+import java.io.InputStream;
+import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.List;
@@ -44,7 +50,14 @@ public class MovieSelected extends Activity {
     //non editable attributes
     private TextView lblTitle;
     private TextView lblYear;
-    private TextView lblFullPlot;
+    private TextView lblGenre;
+    private TextView lblRuntime;
+    private TextView lblCountry;
+    private TextView lblVotes;
+    private TextView lblRating;
+    private TextView lblPlot;
+
+
     private ImageView imgPoster;
 
     //editable atributtes
@@ -83,7 +96,13 @@ public class MovieSelected extends Activity {
         //find noneditables
         lblTitle = (TextView) findViewById(R.id.lblTitle);
         lblYear = (TextView) findViewById(R.id.lblYear);
-        lblFullPlot = (TextView) findViewById(R.id.lblPlot);
+        lblGenre = (TextView) findViewById(R.id.lblGenre);
+        lblRuntime = (TextView) findViewById(R.id.lblRuntime);
+        lblCountry = (TextView) findViewById(R.id.lblCountry);
+        lblVotes = (TextView) findViewById(R.id.lblVotes);
+        lblRating = (TextView) findViewById(R.id.lblRating);
+
+        lblPlot = (TextView) findViewById(R.id.lblPlot);
         imgPoster = (ImageView) findViewById(R.id.imgPoster);
         rtbRating = (RatingBar) findViewById(R.id.movieRatingBar);
 
@@ -109,7 +128,7 @@ public class MovieSelected extends Activity {
             //set noneditable information
             lblTitle.setText(model.movies[movieId].title);
             lblYear.setText(model.movies[movieId].year);
-            lblFullPlot.setText(model.movies[movieId].fullPlot);
+            lblPlot.setText(model.movies[movieId].plot);
             rtbRating.setRating(model.movies[movieId].rating);
 
             //set editable/party information if it has created
@@ -122,10 +141,10 @@ public class MovieSelected extends Activity {
 
             //Set image
             Resources res = getResources();
-            String mDrawableName = model.movies[movieId].imgSrc;
-            int resID = res.getIdentifier(mDrawableName, "drawable", getPackageName());
-            Drawable drawable = res.getDrawable(resID);
-            imgPoster.setImageDrawable(drawable);
+            //String mDrawableName = model.movies[movieId].imgSrc;
+            //int resID = res.getIdentifier(mDrawableName, "drawable", getPackageName());
+           // Drawable drawable = res.getDrawable(resID);
+            //imgPoster.setImageDrawable(drawable);
 
             //set invitees list
             getListElements();
@@ -196,11 +215,43 @@ public class MovieSelected extends Activity {
             });
         } else {
             lblTitle.setText(model.searchedMovie.title);
-            lblYear.setText(model.searchedMovie.year);
-            lblFullPlot.setText(model.searchedMovie.fullPlot);
+            lblYear.setText("Year: "+model.searchedMovie.year);
+            lblGenre.setText("Genre: "+model.searchedMovie.genre);
+            lblRuntime.setText("Runtime: "+model.searchedMovie.runtime);
+            lblCountry.setText("Country: "+model.searchedMovie.country);
+            lblVotes.setText("IMDB Votes: "+model.searchedMovie.imdbVotes);
+            lblRating.setText("IMDB Rating: "+model.searchedMovie.imdbRating);
+            lblPlot.setText(model.searchedMovie.plot);
+
+            new DownloadImageTask(imgPoster)
+                    .execute(model.searchedMovie.imgURL);
         }
     }
 
+    private class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
+        ImageView bmImage;
+
+        public DownloadImageTask(ImageView bmImage) {
+            this.bmImage = bmImage;
+        }
+
+        protected Bitmap doInBackground(String... urls) {
+            String urldisplay = urls[0];
+            Bitmap mIcon11 = null;
+            try {
+                InputStream in = new java.net.URL(urldisplay).openStream();
+                mIcon11 = BitmapFactory.decodeStream(in);
+            } catch (Exception e) {
+                Log.e("Error", e.getMessage());
+                e.printStackTrace();
+            }
+            return mIcon11;
+        }
+
+        protected void onPostExecute(Bitmap result) {
+            bmImage.setImageBitmap(result);
+        }
+    }
     //Function to enable or disable the editable atributtes
     public void enableEditables(boolean trueOrFalse){
         edtDate.setEnabled(trueOrFalse);

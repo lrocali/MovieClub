@@ -188,9 +188,21 @@ public class MovieList extends ListActivity {
             try {
 
                 if (fetchFromId) {
-                    Toast.makeText(getApplicationContext(),"BY ID :" +  msJsonObj.getString("Title"), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(),"BY ID :" +  msJsonObj.getString("imdbID"), Toast.LENGTH_SHORT).show();
 
-                    model.setSearchedMovie(msJsonObj.getString("Title"),msJsonObj.getString("Year"),msJsonObj.getString("Title"),msJsonObj.getString("Plot"));
+
+                    model.setSearchedMovie(
+                            msJsonObj.getString("imdbID"),
+                            msJsonObj.getString("Title"),
+                            msJsonObj.getString("Year"),
+                            msJsonObj.getString("Plot"),
+                            msJsonObj.getString("Runtime"),
+                            msJsonObj.getString("Genre"),
+                            msJsonObj.getString("Country"),
+                            msJsonObj.getString("imdbVotes"),
+                            msJsonObj.getString("imdbRating"),
+                            msJsonObj.getString("Poster")
+                    );
 
                     Intent i = new Intent(getApplicationContext(), MovieSelected.class);
                     // sending movie id to new activity

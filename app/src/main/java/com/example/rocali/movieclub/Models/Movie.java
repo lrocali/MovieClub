@@ -8,12 +8,16 @@ import java.util.List;
  */
 public class Movie {
     //no editable atributes
+    private String id;
     public String title;
     public String year;
-    public String shortPlot;
-    public String fullPlot;
-    private String id;
-    public String imgSrc;
+    public String plot;
+    public String runtime;
+    public String genre;
+    public String country;
+    public String imdbVotes;
+    public String imdbRating;
+    public String imgURL;
     //editable atributes
     public float rating;
     public String date;
@@ -24,27 +28,29 @@ public class Movie {
     public boolean scheduled = false;
 
     //initialize movie with pre-defined and no editable atributes
-    public Movie (String _title, String _year, String _shortPlot, String _fullPlot) {
+    public Movie (String _id,String _title, String _year, String _plot,String _runtime,String _genre,String _country,String _imdbVotes,String _imdbRating,String _imgURL) {
+        id = _id;
         title = _title;
         year = _year;
-        shortPlot = _shortPlot;
-        fullPlot = _fullPlot;
-        id = generateId(_title,_year);
-        imgSrc = getImgName(_title);
+        plot = _plot;
+        runtime = _runtime;
+        genre = _genre;
+        country = _country;
+        imdbVotes = _imdbVotes;
+        imdbRating = _imdbRating;
+
+        imgURL = _imgURL;
         rating = 0;
     }
 
+    /*
     //initialize movie with pre-defined and no editable atributes
     public Movie () {
-        title = "";
-        year = "";
-        shortPlot = "";
-        fullPlot = "";
-        id = generateId("ABC","0000");
         imgSrc = getImgName("fightclub");
         rating = 0;
-    }
+    }*/
 
+    /*
     //generate id of 10 letters based on the number of letters on title and number of the year
     private String generateId(String title,String year) {
         String alphabet = "0123456789ABCDEFGHIJKLMNOPQRSTUVXWYZ";
@@ -60,12 +66,14 @@ public class Movie {
 
         return id;
     }
-
+*/
+    /*
     //"Generate" the name of the img file, which is the title in lowercase and no spaces
     private String getImgName(String title) {
         String imgsrc = title.toLowerCase();
         imgsrc = imgsrc.replaceAll(" ", "");
+        imgsrc = "cityofgod";
         return imgsrc;
-    }
+    }*/
 
 }

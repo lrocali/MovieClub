@@ -21,7 +21,7 @@ public class Model {
 
     //Singleton Model
     public Movie [] movies;
-    public Movie searchedMovie = new Movie();
+    public Movie searchedMovie;
     public static Model instance = null;
     public JSONObject movie = null;
 
@@ -135,45 +135,88 @@ public class Model {
             Log.v(TAG, "Network not Available!");
         }*/
         //Information based of imdb.com
+
         movies = new Movie [] {
-                new Movie("The Shawshank Redemption",
+                new Movie("00",
+                        "The Shawshank Redemption",
                         "1994",
-                        "Two imprisoned men bond over a number of years, finding...",
-                        "Two imprisoned men bond over a number of years, finding solace and eventual redemption through acts of common decency."
-                        ),
-                new Movie("The Godfather",
+                        "Two imprisoned men bond over a number of years, finding solace and eventual redemption through acts of common decency.",
+                        "runtime",
+                        "genre",
+                        "country",
+                        "imdb votes",
+                        "imdvrating",
+                        "0"
+                ),
+                new Movie("000",
+                        "The Godfather",
                         "1972",
-                        "The aging patriarch of an organized crime dynasty transfers...",
-                        "The aging patriarch of an organized crime dynasty transfers control of his clandestine empire to his reluctant son."
-                        ),
-                new Movie("Schindlers List",
+                        "The aging patriarch of an organized crime dynasty transfers control of his clandestine empire to his reluctant son.",
+                        "runtime",
+                        "genre",
+                        "country",
+                        "imdb votes",
+                        "imdvrating",
+                        "0"
+                ),
+                new Movie("000",
+                        "Schindlers List",
                         "1993",
-                        "In Poland during World War II, Oskar Schindler gradually becomes...",
-                        "In Poland during World War II, Oskar Schindler gradually becomes concerned for his Jewish workforce after witnessing their persecution by the Nazis."
-                        ),
-                new Movie("Fight Club",
+                        "In Poland during World War II, Oskar Schindler gradually becomes concerned for his Jewish workforce after witnessing their persecution by the Nazis.",
+                        "runtime",
+                        "genre",
+                        "country",
+                        "imdb votes",
+                        "imdvrating",
+                        "0"
+                ),
+                new Movie("000",
+                        "Fight Club",
                         "1999",
-                        "An insomniac office worker, looking for a way to change his life...",
-                        "An insomniac office worker, looking for a way to change his life, crosses paths with a devil-may-care soap maker, forming an underground fight club that evolves into something much, much more."
-                        ),
-                new Movie("Inception",
+                        "An insomniac office worker, looking for a way to change his life, crosses paths with a devil-may-care soap maker, forming an underground fight club that evolves into something much, much more.",
+                        "runtime",
+                        "genre",
+                        "country",
+                        "imdb votes",
+                        "imdvrating",
+                        "0"
+                ),
+                new Movie("000",
+                        "Inception",
                         "2010",
-                        "\"A thief who steals corporate secrets through use of dream-sharing...",
-                        "A thief who steals corporate secrets through use of dream-sharing technology is given the inverse task of planting an idea into the mind of a CEO."
-                        ),
-                new Movie("City Of God",
+                        "A thief who steals corporate secrets through use of dream-sharing technology is given the inverse task of planting an idea into the mind of a CEO.",
+                        "runtime",
+                        "genre",
+                        "country",
+                        "imdb votes",
+                        "imdvrating",
+                        "0"
+                ),
+                new Movie("000",
+                        "City Of God",
                         "2002",
-                        "Two boys growing up in a violent neighborhood of Rio de Janeiro...",
-                        "Two boys growing up in a violent neighborhood of Rio de Janeiro take different paths: one becomes a photographer, the other a drug dealer."
-                       ),
-                new Movie("Interstellar",
+                        "Two boys growing up in a violent neighborhood of Rio de Janeiro take different paths: one becomes a photographer, the other a drug dealer.",
+                        "runtime",
+                        "genre",
+                        "country",
+                        "imdb votes",
+                        "imdvrating",
+                        "0"
+                ),
+                new Movie("000",
+                        "Interstellar",
                         "2014",
-                        "A team of explorers travel through a wormhole in space in...",
-                        "A team of explorers travel through a wormhole in space in an attempt to ensure humanity's survival."
-                        )
+                        "A team of explorers travel through a wormhole in space in an attempt to ensure humanity's survival.",
+                        "runtime",
+                        "genre",
+                        "country",
+                        "imdb votes",
+                        "imdvrating",
+                        "0"
+                )
         };
 
-
+//*
         //Simulating pre-schedulled parties
         movies[2].invitees.add("john@hotmail.com");
         movies[2].invitees.add("katie@hotmail.com");
@@ -197,15 +240,15 @@ public class Model {
         movies[4].rating = 2.5f;
         movies[4].scheduled = true;
 
+
     }
 
-    public void setSearchedMovie(String title,String year,String shortPlot,String fullPlot){
-        searchedMovie.title = title;
-        searchedMovie.year = year;
-        searchedMovie.shortPlot = shortPlot;
-        searchedMovie.fullPlot = fullPlot;
+    public void setSearchedMovie(String _id,String _title, String _year, String _plot,String _runtime,String _genre,String _country,String _imdbVotes,String _imdbRating,String _imgURL){
+        searchedMovie = new Movie(_id,_title,_year,_plot,_runtime,_genre,_country,_imdbVotes,_imdbRating,_imgURL);
+
     }
 
+    /*
     //Get array of int of image resources
     public int [] getImgResources(Context context) {
         int numOfMovies = movies.length;
@@ -218,4 +261,5 @@ public class Model {
         }
         return  imgs;
     }
+    */
 }
