@@ -32,7 +32,17 @@ public class Movie {
         id = generateId(_title,_year);
         imgSrc = getImgName(_title);
         rating = 0;
+    }
 
+    //initialize movie with pre-defined and no editable atributes
+    public Movie () {
+        title = "";
+        year = "";
+        shortPlot = "";
+        fullPlot = "";
+        id = generateId("ABC","0000");
+        imgSrc = getImgName("fightclub");
+        rating = 0;
     }
 
     //generate id of 10 letters based on the number of letters on title and number of the year

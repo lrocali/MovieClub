@@ -21,6 +21,7 @@ public class Model {
 
     //Singleton Model
     public Movie [] movies;
+    public Movie searchedMovie = new Movie();
     public static Model instance = null;
     public JSONObject movie = null;
 
@@ -37,6 +38,27 @@ public class Model {
         if (info == null) return false;
         NetworkInfo.State network = info.getState();
         return (network == NetworkInfo.State.CONNECTED || network == NetworkInfo.State.CONNECTING);
+    }
+
+    public String getSearchableTitle(String enteredText) {
+
+        String searchableTitle = new String();
+        boolean deleteLastChar = false;     //Delete white space in case of last char is space or not
+                //enteredText.substring(0, enteredText.length()-1);
+        char[] titleChars = enteredText.toCharArray();
+        for(int i = 0; i < titleChars.length; i++){
+            if(Character.isWhitespace(titleChars[i])){
+                if (i == titleChars.length-1)
+                    deleteLastChar = true;
+                titleChars[i] = '+';
+            }
+        }
+
+        searchableTitle = String.valueOf(titleChars);
+        if (deleteLastChar)
+            searchableTitle = searchableTitle.substring(0, searchableTitle.length()-1);
+        //Log.v(TAG,searchableTitle);
+        return searchableTitle;
     }
 
     /*
@@ -151,6 +173,7 @@ public class Model {
                         )
         };
 
+
         //Simulating pre-schedulled parties
         movies[2].invitees.add("john@hotmail.com");
         movies[2].invitees.add("katie@hotmail.com");
@@ -174,6 +197,13 @@ public class Model {
         movies[4].rating = 2.5f;
         movies[4].scheduled = true;
 
+    }
+
+    public void setSearchedMovie(String title,String year,String shortPlot,String fullPlot){
+        searchedMovie.title = title;
+        searchedMovie.year = year;
+        searchedMovie.shortPlot = shortPlot;
+        searchedMovie.fullPlot = fullPlot;
     }
 
     //Get array of int of image resources

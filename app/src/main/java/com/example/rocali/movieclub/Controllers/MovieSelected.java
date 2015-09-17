@@ -71,8 +71,6 @@ public class MovieSelected extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
 
-
-
         //initial
         super.onCreate(savedInstanceState);
         this.setContentView(R.layout.selected_movie);
@@ -99,101 +97,108 @@ public class MovieSelected extends Activity {
         btnAddInvited = (Button) findViewById(R.id.btnAddInvited);
         btnParty = (Button) findViewById((R.id.btnParty));
 
-        //hide party button if they will create the event
-        if (!model.movies[movieId].scheduled)
-            btnParty.setVisibility(View.INVISIBLE);
 
-        //disableEditables
-        enableEditables(false);
+        if (movieId > 0) {
+            //hide party button if they will create the event
+            if (!model.movies[movieId].scheduled)
+                btnParty.setVisibility(View.INVISIBLE);
 
-        //set noneditable information
-        lblTitle.setText(model.movies[movieId].title);
-        lblYear.setText(model.movies[movieId].year);
-        lblFullPlot.setText(model.movies[movieId].fullPlot);
-        rtbRating.setRating(model.movies[movieId].rating);
+            //disableEditables
+            enableEditables(false);
 
-        //set editable/party information if it has created
-        if (model.movies[movieId].scheduled) {
-            edtDate.setText(model.movies[movieId].date);
-            edtTime.setText(model.movies[movieId].time);
-            edtVenue.setText(model.movies[movieId].venue);
-            edtLocation.setText(model.movies[movieId].location);
-        }
+            //set noneditable information
+            lblTitle.setText(model.movies[movieId].title);
+            lblYear.setText(model.movies[movieId].year);
+            lblFullPlot.setText(model.movies[movieId].fullPlot);
+            rtbRating.setRating(model.movies[movieId].rating);
 
-        //Set image
-        Resources res = getResources();
-        String mDrawableName = model.movies[movieId].imgSrc;
-        int resID = res.getIdentifier(mDrawableName , "drawable", getPackageName());
-        Drawable drawable = res.getDrawable(resID);
-        imgPoster.setImageDrawable(drawable);
+            //set editable/party information if it has created
+            if (model.movies[movieId].scheduled) {
+                edtDate.setText(model.movies[movieId].date);
+                edtTime.setText(model.movies[movieId].time);
+                edtVenue.setText(model.movies[movieId].venue);
+                edtLocation.setText(model.movies[movieId].location);
+            }
 
-        //set invitees list
-        getListElements();
+            //Set image
+            Resources res = getResources();
+            String mDrawableName = model.movies[movieId].imgSrc;
+            int resID = res.getIdentifier(mDrawableName, "drawable", getPackageName());
+            Drawable drawable = res.getDrawable(resID);
+            imgPoster.setImageDrawable(drawable);
 
-        //if the movie has no scheduled party
-        if (!model.movies[movieId].scheduled) {
-            btnEditMovie.setText("Create an event");
-        }
+            //set invitees list
+            getListElements();
 
-        //edit movie button
-        btnEditMovie.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                //if on edit state
-                if (!editState) {
-                    enableEditables(true);
-                    btnEditMovie.setText("Cancel");
-                    editState = true;
-                    model.movies[movieId].scheduled = true;
-                } else {
+            //if the movie has no scheduled party
+            if (!model.movies[movieId].scheduled) {
+                btnEditMovie.setText("Create an event");
+            }
+
+            //edit movie button
+            btnEditMovie.setOnClickListener(new View.OnClickListener() {
+                public void onClick(View v) {
+                    //if on edit state
+                    if (!editState) {
+                        enableEditables(true);
+                        btnEditMovie.setText("Cancel");
+                        editState = true;
+                        model.movies[movieId].scheduled = true;
+                    } else {
+                        enableEditables(false);
+                        btnEditMovie.setText("Edit");
+                        editState = false;
+                    }
+                }
+            });
+
+            //add invite button
+            btnAddInvited.setOnClickListener(new View.OnClickListener() {
+                public void onClick(View v) {
+                    model.movies[movieId].invitees.add(edtInvited.getText().toString());
+                    //get/refresh list of invitees
+                    getListElements();
+                    //if all the field had been entered the party button is visible
+                    if (edtDate.getText().toString() != null &&
+                            edtTime.getText().toString() != null &&
+                            edtVenue.getText().toString() != null &&
+                            edtLocation.getText().toString() != null) {
+
+                        btnParty.setVisibility(View.VISIBLE);
+                    }
+                }
+            });
+
+            //party/create event button
+            btnParty.setOnClickListener(new View.OnClickListener() {
+                public void onClick(View v) {
+                    //set information on the model
+                    model.movies[movieId].date = edtDate.getText().toString();
+                    model.movies[movieId].time = edtTime.getText().toString();
+                    model.movies[movieId].venue = edtVenue.getText().toString();
+                    model.movies[movieId].location = edtLocation.getText().toString();
+
+                    //disable editables
                     enableEditables(false);
+
+                    //change name of the button and it state
                     btnEditMovie.setText("Edit");
                     editState = false;
                 }
-            }
-        });
+            });
 
-        //add invite button
-        btnAddInvited.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                model.movies[movieId].invitees.add(edtInvited.getText().toString());
-                //get/refresh list of invitees
-                getListElements();
-                //if all the field had been entered the party button is visible
-                if (edtDate.getText().toString() != null &&
-                        edtTime.getText().toString() != null &&
-                        edtVenue.getText().toString() != null &&
-                        edtLocation.getText().toString() != null) {
+            //set action to rating bar
+            rtbRating.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
+                public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
+                    model.movies[movieId].rating = rating;
 
-                    btnParty.setVisibility(View.VISIBLE);
                 }
-            }
-        });
-
-        //party/create event button
-        btnParty.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                //set information on the model
-                model.movies[movieId].date = edtDate.getText().toString();
-                model.movies[movieId].time = edtTime.getText().toString();
-                model.movies[movieId].venue = edtVenue.getText().toString();
-                model.movies[movieId].location = edtLocation.getText().toString();
-
-                //disable editables
-                enableEditables(false);
-
-                //change name of the button and it state
-                btnEditMovie.setText("Edit");
-                editState = false;
-            }
-        });
-
-        //set action to rating bar
-        rtbRating.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
-            public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
-                model.movies[movieId].rating = rating;
-
-            }
-        });
+            });
+        } else {
+            lblTitle.setText(model.searchedMovie.title);
+            lblYear.setText(model.searchedMovie.year);
+            lblFullPlot.setText(model.searchedMovie.fullPlot);
+        }
     }
 
     //Function to enable or disable the editable atributtes

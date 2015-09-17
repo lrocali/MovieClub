@@ -24,16 +24,22 @@ import com.example.rocali.movieclub.Models.JsonClass;
 import com.example.rocali.movieclub.Models.Model;
 import com.example.rocali.movieclub.R;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.ArrayList;
 
 
 public class MovieList extends ListActivity {
 
     public Model model = Model.getInstance();
     private static final String TAG = "MyActivity";
-    public JSONObject moviesSearch = null;
-    public String[] values = new String[]{};
+    public JSONObject msJsonObj = null;
+    public JSONArray msJsonArray = null;
+    ArrayList<String>  msArrayList =new ArrayList<String>();
+
+    boolean fetchFromId = false;
 
     // Progress Dialog Object
     private ProgressDialog prgDialog;
@@ -86,7 +92,7 @@ public class MovieList extends ListActivity {
             };
 */
             ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
-                    android.R.layout.simple_list_item_1, android.R.id.text1, values);
+                    android.R.layout.simple_list_item_1, android.R.id.text1, msArrayList);
 
             // Assign adapter to ListView
             lv.setAdapter(adapter);
@@ -94,6 +100,21 @@ public class MovieList extends ListActivity {
             lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 public void onItemClick(AdapterView<?> parent, View view,
                                         int position, long id) {
+
+                    //Get movie id on imdb which have been fetched from search
+                    try {
+                        JSONObject movieSelected = msJsonArray.getJSONObject(position);
+                        String imdbID = movieSelected.getString("imdbID");
+                        //Toast.makeText(getApplicationContext(), imdbID, Toast.LENGTH_LONG).show();
+
+                        fetchFromId = true;
+                        String url = "http://www.omdbapi.com/?i="+imdbID+"&plot=short&r=json";
+                        new searchMovieThread().execute(url);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                        Log.v(TAG,"Get imdbId Error");
+                    }
+
 
                    /* Intent i = new Intent(getApplicationContext(), MovieSelected.class);
                     // sending movie id to new activity
@@ -136,11 +157,11 @@ public class MovieList extends ListActivity {
 
         // Download Music File from Internet
         @Override
-        protected String doInBackground(String... f_url) {
-            int count;
+        protected String doInBackground(String... f_url) {   //search via title or by id
             try {
                 JsonClass json = new JsonClass();
-                moviesSearch = json.getJSONFromUrl(f_url[0]);
+                msJsonObj = json.getJSONFromUrl(f_url[0]);
+
             } catch (Exception e) {
                 Log.e("Error: ", e.getMessage());
             }
@@ -161,14 +182,35 @@ public class MovieList extends ListActivity {
             //Toast.makeText(getApplicationContext(), "Download complete, playing Music", Toast.LENGTH_LONG).show();
             // Play the music
             // playMusic();
+
             Log.v(TAG, "POST EXECUTE");
-            String title = null;
+            //Toast.makeText(getApplicationContext(),"POST EXECUTE", Toast.LENGTH_SHORT).show();
             try {
-                title = moviesSearch.getString("Title");
-                Log.v(TAG,title);
+
+                if (fetchFromId) {
+                    Toast.makeText(getApplicationContext(),"BY ID :" +  msJsonObj.getString("Title"), Toast.LENGTH_SHORT).show();
+
+                    model.setSearchedMovie(msJsonObj.getString("Title"),msJsonObj.getString("Year"),msJsonObj.getString("Title"),msJsonObj.getString("Plot"));
+
+                    Intent i = new Intent(getApplicationContext(), MovieSelected.class);
+                    // sending movie id to new activity
+                    i.putExtra("movieId", "-1");
+                    startActivity(i);
+
+                } else {
+                    msArrayList.clear();
+                    msJsonArray = msJsonObj.getJSONArray("Search");
+                    Log.v(TAG, "LENGHT" + msJsonArray.length());
+                    for (int i = 0; i < msJsonArray.length(); i++) {
+                        JSONObject json_data = msJsonArray.getJSONObject(i);
+
+                        msArrayList.add(json_data.getString("Title"));
+                    }
+                    populateListView(true);
+                }
             } catch (JSONException e) {
                 e.printStackTrace();
-                Log.v(TAG,"ERROR NO TITLE");
+                Log.v(TAG,"ERROR NO JSONARRAY");
             }
 
         }
@@ -209,6 +251,26 @@ public class MovieList extends ListActivity {
         }
     }*/
 
+    public void handleSearch(String searchText,boolean submit) {
+        if (searchText.length() != 0 && ( Character.isWhitespace(searchText.charAt(searchText.length() - 1)) || submit )) {
+
+            if (model.isNetworkConnectionAvailable(this)) {
+                Toast.makeText(getApplicationContext(), model.getSearchableTitle(searchText), Toast.LENGTH_SHORT).show();
+
+                fetchFromId = false;
+                String url = "http://www.omdbapi.com/?s=" + model.getSearchableTitle(searchText) + "&y=&plot=short&r=json";
+                new searchMovieThread().execute(url);
+                populateListView(true);
+            } else {
+                Toast.makeText(getApplicationContext(),"NO INTERNET CONECTION", Toast.LENGTH_SHORT).show();
+            }
+        } else {
+            msArrayList = new ArrayList<String>();
+        }
+
+
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
@@ -224,29 +286,13 @@ public class MovieList extends ListActivity {
         SearchView.OnQueryTextListener textChangeListener = new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextChange(String newText) {
-                // this is your adapter that will be filtered
-                //myAdapter.getFilter().filter(newText);
-
-                Log.v(TAG, "on text chnge text: " + newText);
-
-
-                if (newText.contains(" ")) {
-                    Toast.makeText(getApplicationContext(), newText, Toast.LENGTH_SHORT).show();
-                    String url = "http://www.omdbapi.com/?s=Fight&y=&plot=short&r=json";
-                    new searchMovieThread().execute(url);
-                }
-
-                populateListView(true);
-
+               handleSearch(newText,false);
                 return true;
             }
 
             @Override
             public boolean onQueryTextSubmit(String query) {
-                // this is your adapter that will be filtered
-                //myAdapter.getFilter().filter(query);
-                //populateListView(false);
-                Log.v(TAG, "on query submit: " + query);
+                handleSearch(query,true);
                 return true;
             }
         };
