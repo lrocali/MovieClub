@@ -22,7 +22,12 @@ import android.widget.Toast;
 
 import com.example.rocali.movieclub.Models.JsonClass;
 import com.example.rocali.movieclub.Models.Model;
+import com.example.rocali.movieclub.Models.Movie;
 import com.example.rocali.movieclub.R;
+import com.firebase.client.DataSnapshot;
+import com.firebase.client.Firebase;
+import com.firebase.client.FirebaseError;
+import com.firebase.client.ValueEventListener;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -39,6 +44,10 @@ public class MovieList extends ListActivity {
     public JSONArray msJsonArray = null;
     ArrayList<String>  msArrayList =new ArrayList<String>();
 
+    //Firebase
+    Firebase firebaseRef;
+
+    //Fetch frmo OMDB
     boolean fetchFromId = false;
 
     // Progress Dialog Object
@@ -50,6 +59,11 @@ public class MovieList extends ListActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_movie_list);
+
+        //Set context to firebase
+        Firebase.setAndroidContext(this);
+       // model.fetchSearchedMovies();
+        fetchSearchedMovies();
 
         //ActionBar actionBar = getActionBar();
         //Log.v(TAG,actionBar.getTitle().toString());
@@ -69,6 +83,33 @@ public class MovieList extends ListActivity {
             Log.v(TAG, "NOT CONECTED");
 
     }
+
+    public void fetchSearchedMovies(){
+        firebaseRef = new Firebase("https://torrid-heat-8747.firebaseio.com/");
+        Firebase searchedRef = firebaseRef.child("searchedMovies");
+        searchedRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot snapshot) {
+                System.out.println("There are " + snapshot.getChildrenCount() + " blog posts");
+                model.movies.clear();
+                for (DataSnapshot postSnapshot : snapshot.getChildren()) {
+
+                    Movie movie = postSnapshot.getValue(Movie.class);
+                    System.out.println("89" + movie.getTitle());
+                    model.movies.add(movie);
+
+                    populateListView(false);
+
+                }
+            }
+
+            @Override
+            public void onCancelled(FirebaseError firebaseError) {
+                System.out.println("The read failed: " + firebaseError.getMessage());
+            }
+        });
+    }
+
     @Override
     public void onResume() {
         super.onResume();
@@ -208,6 +249,7 @@ public class MovieList extends ListActivity {
                     // sending movie id to new activity
                     i.putExtra("movieId", "-1");
                     startActivity(i);
+                    sendData();
 
                 } else {
                     msArrayList.clear();
@@ -226,6 +268,11 @@ public class MovieList extends ListActivity {
             }
 
         }
+
+    }
+    public void sendData() {
+        Firebase searchedRef = firebaseRef.child("searchedMovies");
+        searchedRef.push().setValue(model.searchedMovie);
 
     }
     /*

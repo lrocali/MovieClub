@@ -119,38 +119,47 @@ public class MovieSelected extends Activity {
 
         if (movieId >= 0) {
             //hide party button if they will create the event
-            if (!model.movies[movieId].scheduled)
+            if (!model.movies.get(movieId).isScheduled())
                 btnParty.setVisibility(View.INVISIBLE);
 
             //disableEditables
             enableEditables(false);
 
             //set noneditable information
-            lblTitle.setText(model.movies[movieId].title);
-            lblYear.setText(model.movies[movieId].year);
-            lblPlot.setText(model.movies[movieId].plot);
-            rtbRating.setRating(model.movies[movieId].rating);
+            lblTitle.setText(model.movies.get(movieId).getTitle());
+            lblYear.setText("Year: "+model.movies.get(movieId).getYear());
+            lblGenre.setText("Genre: "+model.movies.get(movieId).getGenre());
+            lblRuntime.setText("Runtime: "+model.movies.get(movieId).getRuntime());
+            lblCountry.setText("Country: " + model.movies.get(movieId).getCountry());
+            lblVotes.setText("IMDB Votes: "+model.movies.get(movieId).getImdbVotes());
+            lblRating.setText("IMDB Rating: "+model.movies.get(movieId).getImdbRating());
+            lblPlot.setText(model.movies.get(movieId).getPlot());
+
+            rtbRating.setRating(model.movies.get(movieId).getRating());
+
+            // -------------
+            //new DownloadImageTask(imgPoster).execute(model.searchedMovie.getImgURL());
 
             //set editable/party information if it has created
-            if (model.movies[movieId].scheduled) {
-                edtDate.setText(model.movies[movieId].date);
-                edtTime.setText(model.movies[movieId].time);
-                edtVenue.setText(model.movies[movieId].venue);
-                edtLocation.setText(model.movies[movieId].location);
+            if (model.movies.get(movieId).isScheduled()) {
+                edtDate.setText(model.movies.get(movieId).getDate());
+                edtTime.setText(model.movies.get(movieId).getTime());
+                edtVenue.setText(model.movies.get(movieId).getVenue());
+                edtLocation.setText(model.movies.get(movieId).getLocation());
             }
 
             //Set image
-            Resources res = getResources();
+           // Resources res = getResources();
             //String mDrawableName = model.movies[movieId].imgSrc;
             //int resID = res.getIdentifier(mDrawableName, "drawable", getPackageName());
            // Drawable drawable = res.getDrawable(resID);
             //imgPoster.setImageDrawable(drawable);
 
             //set invitees list
-            getListElements();
+           // getListElements();                    -------------
 
             //if the movie has no scheduled party
-            if (!model.movies[movieId].scheduled) {
+            if (!model.movies.get(movieId).isScheduled()) {
                 btnEditMovie.setText("Create an event");
             }
 
@@ -162,7 +171,7 @@ public class MovieSelected extends Activity {
                         enableEditables(true);
                         btnEditMovie.setText("Cancel");
                         editState = true;
-                        model.movies[movieId].scheduled = true;
+                        model.movies.get(movieId).setScheduled(true);
                     } else {
                         enableEditables(false);
                         btnEditMovie.setText("Edit");
@@ -174,7 +183,7 @@ public class MovieSelected extends Activity {
             //add invite button
             btnAddInvited.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
-                    model.movies[movieId].invitees.add(edtInvited.getText().toString());
+                    model.movies.get(movieId).addInvitees(edtInvited.getText().toString());
                     //get/refresh list of invitees
                     getListElements();
                     //if all the field had been entered the party button is visible
@@ -192,10 +201,10 @@ public class MovieSelected extends Activity {
             btnParty.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
                     //set information on the model
-                    model.movies[movieId].date = edtDate.getText().toString();
-                    model.movies[movieId].time = edtTime.getText().toString();
-                    model.movies[movieId].venue = edtVenue.getText().toString();
-                    model.movies[movieId].location = edtLocation.getText().toString();
+                    model.movies.get(movieId).setDate(edtDate.getText().toString());
+                    model.movies.get(movieId).setTime(edtTime.getText().toString());
+                    model.movies.get(movieId).setVenue(edtVenue.getText().toString());
+                    model.movies.get(movieId).setLocation(edtLocation.getText().toString());
 
                     //disable editables
                     enableEditables(false);
@@ -209,22 +218,22 @@ public class MovieSelected extends Activity {
             //set action to rating bar
             rtbRating.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
                 public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
-                    model.movies[movieId].rating = rating;
+                    model.movies.get(movieId).setRating(rating);
 
                 }
             });
         } else {
-            lblTitle.setText(model.searchedMovie.title);
-            lblYear.setText("Year: "+model.searchedMovie.year);
-            lblGenre.setText("Genre: "+model.searchedMovie.genre);
-            lblRuntime.setText("Runtime: "+model.searchedMovie.runtime);
-            lblCountry.setText("Country: "+model.searchedMovie.country);
-            lblVotes.setText("IMDB Votes: "+model.searchedMovie.imdbVotes);
-            lblRating.setText("IMDB Rating: "+model.searchedMovie.imdbRating);
-            lblPlot.setText(model.searchedMovie.plot);
+            lblTitle.setText(model.searchedMovie.getTitle());
+            lblYear.setText("Year: "+model.searchedMovie.getYear());
+            lblGenre.setText("Genre: "+model.searchedMovie.getGenre());
+            lblRuntime.setText("Runtime: "+model.searchedMovie.getRuntime());
+            lblCountry.setText("Country: "+model.searchedMovie.getCountry());
+            lblVotes.setText("IMDB Votes: "+model.searchedMovie.getImdbVotes());
+            lblRating.setText("IMDB Rating: "+model.searchedMovie.getImdbRating());
+            lblPlot.setText(model.searchedMovie.getPlot());
 
-            new DownloadImageTask(imgPoster)
-                    .execute(model.searchedMovie.imgURL);
+           // -------------
+            //new DownloadImageTask(imgPoster).execute(model.searchedMovie.getImgURL());
         }
     }
 
@@ -264,15 +273,15 @@ public class MovieSelected extends Activity {
 
     //Function to get/refresh the list of invitess when a new invited is added
     public void getListElements() {
-        inviteesList = model.movies[movieId].invitees;
+        inviteesList = model.movies.get(movieId).getInvitees();
         listInvitees = (ListView) findViewById(R.id.listInvitees);
         adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, inviteesList);
         listInvitees.setAdapter(adapter);
 
         //Set list view height
-        ViewGroup.LayoutParams listViewParams = (ViewGroup.LayoutParams)listInvitees.getLayoutParams();
-        listViewParams.height = inviteesList.size()*150;
-        listInvitees.requestLayout();
+        //ViewGroup.LayoutParams listViewParams = (ViewGroup.LayoutParams)listInvitees.getLayoutParams();
+        //listViewParams.height = inviteesList.size()*150;
+        //listInvitees.requestLayout();
     }
 
 

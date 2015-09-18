@@ -9,8 +9,15 @@ import android.util.Log;
 import android.widget.Toast;
 
 
+import com.firebase.client.DataSnapshot;
+import com.firebase.client.Firebase;
+import com.firebase.client.FirebaseError;
+import com.firebase.client.ValueEventListener;
+
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.ArrayList;
 
 /**
  * Created by rocali on 8/24/15.
@@ -20,10 +27,13 @@ public class Model {
     private static final String TAG = "TAG";
 
     //Singleton Model
-    public Movie [] movies;
+    public ArrayList<Movie> movies;
+    //public Movie [] movies;
     public Movie searchedMovie;
     public static Model instance = null;
     public JSONObject movie = null;
+
+
 
     public static Model getInstance(){
         if (instance == null) {
@@ -60,6 +70,10 @@ public class Model {
         //Log.v(TAG,searchableTitle);
         return searchableTitle;
     }
+
+
+
+
 
     /*
     public void searchMovie(String url) {
@@ -118,105 +132,59 @@ public class Model {
         }
     }
 */
+
+    /*
+     lblTitle.setText(model.searchedMovie.getTitle());
+            lblYear.setText("Year: "+model.searchedMovie.getYear());
+            lblGenre.setText("Genre: "+model.searchedMovie.getGenre());
+            lblRuntime.setText("Runtime: "+model.searchedMovie.getRuntime());
+            lblCountry.setText("Country: "+model.searchedMovie.getCountry());
+            lblVotes.setText("IMDB Votes: "+model.searchedMovie.getImdbVotes());
+            lblRating.setText("IMDB Rating: "+model.searchedMovie.getImdbRating());
+            lblPlot.setText(model.searchedMovie.getPlot());
+
+            new DownloadImageTask(imgPoster)
+                    .execute(model.searchedMovie.getImgURL());
+     */
+    /*
+    public String getMovieTitle(int index){
+        return movies.get(index).getTitle();
+    }
+    public String getMovieYear(int index){
+        return movies.get(index).getYear();
+    }
+    public String getMoviePlot(int index){
+        return movies.get(index).getPlot();
+    }
+    public String getMovieRuntime(int index){
+        return movies.get(index).getRuntime();
+    }
+    public String getMovieGenre(int index){
+        return movies.get(index).getGenre();
+    }
+    public String getMovieCountry(int index){
+        return movies.get(index).getCountry();
+    }
+    public String getMovieVotes(int index){
+        return movies.get(index).getImdbVotes();
+    }
+    public String getMovieRating(int index){
+        return movies.get(index).getImdbRating();
+    }
+    public String getMovieImgURL(int index){
+        return movies.get(index).getImgURL();
+    }
+    */
     public Model () {
         //List of movie
 
-//        JSONObject movie = null;
-  //      JsonClass json = new JsonClass();
-    //    movie = json.getJSONFromUrl("http://www.omdbapi.com/?t=Fight+Club&y=&plot=short&r=json");
+        movies = new ArrayList<Movie>();
 
 
-        /*
-        AndroidNetworkUtility androidNetworkUtility = new AndroidNetworkUtility();
-        if (androidNetworkUtility.isConnected(this)) {
-            Log.i(TAG, "Connected.");
-            new ProductAsyncTask().execute(this);
-        } else {
-            Log.v(TAG, "Network not Available!");
-        }*/
-        //Information based of imdb.com
+       // Movie m = new Movie("a","a","a","a","a","a","a","a","a","a");
+        //movies.add(m);
 
-        movies = new Movie [] {
-                new Movie("00",
-                        "The Shawshank Redemption",
-                        "1994",
-                        "Two imprisoned men bond over a number of years, finding solace and eventual redemption through acts of common decency.",
-                        "runtime",
-                        "genre",
-                        "country",
-                        "imdb votes",
-                        "imdvrating",
-                        "0"
-                ),
-                new Movie("000",
-                        "The Godfather",
-                        "1972",
-                        "The aging patriarch of an organized crime dynasty transfers control of his clandestine empire to his reluctant son.",
-                        "runtime",
-                        "genre",
-                        "country",
-                        "imdb votes",
-                        "imdvrating",
-                        "0"
-                ),
-                new Movie("000",
-                        "Schindlers List",
-                        "1993",
-                        "In Poland during World War II, Oskar Schindler gradually becomes concerned for his Jewish workforce after witnessing their persecution by the Nazis.",
-                        "runtime",
-                        "genre",
-                        "country",
-                        "imdb votes",
-                        "imdvrating",
-                        "0"
-                ),
-                new Movie("000",
-                        "Fight Club",
-                        "1999",
-                        "An insomniac office worker, looking for a way to change his life, crosses paths with a devil-may-care soap maker, forming an underground fight club that evolves into something much, much more.",
-                        "runtime",
-                        "genre",
-                        "country",
-                        "imdb votes",
-                        "imdvrating",
-                        "0"
-                ),
-                new Movie("000",
-                        "Inception",
-                        "2010",
-                        "A thief who steals corporate secrets through use of dream-sharing technology is given the inverse task of planting an idea into the mind of a CEO.",
-                        "runtime",
-                        "genre",
-                        "country",
-                        "imdb votes",
-                        "imdvrating",
-                        "0"
-                ),
-                new Movie("000",
-                        "City Of God",
-                        "2002",
-                        "Two boys growing up in a violent neighborhood of Rio de Janeiro take different paths: one becomes a photographer, the other a drug dealer.",
-                        "runtime",
-                        "genre",
-                        "country",
-                        "imdb votes",
-                        "imdvrating",
-                        "0"
-                ),
-                new Movie("000",
-                        "Interstellar",
-                        "2014",
-                        "A team of explorers travel through a wormhole in space in an attempt to ensure humanity's survival.",
-                        "runtime",
-                        "genre",
-                        "country",
-                        "imdb votes",
-                        "imdvrating",
-                        "0"
-                )
-        };
-
-//*
+/*
         //Simulating pre-schedulled parties
         movies[2].invitees.add("john@hotmail.com");
         movies[2].invitees.add("katie@hotmail.com");
@@ -240,8 +208,10 @@ public class Model {
         movies[4].rating = 2.5f;
         movies[4].scheduled = true;
 
-
+*/
     }
+
+
 
     public void setSearchedMovie(String _id,String _title, String _year, String _plot,String _runtime,String _genre,String _country,String _imdbVotes,String _imdbRating,String _imgURL){
         searchedMovie = new Movie(_id,_title,_year,_plot,_runtime,_genre,_country,_imdbVotes,_imdbRating,_imgURL);

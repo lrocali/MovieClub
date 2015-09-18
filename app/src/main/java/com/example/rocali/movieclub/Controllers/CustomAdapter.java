@@ -37,7 +37,7 @@ public class CustomAdapter extends BaseAdapter{
     @Override
     public int getCount() {
         // TODO Auto-generated method stub
-        return model.movies.length;
+        return model.movies.size();
     }
 
     @Override
@@ -85,19 +85,19 @@ public class CustomAdapter extends BaseAdapter{
 
         //Seting information of the movie (never change)
        // rowInfo.poster.setImageResource(movieImgSrcs[position]);
-        rowInfo.title.setText(model.movies[position].title);
-        rowInfo.year.setText(model.movies[position].year);
-        rowInfo.shortPlot.setText(model.movies[position].plot);
+        rowInfo.title.setText(model.movies.get(position).getTitle());
+        rowInfo.year.setText(model.movies.get(position).getYear());
+        rowInfo.shortPlot.setText(model.movies.get(position).getPlot());
 
         //Set ratting in case of the user had ratted the movie before
-        if (model.movies[position].rating != 0) {
-            rowInfo.rating.setRating(model.movies[position].rating);
+        if (model.movies.get(position).getRating() != 0) {
+            rowInfo.rating.setRating(model.movies.get(position).getRating());
         }
         //Setting the information of the party schedulled
-        if (model.movies[position].scheduled == true) {
-            rowInfo.dateAndTime.setText(model.movies[position].date + " - " + model.movies[position].time);
-            rowInfo.location.setText("At " + model.movies[position].location);
-            int nInv = model.movies[position].invitees.size();
+        if (model.movies.get(position).isScheduled()) {
+            rowInfo.dateAndTime.setText(model.movies.get(position).getDate() + " - " + model.movies.get(position).getTime());
+            rowInfo.location.setText("At " + model.movies.get(position).getLocation());
+            int nInv = model.movies.get(position).getInvitees().size();
             rowInfo.nInvitees.setText("Invitees: " + String.valueOf(nInv));
 
         } else {
@@ -122,7 +122,7 @@ public class CustomAdapter extends BaseAdapter{
         //set action to rating bar
         rowInfo.rating.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
             public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
-                model.movies[position].rating = rating;
+                model.movies.get(position).setRating(rating);
 
 
             }
