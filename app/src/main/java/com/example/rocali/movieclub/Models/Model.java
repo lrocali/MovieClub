@@ -9,6 +9,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 
+import com.example.rocali.movieclub.Controllers.MovieList;
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
@@ -28,16 +29,21 @@ public class Model {
 
     //Singleton Model
     public ArrayList<Movie> movies;
+
+    public ArrayList<String> keys;
     //public Movie [] movies;
     public Movie searchedMovie;
     public static Model instance = null;
     public JSONObject movie = null;
 
+    private Context context;
 
+    //Firebase
+    public Firebase firebaseRef;
 
-    public static Model getInstance(){
+    public static Model getInstance(Context _context){
         if (instance == null) {
-            instance = new Model();
+            instance = new Model(_context);
         }
         return instance;
     }
@@ -175,16 +181,30 @@ public class Model {
         return movies.get(index).getImgURL();
     }
     */
-    public Model () {
+    public Model (Context _context) {
         //List of movie
 
         movies = new ArrayList<Movie>();
 
+        context = _context;
+        //Set context to firebase
+        Firebase.setAndroidContext(context);
+        firebaseRef = new Firebase("https://torrid-heat-8747.firebaseio.com/");
 
-       // Movie m = new Movie("a","a","a","a","a","a","a","a","a","a");
-        //movies.add(m);
-
+        keys = new ArrayList<String>(){};
 /*
+        Movie m = new Movie("a","a","a","a","a","a","a","a","a","a","a");
+        movies.add(m);
+
+
+        movies.get(0).addInvitees("Ihuu1");
+        movies.get(0).addInvitees("Ihuu2");
+        movies.get(0).addInvitees("Ihuu3");
+
+        System.out.print(movies.get(0).getInvitees());
+        */
+/*
+
         //Simulating pre-schedulled parties
         movies[2].invitees.add("john@hotmail.com");
         movies[2].invitees.add("katie@hotmail.com");
@@ -210,11 +230,14 @@ public class Model {
 
 */
     }
+    public void addKey(String key){
+        keys.add(key);
+    }
 
 
 
-    public void setSearchedMovie(String _id,String _title, String _year, String _plot,String _runtime,String _genre,String _country,String _imdbVotes,String _imdbRating,String _imgURL){
-        searchedMovie = new Movie(_id,_title,_year,_plot,_runtime,_genre,_country,_imdbVotes,_imdbRating,_imgURL);
+    public void setSearchedMovie(String _pushId,String _id,String _title, String _year, String _plot,String _runtime,String _genre,String _country,String _imdbVotes,String _imdbRating,String _imgURL){
+        searchedMovie = new Movie(_pushId,_id,_title,_year,_plot,_runtime,_genre,_country,_imdbVotes,_imdbRating,_imgURL);
 
     }
 

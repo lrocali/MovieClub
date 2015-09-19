@@ -38,14 +38,13 @@ import java.util.ArrayList;
 
 public class MovieList extends ListActivity {
 
-    public Model model = Model.getInstance();
+    public Model model;
     private static final String TAG = "MyActivity";
     public JSONObject msJsonObj = null;
     public JSONArray msJsonArray = null;
     ArrayList<String>  msArrayList =new ArrayList<String>();
 
-    //Firebase
-    Firebase firebaseRef;
+
 
     //Fetch frmo OMDB
     boolean fetchFromId = false;
@@ -60,46 +59,42 @@ public class MovieList extends ListActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_movie_list);
 
-        //Set context to firebase
-        Firebase.setAndroidContext(this);
-       // model.fetchSearchedMovies();
+
+        model  = Model.getInstance(this);
         fetchSearchedMovies();
 
-        //ActionBar actionBar = getActionBar();
-        //Log.v(TAG,actionBar.getTitle().toString());
-        // Enabling Back navigation on Action Bar icon
-        //actionBar.setDisplayHomeAsUpEnabled(true);
-
-        //txtQuery = (TextView) findViewById(R.id.txtQuery);
-
-        //handleIntent(getIntent());
-
-
         if (model.isNetworkConnectionAvailable(this)) {
-            Log.v(TAG, "CONECTED");
+            Toast.makeText(this, "CONECTED", Toast.LENGTH_LONG).show();
+            //Log.v(TAG, "CONECTED");
             //model.searchMovie("http://www.omdbapi.com/?t=Fight+Club&y=&plot=short&r=json");
             //Toast.makeText(getApplicationContext(), "File already exist under SD card, playing Music", Toast.LENGTH_LONG).show();
+        } else {
+            Toast.makeText(this, "NOT CONECTED", Toast.LENGTH_LONG).show();
         }
-            Log.v(TAG, "NOT CONECTED");
 
     }
 
     public void fetchSearchedMovies(){
-        firebaseRef = new Firebase("https://torrid-heat-8747.firebaseio.com/");
-        Firebase searchedRef = firebaseRef.child("searchedMovies");
+
+        Firebase searchedRef = model.firebaseRef.child("searchedMovies");
         searchedRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
                 System.out.println("There are " + snapshot.getChildrenCount() + " blog posts");
                 model.movies.clear();
-                for (DataSnapshot postSnapshot : snapshot.getChildren()) {
+                if (snapshot.getChildrenCount() != model.movies.size()) {
+                    for (DataSnapshot postSnapshot : snapshot.getChildren()) {
+                       // Toast.makeText(getApplicationContext(),"BY ID :" +  "Fetching", Toast.LENGTH_SHORT).show();
 
-                    Movie movie = postSnapshot.getValue(Movie.class);
-                    System.out.println("89" + movie.getTitle());
-                    model.movies.add(movie);
+                        model.addKey(postSnapshot.getKey());
+                        Movie movie = postSnapshot.getValue(Movie.class);
 
-                    populateListView(false);
+                        model.movies.add(movie);
+                        populateListView(false);
 
+                    }
+                } else {
+                    //Toast.makeText(getApplicationContext(),"BY ID :" +  "NOT Fetching", Toast.LENGTH_SHORT).show();
                 }
             }
 
@@ -117,21 +112,9 @@ public class MovieList extends ListActivity {
     }
 
     public void populateListView(boolean searching) {
-        //populate list view
         ListView lv = getListView();
         if (searching) {
             //Toast.makeText(this, "SEARCHING", Toast.LENGTH_LONG).show();
-/*
-            String[] values = new String[] { "Android List View",
-                    "Adapter implementation",
-                    "Simple List View In Android",
-                    "Create List View Android",
-                    "Android Example",
-                    "List View Source Code",
-                    "List View Array Adapter",
-                    "Android Example List View"
-            };
-*/
             ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
                     android.R.layout.simple_list_item_1, android.R.id.text1, msArrayList);
 
@@ -186,17 +169,6 @@ public class MovieList extends ListActivity {
 
     // Async Task Class
     class searchMovieThread extends AsyncTask<String, String, String> {
-
-        // Show Progress bar before downloading Music
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            // Shows Progress Bar Dialog and then call doInBackground method
-            //showDialog(progress_bar_type);
-            Log.v(TAG,"PRE EXECUTE");
-        }
-
-        // Download Music File from Internet
         @Override
         protected String doInBackground(String... f_url) {   //search via title or by id
             try {
@@ -209,22 +181,8 @@ public class MovieList extends ListActivity {
             return null;
         }
 
-        // While Downloading Music File
-        protected void onProgressUpdate(String... progress) {
-            // Set progress percentage
-            //prgDialog.setProgress(Integer.parseInt(progress[0]));
-        }
-
-        // Once Music File is downloaded
         @Override
         protected void onPostExecute(String file_url) {
-            // Dismiss the dialog after the Music file was downloaded
-            //dismissDialog(progress_bar_type);
-            //Toast.makeText(getApplicationContext(), "Download complete, playing Music", Toast.LENGTH_LONG).show();
-            // Play the music
-            // playMusic();
-
-            Log.v(TAG, "POST EXECUTE");
             //Toast.makeText(getApplicationContext(),"POST EXECUTE", Toast.LENGTH_SHORT).show();
             try {
 
@@ -232,7 +190,7 @@ public class MovieList extends ListActivity {
                     Toast.makeText(getApplicationContext(),"BY ID :" +  msJsonObj.getString("imdbID"), Toast.LENGTH_SHORT).show();
 
 
-                    model.setSearchedMovie(
+                    model.setSearchedMovie("x",
                             msJsonObj.getString("imdbID"),
                             msJsonObj.getString("Title"),
                             msJsonObj.getString("Year"),
@@ -249,7 +207,7 @@ public class MovieList extends ListActivity {
                     // sending movie id to new activity
                     i.putExtra("movieId", "-1");
                     startActivity(i);
-                    sendData();
+                    addSearchedMovie();
 
                 } else {
                     msArrayList.clear();
@@ -270,45 +228,16 @@ public class MovieList extends ListActivity {
         }
 
     }
-    public void sendData() {
-        Firebase searchedRef = firebaseRef.child("searchedMovies");
+    public void addSearchedMovie() {
+        Firebase searchedRef = model.firebaseRef.child("searchedMovies");
+        String key1 = searchedRef.push().getKey();
+        model.searchedMovie.setPushId(key1);
         searchedRef.push().setValue(model.searchedMovie);
+        String key2 = searchedRef.getKey();
 
     }
-    /*
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        // Inflate menu to add items to action bar if it is present.
-        inflater.inflate(R.menu.menu_main, menu);
-        // Associate searchable configuration with the SearchView
-        SearchManager searchManager =
-                (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-        SearchView searchView =
-                (SearchView) menu.findItem(R.id.menu_search).getActionView();
-        searchView.setSearchableInfo(
-                searchManager.getSearchableInfo(getComponentName()));
 
-        return true;
-    }*/
 
-    /*
-    @Override
-    protected void onNewIntent(Intent intent) {
-        setIntent(intent);
-        handleIntent(intent);
-    }
-
-    private void handleIntent(Intent intent) {
-        if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
-            String query = intent.getStringExtra(SearchManager.QUERY);
-            populateListView(true);
-            //txtQuery.setText("Search Query: " + query);
-
-        } else {
-            populateListView(false);
-        }
-    }*/
 
     public void handleSearch(String searchText,boolean submit) {
         if (searchText.length() != 0 && ( Character.isWhitespace(searchText.charAt(searchText.length() - 1)) || submit )) {

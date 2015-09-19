@@ -16,7 +16,7 @@ import com.example.rocali.movieclub.R;
 public class CustomAdapter extends BaseAdapter{
 
     //model
-    public Model model = Model.getInstance();
+    public Model model ;
 
     //array of img resources
     //int [] movieImgSrcs;
@@ -29,6 +29,7 @@ public class CustomAdapter extends BaseAdapter{
 
         //Get context to be sent to model to get img resources
         context = movieList;
+        model = Model.getInstance(context);
         //movieImgSrcs = model.getImgResources(context);
 
         inflater = ( LayoutInflater )context.
@@ -85,6 +86,7 @@ public class CustomAdapter extends BaseAdapter{
 
         //Seting information of the movie (never change)
        // rowInfo.poster.setImageResource(movieImgSrcs[position]);
+        new DownloadImageTask(rowInfo.poster).execute(model.movies.get(position).getImgURL());
         rowInfo.title.setText(model.movies.get(position).getTitle());
         rowInfo.year.setText(model.movies.get(position).getYear());
         rowInfo.shortPlot.setText(model.movies.get(position).getPlot());

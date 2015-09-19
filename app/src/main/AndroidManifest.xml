@@ -40,7 +40,7 @@
         <activity
             android:name=".Controllers.MovieSelected"
             android:label="Movie selected"
-            android:theme="@style/Theme.AppCompat" ></activity>
+            android:theme="@style/AppTheme" ></activity>
     </application>
 
 </manifest>

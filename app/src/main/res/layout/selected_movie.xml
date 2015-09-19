@@ -7,24 +7,13 @@
         android:orientation="vertical" android:layout_width="match_parent"
         android:layout_height="fill_parent">
 
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="right"
-            android:id="@+id/btnEditMovie"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentRight="true"
-            android:text="Edit"
-            android:layout_margin="5dp" />
 
-
-
-            <!--android:layout_height="@dimen/abc_action_bar_
+        <!--android:layout_height="@dimen/abc_action_bar_
 default_height_material"
-            android:layout_width="match_parent"
-            android:minHeight="@dimen/abc_action_bar_
+        android:layout_width="match_parent"
+        android:minHeight="@dimen/abc_action_bar_
 default_height_material"
-            android:background="?attr/colorPrimary"-->
+        android:background="?attr/colorPrimary"-->
 
 
 
@@ -38,7 +27,8 @@ default_height_material"
             android:layout_alignParentLeft="true"
             android:layout_marginLeft="0dp"
             android:layout_alignParentTop="true"
-            android:layout_marginTop="40dp" />
+            android:layout_alignParentEnd="true"
+            android:layout_margin="5dp" />
 
         <ImageView
             android:src="@drawable/defaultimg"

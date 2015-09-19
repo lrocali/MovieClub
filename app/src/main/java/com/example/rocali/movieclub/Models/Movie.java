@@ -8,6 +8,7 @@ import java.util.List;
  */
 public class Movie {
     //no editable atributes
+    private String pushId;
     private String id;
     private String title;
     private String year;
@@ -33,8 +34,9 @@ public class Movie {
         //Firebase
     }
     //initialize movie with pre-defined and no editable atributes
-    public Movie (String _id,String _title, String _year, String _plot,String _runtime,String _genre,String _country,String _imdbVotes,String _imdbRating,String _imgURL) {
+    public Movie (String _pushId,String _id,String _title, String _year, String _plot,String _runtime,String _genre,String _country,String _imdbVotes,String _imdbRating,String _imgURL) {
         //Non editable
+        pushId = _pushId;
         id = _id;
         title = _title;
         year = _year;
@@ -54,6 +56,7 @@ public class Movie {
         location = " ";
         scheduled = false;
         invitees = new ArrayList<String>();
+        invitees.add("user0");
     }
 
     //Non editables (just get, initialized just on creation)
@@ -133,6 +136,7 @@ public class Movie {
     public void setInvitees(ArrayList<String> invitees) {
         this.invitees = invitees;
     }
+
     public void addInvitees(String invited){
         this.invitees.add(invited);
     }
@@ -143,6 +147,14 @@ public class Movie {
 
     public void setScheduled(boolean scheduled) {
         this.scheduled = scheduled;
+    }
+
+    public String getPushId() {
+        return pushId;
+    }
+
+    public void setPushId(String pushId) {
+        this.pushId = pushId;
     }
 
     /*
