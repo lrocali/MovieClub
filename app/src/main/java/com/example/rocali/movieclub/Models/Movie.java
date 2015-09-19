@@ -1,5 +1,7 @@
 package com.example.rocali.movieclub.Models;
 
+import android.provider.Telephony;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -8,7 +10,6 @@ import java.util.List;
  */
 public class Movie {
     //no editable atributes
-    private String pushId;
     private String id;
     private String title;
     private String year;
@@ -23,6 +24,10 @@ public class Movie {
     //editable atributes
     private boolean scheduled;
     private float rating;
+
+    private Party party;
+
+
     private String date;
     private String time;
     private String venue;
@@ -34,9 +39,8 @@ public class Movie {
         //Firebase
     }
     //initialize movie with pre-defined and no editable atributes
-    public Movie (String _pushId,String _id,String _title, String _year, String _plot,String _runtime,String _genre,String _country,String _imdbVotes,String _imdbRating,String _imgURL) {
+    public Movie (String _id,String _title, String _year, String _plot,String _runtime,String _genre,String _country,String _imdbVotes,String _imdbRating,String _imgURL) {
         //Non editable
-        pushId = _pushId;
         id = _id;
         title = _title;
         year = _year;
@@ -47,14 +51,16 @@ public class Movie {
         imdbVotes = _imdbVotes;
         imdbRating = _imdbRating;
         imgURL = _imgURL;
-        rating = 0;
 
+        rating = 0;
+        scheduled = false;
+        party = new Party();
         //Editable
         date = " ";
         time = " ";
         venue = " ";
         location = " ";
-        scheduled = false;
+
         invitees = new ArrayList<String>();
         invitees.add("user0");
     }
@@ -149,13 +155,6 @@ public class Movie {
         this.scheduled = scheduled;
     }
 
-    public String getPushId() {
-        return pushId;
-    }
-
-    public void setPushId(String pushId) {
-        this.pushId = pushId;
-    }
 
     /*
     //initialize movie with pre-defined and no editable atributes

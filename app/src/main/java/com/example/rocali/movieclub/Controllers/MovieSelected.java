@@ -203,7 +203,7 @@ public class MovieSelected extends Activity {
                     model.movies.get(movieId).setVenue(edtVenue.getText().toString());
                     model.movies.get(movieId).setLocation(edtLocation.getText().toString());
 
-                    updateMovieParty();
+                    model.updateMovieParty(movieId);
                     //disable editables
                     enableEditables(false);
 
@@ -217,11 +217,14 @@ public class MovieSelected extends Activity {
             rtbRating.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
                 public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
                     model.movies.get(movieId).setRating(rating);
-                    updateRatingMovie();
+                    model.updateRatingMovie(movieId);
 
                 }
             });
         } else {
+            //disableEditables
+            enableEditables(false);
+
             lblTitle.setText(model.searchedMovie.getTitle());
             lblYear.setText("Year: "+model.searchedMovie.getYear());
             lblGenre.setText("Genre: "+model.searchedMovie.getGenre());
@@ -236,19 +239,7 @@ public class MovieSelected extends Activity {
         }
     }
 
-    public void updateRatingMovie(){
-        Firebase movieParty = model.firebaseRef.child("searchedMovies").child(model.keys.get(movieId));
-        movieParty.child("rating").setValue(model.movies.get(movieId).getRating());
-    }
-    public void updateMovieParty() {
-        Firebase movieParty = model.firebaseRef.child("searchedMovies").child(model.keys.get(movieId));
-        movieParty.child("scheduled").setValue(model.movies.get(movieId).isScheduled());
-        movieParty.child("date").setValue(model.movies.get(movieId).getDate());
-        movieParty.child("time").setValue(model.movies.get(movieId).getTime());
-        movieParty.child("venue").setValue(model.movies.get(movieId).getVenue());
-        movieParty.child("location").setValue(model.movies.get(movieId).getLocation());
-        movieParty.child("invitees").setValue(model.movies.get(movieId).getInvitees());
-    }
+
 /*
     private class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
         ImageView bmImage;
@@ -342,34 +333,49 @@ public class MovieSelected extends Activity {
         SimpleDateFormat stf = new SimpleDateFormat( timeFormat, Locale.US );
         edtTime.setText(stf.format(c.getTime()));
     }
+    public void addSearchedMovie() {
+        Firebase searchedRef = model.firebaseRef.child("searchedMovies");
+        searchedRef.push().setValue(model.searchedMovie);
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu_movie_selected, menu);
 
+        if (movieId <= 0) {
+            MenuItem item = menu.findItem(R.id.action_edit_event);
+            item.setIcon(R.drawable.ic_addmovie);
+            item.setTitle("Add Movie");
+        }
+
+
         return super.onCreateOptionsMenu(menu);
     }
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 
-
         //Toast.makeText(getApplicationContext(), "Edit", Toast.LENGTH_SHORT).show();
         //if on edit state
-        if (!editState) {
-            enableEditables(true);
-            Toast.makeText(getApplicationContext(), "Cancel", Toast.LENGTH_SHORT).show();
-            editState = true;
-            model.movies.get(movieId).setScheduled(true);
-        } else {
-
-            enableEditables(false);
-            if (!model.movies.get(movieId).isScheduled()) {
-                Toast.makeText(getApplicationContext(), "Create event", Toast.LENGTH_SHORT).show();
+        if (movieId >= 0) {
+            if (!editState) {
+                enableEditables(true);
+                Toast.makeText(getApplicationContext(), "Cancel", Toast.LENGTH_SHORT).show();
+                editState = true;
+                model.movies.get(movieId).setScheduled(true);
             } else {
-                Toast.makeText(getApplicationContext(), "Edit event", Toast.LENGTH_SHORT).show();
+
+                enableEditables(false);
+                if (!model.movies.get(movieId).isScheduled()) {
+                    Toast.makeText(getApplicationContext(), "Create event", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(getApplicationContext(), "Edit event", Toast.LENGTH_SHORT).show();
+                }
+                editState = false;
             }
-            editState = false;
+        } else {
+            Toast.makeText(getApplicationContext(), "Add Movie", Toast.LENGTH_SHORT).show();
+            addSearchedMovie();
         }
         return true;
 

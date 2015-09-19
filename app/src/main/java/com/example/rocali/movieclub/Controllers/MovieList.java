@@ -61,10 +61,11 @@ public class MovieList extends ListActivity {
 
 
         model  = Model.getInstance(this);
-        fetchSearchedMovies();
+        if (model.movies.size() == 0)
+            fetchSearchedMovies();
 
         if (model.isNetworkConnectionAvailable(this)) {
-            Toast.makeText(this, "CONECTED", Toast.LENGTH_LONG).show();
+            //Toast.makeText(this, "CONECTED", Toast.LENGTH_LONG).show();
             //Log.v(TAG, "CONECTED");
             //model.searchMovie("http://www.omdbapi.com/?t=Fight+Club&y=&plot=short&r=json");
             //Toast.makeText(getApplicationContext(), "File already exist under SD card, playing Music", Toast.LENGTH_LONG).show();
@@ -108,7 +109,7 @@ public class MovieList extends ListActivity {
     @Override
     public void onResume() {
         super.onResume();
-        populateListView(false);
+        //populateListView(false);
     }
 
     public void populateListView(boolean searching) {
@@ -187,10 +188,10 @@ public class MovieList extends ListActivity {
             try {
 
                 if (fetchFromId) {
-                    Toast.makeText(getApplicationContext(),"BY ID :" +  msJsonObj.getString("imdbID"), Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(getApplicationContext(),"BY ID :" +  msJsonObj.getString("imdbID"), Toast.LENGTH_SHORT).show();
 
 
-                    model.setSearchedMovie("x",
+                    model.setSearchedMovie(
                             msJsonObj.getString("imdbID"),
                             msJsonObj.getString("Title"),
                             msJsonObj.getString("Year"),
@@ -207,7 +208,7 @@ public class MovieList extends ListActivity {
                     // sending movie id to new activity
                     i.putExtra("movieId", "-1");
                     startActivity(i);
-                    addSearchedMovie();
+                    //addSearchedMovie();
 
                 } else {
                     msArrayList.clear();
@@ -228,14 +229,7 @@ public class MovieList extends ListActivity {
         }
 
     }
-    public void addSearchedMovie() {
-        Firebase searchedRef = model.firebaseRef.child("searchedMovies");
-        String key1 = searchedRef.push().getKey();
-        model.searchedMovie.setPushId(key1);
-        searchedRef.push().setValue(model.searchedMovie);
-        String key2 = searchedRef.getKey();
 
-    }
 
 
 
@@ -243,14 +237,14 @@ public class MovieList extends ListActivity {
         if (searchText.length() != 0 && ( Character.isWhitespace(searchText.charAt(searchText.length() - 1)) || submit )) {
 
             if (model.isNetworkConnectionAvailable(this)) {
-                Toast.makeText(getApplicationContext(), model.getSearchableTitle(searchText), Toast.LENGTH_SHORT).show();
+                //Toast.makeText(getApplicationContext(), model.getSearchableTitle(searchText), Toast.LENGTH_SHORT).show();
 
                 fetchFromId = false;
                 String url = "http://www.omdbapi.com/?s=" + model.getSearchableTitle(searchText) + "&y=&plot=short&r=json";
                 new searchMovieThread().execute(url);
                 populateListView(true);
             } else {
-                Toast.makeText(getApplicationContext(),"NO INTERNET CONECTION", Toast.LENGTH_SHORT).show();
+             //   Toast.makeText(getApplicationContext(),"NO INTERNET CONECTION", Toast.LENGTH_SHORT).show();
             }
         } else {
             msArrayList = new ArrayList<String>();
@@ -290,7 +284,7 @@ public class MovieList extends ListActivity {
             @Override
             public boolean onClose() {
                 populateListView(false);
-                Toast.makeText(getApplicationContext(), "Cancel", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(getApplicationContext(), "Cancel", Toast.LENGTH_SHORT).show();
                 return false;
             }
         });

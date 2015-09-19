@@ -236,11 +236,24 @@ public class Model {
 
 
 
-    public void setSearchedMovie(String _pushId,String _id,String _title, String _year, String _plot,String _runtime,String _genre,String _country,String _imdbVotes,String _imdbRating,String _imgURL){
-        searchedMovie = new Movie(_pushId,_id,_title,_year,_plot,_runtime,_genre,_country,_imdbVotes,_imdbRating,_imgURL);
+    public void setSearchedMovie(String _id,String _title, String _year, String _plot,String _runtime,String _genre,String _country,String _imdbVotes,String _imdbRating,String _imgURL){
+        searchedMovie = new Movie(_id,_title,_year,_plot,_runtime,_genre,_country,_imdbVotes,_imdbRating,_imgURL);
 
     }
 
+    public void updateRatingMovie(int index){
+        Firebase movieParty = firebaseRef.child("searchedMovies").child(keys.get(index));
+        movieParty.child("rating").setValue(movies.get(index).getRating());
+    }
+    public void updateMovieParty(int index) {
+        Firebase movieParty = firebaseRef.child("searchedMovies").child(keys.get(index));
+        movieParty.child("scheduled").setValue(movies.get(index).isScheduled());
+        movieParty.child("date").setValue(movies.get(index).getDate());
+        movieParty.child("time").setValue(movies.get(index).getTime());
+        movieParty.child("venue").setValue(movies.get(index).getVenue());
+        movieParty.child("location").setValue(movies.get(index).getLocation());
+        movieParty.child("invitees").setValue(movies.get(index).getInvitees());
+    }
     /*
     //Get array of int of image resources
     public int [] getImgResources(Context context) {
