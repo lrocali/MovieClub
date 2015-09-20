@@ -24,7 +24,6 @@ public class SQLData extends SQLiteOpenHelper{
     public static final String COL_VOTES = "VOTES";
     public static final String COL_IMDBRATING = "IMDBRATING";
     public static final String COL_IMGURL = "IMGURL";
-    public static final String COL_SCHEDULED = "SCHEDULED";
     public static final String COL_RATING = "RATING";
 
 
@@ -36,19 +35,19 @@ public class SQLData extends SQLiteOpenHelper{
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        db.execSQL("create table " + TABLE_NAME + " (ID TEXT PRIMARY KEY,TITLE TEXT,YEAR TEXT,PLOT TEXT,RUNTIME TEXT,GENRE TEXT,COUNTRY TEXT,VOTES TEXT,IMDBRATING TEXT,IMGURL TEXT,SCHEDULED TEXT,RATING TEXT)");
+        db.execSQL("create table " + TABLE_NAME + " (ID TEXT PRIMARY KEY,TITLE TEXT,YEAR TEXT,PLOT TEXT,RUNTIME TEXT,GENRE TEXT,COUNTRY TEXT,VOTES TEXT,IMDBRATING TEXT,IMGURL TEXT,RATING TEXT)");
 
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        db.execSQL("DROP TABLE IF EXISTS "+TABLE_NAME);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME);
         onCreate(db);
     }
 
-    public boolean insertMovie(String _id,String _title, String _year, String _plot,String _runtime,String _genre,String _country,String _imdbVotes,String _imdbRating,String _imgURL,String _scheduled,String _rating) {
+    public boolean insertMovie(String _id,String _title, String _year, String _plot,String _runtime,String _genre,String _country,String _imdbVotes,String _imdbRating,String _imgURL,String _rating) {
         SQLiteDatabase db = this.getWritableDatabase();
-        //onUpgrade(db,0,0);
+        ///onUpgrade(db,0,0);
 
         ContentValues contentValues = new ContentValues();
         contentValues.put(COL_ID,_id);
@@ -61,7 +60,6 @@ public class SQLData extends SQLiteOpenHelper{
         contentValues.put(COL_VOTES,_imdbVotes);
         contentValues.put(COL_IMDBRATING,_imdbRating);
         contentValues.put(COL_IMGURL,_imgURL);
-        contentValues.put(COL_SCHEDULED,_scheduled);
         contentValues.put(COL_RATING,_rating);
         long result = db.insert(TABLE_NAME,null,contentValues);
         if (result == -1){

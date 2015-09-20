@@ -7,6 +7,7 @@ import java.util.ArrayList;
  */
 public class Party {
 
+    private String id;
     private String date;
     private String time;
     private String venue;
@@ -14,6 +15,7 @@ public class Party {
     private ArrayList<String> invitees;
 
     public  Party() {
+        id = " ";
         date = " ";
         time = " ";
         venue = " ";
@@ -23,7 +25,8 @@ public class Party {
         invitees.add("user0");
     }
 
-    public Party(String _date,String _time, String _venue, String _location, ArrayList<String> _invitees){
+    public Party(String _id,String _date,String _time, String _venue, String _location, ArrayList<String> _invitees){
+        this.id = _id;
         this.date = _date;
         this.time = _time;
         this.venue = _venue;
@@ -73,5 +76,13 @@ public class Party {
 
     public void addInvitees(String invited){
         this.invitees.add(invited);
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 }

@@ -22,14 +22,7 @@ public class Movie {
     private String imgURL;
 
     //editable atributes
-    private boolean scheduled;
     private float rating;
-
-    private Party party;
-
-
-
-
 
     public Movie () {
         //Firebase
@@ -50,8 +43,6 @@ public class Movie {
 
         //Editable
         rating = 0;
-        scheduled = false;
-        party = new Party();
 
     }
 
@@ -92,26 +83,6 @@ public class Movie {
 
     public void setRating(float rating) {
         this.rating = rating;
-    }
-
-
-
-    public boolean isScheduled() {
-        return scheduled;
-    }
-
-
-
-    public void setScheduled(boolean scheduled) {
-        this.scheduled = scheduled;
-    }
-
-    public Party getParty() {
-        return party;
-    }
-
-    public void setParty(Party party) {
-        this.party = party;
     }
 
     public String getId() {

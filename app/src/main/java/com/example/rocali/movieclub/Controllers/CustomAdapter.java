@@ -11,6 +11,7 @@ import android.widget.RatingBar;
 import android.widget.TextView;
 
 import com.example.rocali.movieclub.Models.Model;
+import com.example.rocali.movieclub.Models.Party;
 import com.example.rocali.movieclub.R;
 
 public class CustomAdapter extends BaseAdapter{
@@ -95,20 +96,39 @@ public class CustomAdapter extends BaseAdapter{
         if (model.movies.get(position).getRating() != 0) {
             rowInfo.rating.setRating(model.movies.get(position).getRating());
         }
-        //Setting the information of the party schedulled
-        if (model.movies.get(position).isScheduled()) {
-            rowInfo.dateAndTime.setText(model.movies.get(position).getParty().getDate() + " - " + model.movies.get(position).getParty().getTime());
-            rowInfo.location.setText("At " + model.movies.get(position).getParty().getLocation());
-            int nInv = model.movies.get(position).getParty().getInvitees().size();
+
+        //Check Party
+        Party party = model.checkForParty(position);
+
+        //If the function return a party
+        if (party != null) {
+            rowInfo.dateAndTime.setText(party.getDate() + " - " + party.getTime());
+            rowInfo.location.setText("At " + party.getLocation());
+            int nInv = party.getInvitees().size();
             rowInfo.nInvitees.setText("Invitees: " + String.valueOf(nInv));
 
-        } else {
+        }
+        //If there is no party
+        else {
             //In case of there is no schedulled party for the movie
             rowInfo.dateAndTime.setText("Movie not scheduled yet, be the first!");
             rowInfo.location.setText(" ");
             rowInfo.nInvitees.setText(" ");
 
         }
+
+        /*
+        if (model.movies.get(position).isScheduled()) {
+            rowInfo.dateAndTime.setText(model.movies.get(position).getParty().getDate() + " - " + model.movies.get(position).getParty().getTime());
+            rowInfo.location.setText("At " + model.movies.get(position).getParty().getLocation());
+            int nInv = model.movies.get(position).getParty().getInvitees().size();
+            rowInfo.nInvitees.setText("Invitees: " + String.valueOf(nInv));
+
+        } else {*/
+            //In case of there is no schedulled party for the movie
+
+
+        //}
 
         //If the user click on the row, its called the new view with the movie details
         rowView.setOnClickListener(new OnClickListener() {

@@ -23,6 +23,7 @@ import android.widget.Toast;
 import com.example.rocali.movieclub.Models.JsonClass;
 import com.example.rocali.movieclub.Models.Model;
 import com.example.rocali.movieclub.Models.Movie;
+import com.example.rocali.movieclub.Models.Party;
 import com.example.rocali.movieclub.R;
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
@@ -69,7 +70,8 @@ public class MovieList extends ListActivity {
            fetchSearchedMovies();
         */
         model.getMoviesFromDatabase();
-        populateListView(false);
+        fetchParties();
+        //populateListView(false);
 
         if (model.isNetworkConnectionAvailable(this)) {
             //Toast.makeText(this, "CONECTED", Toast.LENGTH_LONG).show();
@@ -80,6 +82,24 @@ public class MovieList extends ListActivity {
             Toast.makeText(this, "NOT CONECTED", Toast.LENGTH_LONG).show();
         }
 
+    }
+    public void fetchParties(){
+        Firebase searchedRef = model.firebaseRef.child("Parties");
+        searchedRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot snapshot) {
+                for (DataSnapshot postSnapshot : snapshot.getChildren()) {
+                    Party party = postSnapshot.getValue(Party.class);
+                    model.parties.add(party);
+                }
+                populateListView(false);
+            }
+
+            @Override
+            public void onCancelled(FirebaseError firebaseError) {
+                System.out.println("The read failed: " + firebaseError.getMessage());
+            }
+        });
     }
 
     //Firebase part

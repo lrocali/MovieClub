@@ -12,6 +12,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -32,14 +33,23 @@ import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.example.rocali.movieclub.Models.Model;
+import com.example.rocali.movieclub.Models.Movie;
+import com.example.rocali.movieclub.Models.Party;
 import com.example.rocali.movieclub.R;
+import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
+import com.firebase.client.FirebaseError;
+import com.firebase.client.ValueEventListener;
 
 import java.io.InputStream;
 import java.net.URL;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Locale;
 
 /**
@@ -82,9 +92,11 @@ public class MovieSelected extends Activity {
     private Button btnParty;
 
     //iniviteeslist atributtes
-    private List<String> inviteesList;
-    private ListView listInvitees;
+    private ArrayList<String> inviteesList;
+    private ListView listViewInvitees;
     private ArrayAdapter<String> adapter;
+
+
 
     private boolean editState = false;
 
@@ -93,6 +105,11 @@ public class MovieSelected extends Activity {
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
 
         model = Model.getInstance(this);
+
+
+
+        inviteesList = new ArrayList<String>(){};
+
         //initial
         super.onCreate(savedInstanceState);
         this.setContentView(R.layout.selected_movie);
@@ -121,6 +138,9 @@ public class MovieSelected extends Activity {
         edtVenue = (EditText) findViewById(R.id.edtVenue);
         edtLocation = (EditText) findViewById(R.id.edtLocation);
         edtInvited = (EditText) findViewById(R.id.edtInvited);
+
+        setPartyInfo();
+
         ///btnEditMovie = (Button) findViewById(R.id.btnEditMovie);
         btnAddInvited = (Button) findViewById(R.id.btnAddInvited);
         btnParty = (Button) findViewById((R.id.btnParty));
@@ -128,8 +148,8 @@ public class MovieSelected extends Activity {
 
         if (movieId >= 0) {
             //hide party button if they will create the event
-            if (!model.movies.get(movieId).isScheduled())
-                btnParty.setVisibility(View.INVISIBLE);
+            //if (!model.movies.get(movieId).isScheduled())
+            //    btnParty.setVisibility(View.INVISIBLE);
 
             //disableEditables
             enableEditables(false);
@@ -150,12 +170,13 @@ public class MovieSelected extends Activity {
             new DownloadImageTask(imgPoster).execute(model.movies.get(movieId).getImgURL());
 
             //set editable/party information if it has created
+           /*
             if (model.movies.get(movieId).isScheduled()) {
                 edtDate.setText(model.movies.get(movieId).getParty().getDate());
                 edtTime.setText(model.movies.get(movieId).getParty().getTime());
                 edtVenue.setText(model.movies.get(movieId).getParty().getVenue());
                 edtLocation.setText(model.movies.get(movieId).getParty().getLocation());
-            }
+            }*/
 
             //Set image
            // Resources res = getResources();
@@ -179,7 +200,11 @@ public class MovieSelected extends Activity {
 
                     Toast.makeText(getApplicationContext(), edtInvited.getText().toString(), Toast.LENGTH_SHORT).show();
 
-                    model.movies.get(movieId).getParty().addInvitees(edtInvited.getText().toString());
+
+                    //model.movies.get(movieId).getParty().addInvitees(edtInvited.getText().toString());
+
+                    inviteesList.add(edtInvited.getText().toString());
+
                     //get/refresh list of invitees
                     getListElements();
                     //if all the field had been entered the party button is visible
@@ -197,13 +222,17 @@ public class MovieSelected extends Activity {
             //party/create event button
             btnParty.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
-                    //set information on the model
+
+                    Party newparty = new Party(model.movies.get(movieId).getId(),edtDate.getText().toString(),edtTime.getText().toString(),edtVenue.getText().toString(),edtLocation.getText().toString(),inviteesList);
+                    model.addPartyToCloud(newparty);
+                    //set information on FIREBASE
+                    /*
                     model.movies.get(movieId).getParty().setDate(edtDate.getText().toString());
                     model.movies.get(movieId).getParty().setTime(edtTime.getText().toString());
                     model.movies.get(movieId).getParty().setVenue(edtVenue.getText().toString());
                     model.movies.get(movieId).getParty().setLocation(edtLocation.getText().toString());
-
-                    model.updateMovieParty(movieId);
+*/
+                    //model.updateMovieParty(movieId);
                     //disable editables
                     enableEditables(false);
 
@@ -238,6 +267,24 @@ public class MovieSelected extends Activity {
             new DownloadImageTask(imgPoster).execute(model.searchedMovie.getImgURL());
         }
     }
+
+
+    public void setPartyInfo(){
+        Party party = model.checkForParty(movieId);
+        if(party != null) {
+            edtDate.setText(party.getDate());
+            edtTime.setText(party.getTime());
+            edtVenue.setText(party.getVenue());
+            edtLocation.setText(party.getLocation());
+
+            inviteesList = party.getInvitees();
+            getListElements();
+
+            Toast.makeText(getApplicationContext(), "THERE IS A PARTY FOR THIS MOVIE", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+
 
 
 /*
@@ -277,17 +324,17 @@ public class MovieSelected extends Activity {
 
     //Function to get/refresh the list of invitess when a new invited is added
     public void getListElements() {
-        inviteesList = model.movies.get(movieId).getParty().getInvitees();
+        //inviteesList = null; // model.movies.get(movieId).getParty().getInvitees();
         if (inviteesList != null) {
-            listInvitees = (ListView) findViewById(R.id.listInvitees);
+            listViewInvitees = (ListView) findViewById(R.id.listInvitees);
             adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, inviteesList);
 
-            listInvitees.setAdapter(adapter);
+            listViewInvitees.setAdapter(adapter);
 
             //Set list view height
-            ViewGroup.LayoutParams listViewParams = (ViewGroup.LayoutParams) listInvitees.getLayoutParams();
+            ViewGroup.LayoutParams listViewParams = (ViewGroup.LayoutParams) listViewInvitees.getLayoutParams();
             listViewParams.height = inviteesList.size() * 150;
-            listInvitees.requestLayout();
+            listViewInvitees.requestLayout();
         }
     }
 
@@ -350,37 +397,36 @@ public class MovieSelected extends Activity {
     }
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-
-
-        //Toast.makeText(getApplicationContext(), "Edit", Toast.LENGTH_SHORT).show();
-        //if on edit state
+        //Clicked Edit/Add event button
         if (item.getItemId()== R.id.action_edit_event) {
+            //If selected a movie from DB
             if (movieId >= 0) {
+                //First click (to edit)
                 if (!editState) {
                     enableEditables(true);
-                    Toast.makeText(getApplicationContext(), "Cancel", Toast.LENGTH_SHORT).show();
-                    editState = true;
-                    model.movies.get(movieId).setScheduled(true);
-                } else {
-
-                    enableEditables(false);
-                    if (!model.movies.get(movieId).isScheduled()) {
+                    if (!model.hasParty(movieId)) {
                         Toast.makeText(getApplicationContext(), "Create event", Toast.LENGTH_SHORT).show();
+                        inviteesList.add("User 0");
+                        getListElements();
                     } else {
                         Toast.makeText(getApplicationContext(), "Edit event", Toast.LENGTH_SHORT).show();
                     }
+
+                    editState = true;
+                }
+                //Second click (to cancel)
+                else {
+
+                    Toast.makeText(getApplicationContext(), "Cancel", Toast.LENGTH_SHORT).show();
+                    enableEditables(false);
+
                     editState = false;
                 }
-            } else {
+            }
+            //If selected movie from Search
+            else {
                 Toast.makeText(getApplicationContext(), "Add Movie", Toast.LENGTH_SHORT).show();
-                //model.addSearchedMovie();
                 model.insertSearchedMovieIntoDatabase();
-                //this.finish();
-                //Intent i = new Intent(getApplicationContext(), MovieList.class);
-                //startActivity(i);
-                //Intent i = new Intent(getApplicationContext(), MovieList.class);
-                //i.putExtra("movieId", position + "");
-                //startActivity(i);
                 finish();
             }
 

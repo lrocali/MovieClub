@@ -30,6 +30,7 @@ public class Model {
 
     //Singleton Model
     public ArrayList<Movie> movies;
+    public ArrayList<Party> parties;
 
     public ArrayList<String> keys;
     //public Movie [] movies;
@@ -50,6 +51,31 @@ public class Model {
         }
         return instance;
     }
+
+    //PARTY
+    public boolean hasParty(int index) {
+        for (Party party : parties){
+            if (new String(party.getId()).equals(movies.get(index).getId())) {
+                return true;
+            }
+        }
+        return false;
+
+    }
+
+    public Party checkForParty(int index) {
+        for (Party party : parties){
+            if (new String(party.getId()).equals(movies.get(index).getId())) {
+                return party;
+            }
+        }
+        Party p = null;
+        return p;
+
+    }
+
+
+    //
 
     public boolean isNetworkConnectionAvailable(Context activity) {
         ConnectivityManager cm = (ConnectivityManager) activity.getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -188,6 +214,7 @@ public class Model {
         //List of movie
 
         movies = new ArrayList<Movie>();
+        parties = new ArrayList<Party>();
 
         context = _context;
 
@@ -239,7 +266,7 @@ public class Model {
     //DATABASE FUNCITONS
 
     public void insertSearchedMovieIntoDatabase(){
-        boolean result = DB.insertMovie(searchedMovie.getId(), searchedMovie.getTitle(), searchedMovie.getYear(), searchedMovie.getPlot(), searchedMovie.getRuntime(), searchedMovie.getGenre(), searchedMovie.getCountry(), searchedMovie.getImdbVotes(), searchedMovie.getImdbRating(), searchedMovie.getImgURL(), getScheduledString(), getRatingSring());
+        boolean result = DB.insertMovie(searchedMovie.getId(), searchedMovie.getTitle(), searchedMovie.getYear(), searchedMovie.getPlot(), searchedMovie.getRuntime(), searchedMovie.getGenre(), searchedMovie.getCountry(), searchedMovie.getImdbVotes(), searchedMovie.getImdbRating(), searchedMovie.getImgURL(), getRatingSring());
         if (result) {
             System.out.print("SENDED");
             getMoviesFromDatabase();
@@ -248,10 +275,6 @@ public class Model {
             System.out.print("NOT SENDED");
     }
 
-    public String getScheduledString() {
-        if (searchedMovie.isScheduled()) return "TRUE";
-        else return "FALSE";
-    }
 
     public String getRatingSring() {
         return Float.toString(searchedMovie.getRating());
@@ -279,10 +302,9 @@ public class Model {
     }
 
     public void updateRatingMovie(int index){
-        Firebase movieParty = firebaseRef.child("searchedMovies").child(keys.get(index));
-        movieParty.child("rating").setValue(movies.get(index).getRating());
+        //SET FOR DB
     }
-
+/*
     public void updateMovieParty(int index) {
         Firebase movieParty = firebaseRef.child("searchedMovies").child(keys.get(index)).child("party");
 
@@ -296,11 +318,17 @@ public class Model {
         movieScheduled.child("scheduled").setValue(movies.get(index).isScheduled());
     }
 
-
+*/
     public void addSearchedMovie() {
         Firebase searchedRef = firebaseRef.child("searchedMovies");
         searchedRef.push().setValue(searchedMovie);
     }
+    public void addPartyToCloud(Party party) {
+        Firebase searchedRef = firebaseRef.child("Parties");
+        searchedRef.push().setValue(party);
+    }
+
+
     /*
     //Get array of int of image resources
     public int [] getImgResources(Context context) {
