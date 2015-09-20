@@ -239,9 +239,11 @@ public class Model {
     //DATABASE FUNCITONS
 
     public void insertSearchedMovieIntoDatabase(){
-        boolean result = DB.insertData(searchedMovie.getId(), searchedMovie.getTitle(), searchedMovie.getYear(), searchedMovie.getPlot(), searchedMovie.getRuntime(), searchedMovie.getGenre(), searchedMovie.getCountry(), searchedMovie.getImdbVotes(), searchedMovie.getImdbRating(), searchedMovie.getImgURL(), getScheduledString(), getRatingSring());
-        if (result)
+        boolean result = DB.insertMovie(searchedMovie.getId(), searchedMovie.getTitle(), searchedMovie.getYear(), searchedMovie.getPlot(), searchedMovie.getRuntime(), searchedMovie.getGenre(), searchedMovie.getCountry(), searchedMovie.getImdbVotes(), searchedMovie.getImdbRating(), searchedMovie.getImgURL(), getScheduledString(), getRatingSring());
+        if (result) {
             System.out.print("SENDED");
+            getMoviesFromDatabase();
+        }
         else
             System.out.print("NOT SENDED");
     }
@@ -256,7 +258,7 @@ public class Model {
     }
 
     public void getMoviesFromDatabase() {
-        Cursor res = DB.getAllData();
+        Cursor res = DB.getAllMovies();
         if (res.getCount() == 0)
             return;
         movies.clear();

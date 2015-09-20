@@ -46,9 +46,9 @@ public class SQLData extends SQLiteOpenHelper{
         onCreate(db);
     }
 
-    public boolean insertData(String _id,String _title, String _year, String _plot,String _runtime,String _genre,String _country,String _imdbVotes,String _imdbRating,String _imgURL,String _scheduled,String _rating) {
+    public boolean insertMovie(String _id,String _title, String _year, String _plot,String _runtime,String _genre,String _country,String _imdbVotes,String _imdbRating,String _imgURL,String _scheduled,String _rating) {
         SQLiteDatabase db = this.getWritableDatabase();
-        onUpgrade(db,0,0);
+        //onUpgrade(db,0,0);
 
         ContentValues contentValues = new ContentValues();
         contentValues.put(COL_ID,_id);
@@ -71,7 +71,7 @@ public class SQLData extends SQLiteOpenHelper{
         }
     }
 
-    public Cursor getAllData(){
+    public Cursor getAllMovies(){
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor res = db.rawQuery("select * from "+TABLE_NAME,null);
         return res;

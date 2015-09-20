@@ -62,8 +62,14 @@ public class MovieList extends ListActivity {
 
 
         model  = Model.getInstance(this);
+
+        //Firebase part
+        /*
         if (model.movies.size() == 0)
            fetchSearchedMovies();
+        */
+        model.getMoviesFromDatabase();
+        populateListView(false);
 
         if (model.isNetworkConnectionAvailable(this)) {
             //Toast.makeText(this, "CONECTED", Toast.LENGTH_LONG).show();
@@ -76,6 +82,7 @@ public class MovieList extends ListActivity {
 
     }
 
+    //Firebase part
     public void fetchSearchedMovies(){
 
         Firebase searchedRef = model.firebaseRef.child("searchedMovies");
@@ -95,7 +102,7 @@ public class MovieList extends ListActivity {
                     }
                     populateListView(false);
 
-                    model.getMoviesFromDatabase();
+
                 } else {
                     //Toast.makeText(getApplicationContext(),"BY ID :" +  "NOT Fetching", Toast.LENGTH_SHORT).show();
                 }
