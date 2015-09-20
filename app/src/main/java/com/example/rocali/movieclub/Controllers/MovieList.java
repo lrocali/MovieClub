@@ -60,9 +60,10 @@ public class MovieList extends ListActivity {
         setContentView(R.layout.activity_movie_list);
 
 
+
         model  = Model.getInstance(this);
         if (model.movies.size() == 0)
-            fetchSearchedMovies();
+           fetchSearchedMovies();
 
         if (model.isNetworkConnectionAvailable(this)) {
             //Toast.makeText(this, "CONECTED", Toast.LENGTH_LONG).show();
@@ -83,17 +84,18 @@ public class MovieList extends ListActivity {
             public void onDataChange(DataSnapshot snapshot) {
                 System.out.println("There are " + snapshot.getChildrenCount() + " blog posts");
                 model.movies.clear();
+                model.keys.clear();
                 if (snapshot.getChildrenCount() != model.movies.size()) {
                     for (DataSnapshot postSnapshot : snapshot.getChildren()) {
-                       // Toast.makeText(getApplicationContext(),"BY ID :" +  "Fetching", Toast.LENGTH_SHORT).show();
-
+                        // Toast.makeText(getApplicationContext(),"BY ID :" +  "Fetching", Toast.LENGTH_SHORT).show();
                         model.addKey(postSnapshot.getKey());
                         Movie movie = postSnapshot.getValue(Movie.class);
 
                         model.movies.add(movie);
-                        populateListView(false);
-
                     }
+                    populateListView(false);
+
+                    model.getMoviesFromDatabase();
                 } else {
                     //Toast.makeText(getApplicationContext(),"BY ID :" +  "NOT Fetching", Toast.LENGTH_SHORT).show();
                 }
@@ -112,6 +114,9 @@ public class MovieList extends ListActivity {
         //populateListView(false);
     }
 
+    public void refreshListView(boolean searching){
+        populateListView(searching);
+    }
     public void populateListView(boolean searching) {
         ListView lv = getListView();
         if (searching) {
@@ -166,7 +171,6 @@ public class MovieList extends ListActivity {
         }
 
     }
-
 
     // Async Task Class
     class searchMovieThread extends AsyncTask<String, String, String> {

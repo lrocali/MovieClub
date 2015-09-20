@@ -97,9 +97,9 @@ public class CustomAdapter extends BaseAdapter{
         }
         //Setting the information of the party schedulled
         if (model.movies.get(position).isScheduled()) {
-            rowInfo.dateAndTime.setText(model.movies.get(position).getDate() + " - " + model.movies.get(position).getTime());
-            rowInfo.location.setText("At " + model.movies.get(position).getLocation());
-            int nInv = model.movies.get(position).getInvitees().size();
+            rowInfo.dateAndTime.setText(model.movies.get(position).getParty().getDate() + " - " + model.movies.get(position).getParty().getTime());
+            rowInfo.location.setText("At " + model.movies.get(position).getParty().getLocation());
+            int nInv = model.movies.get(position).getParty().getInvitees().size();
             rowInfo.nInvitees.setText("Invitees: " + String.valueOf(nInv));
 
         } else {

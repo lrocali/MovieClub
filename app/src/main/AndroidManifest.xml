@@ -40,7 +40,10 @@
         <activity
             android:name=".Controllers.MovieSelected"
             android:label="Movie selected"
-            android:theme="@style/AppTheme" ></activity>
+            android:theme="@style/AppTheme"
+            android:launchMode="singleTop"
+            android:parentActivityName=".Controllers.MovieList">
+        </activity>
     </application>
 
 </manifest>

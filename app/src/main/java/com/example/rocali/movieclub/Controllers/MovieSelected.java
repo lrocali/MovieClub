@@ -151,10 +151,10 @@ public class MovieSelected extends Activity {
 
             //set editable/party information if it has created
             if (model.movies.get(movieId).isScheduled()) {
-                edtDate.setText(model.movies.get(movieId).getDate());
-                edtTime.setText(model.movies.get(movieId).getTime());
-                edtVenue.setText(model.movies.get(movieId).getVenue());
-                edtLocation.setText(model.movies.get(movieId).getLocation());
+                edtDate.setText(model.movies.get(movieId).getParty().getDate());
+                edtTime.setText(model.movies.get(movieId).getParty().getTime());
+                edtVenue.setText(model.movies.get(movieId).getParty().getVenue());
+                edtLocation.setText(model.movies.get(movieId).getParty().getLocation());
             }
 
             //Set image
@@ -179,7 +179,7 @@ public class MovieSelected extends Activity {
 
                     Toast.makeText(getApplicationContext(), edtInvited.getText().toString(), Toast.LENGTH_SHORT).show();
 
-                    model.movies.get(movieId).addInvitees(edtInvited.getText().toString());
+                    model.movies.get(movieId).getParty().addInvitees(edtInvited.getText().toString());
                     //get/refresh list of invitees
                     getListElements();
                     //if all the field had been entered the party button is visible
@@ -198,10 +198,10 @@ public class MovieSelected extends Activity {
             btnParty.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
                     //set information on the model
-                    model.movies.get(movieId).setDate(edtDate.getText().toString());
-                    model.movies.get(movieId).setTime(edtTime.getText().toString());
-                    model.movies.get(movieId).setVenue(edtVenue.getText().toString());
-                    model.movies.get(movieId).setLocation(edtLocation.getText().toString());
+                    model.movies.get(movieId).getParty().setDate(edtDate.getText().toString());
+                    model.movies.get(movieId).getParty().setTime(edtTime.getText().toString());
+                    model.movies.get(movieId).getParty().setVenue(edtVenue.getText().toString());
+                    model.movies.get(movieId).getParty().setLocation(edtLocation.getText().toString());
 
                     model.updateMovieParty(movieId);
                     //disable editables
@@ -277,7 +277,7 @@ public class MovieSelected extends Activity {
 
     //Function to get/refresh the list of invitess when a new invited is added
     public void getListElements() {
-        inviteesList = model.movies.get(movieId).getInvitees();
+        inviteesList = model.movies.get(movieId).getParty().getInvitees();
         if (inviteesList != null) {
             listInvitees = (ListView) findViewById(R.id.listInvitees);
             adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, inviteesList);
@@ -333,17 +333,13 @@ public class MovieSelected extends Activity {
         SimpleDateFormat stf = new SimpleDateFormat( timeFormat, Locale.US );
         edtTime.setText(stf.format(c.getTime()));
     }
-    public void addSearchedMovie() {
-        Firebase searchedRef = model.firebaseRef.child("searchedMovies");
-        searchedRef.push().setValue(model.searchedMovie);
-    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu_movie_selected, menu);
 
-        if (movieId <= 0) {
+        if (movieId < 0) {
             MenuItem item = menu.findItem(R.id.action_edit_event);
             item.setIcon(R.drawable.ic_addmovie);
             item.setTitle("Add Movie");
@@ -355,27 +351,39 @@ public class MovieSelected extends Activity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 
+
         //Toast.makeText(getApplicationContext(), "Edit", Toast.LENGTH_SHORT).show();
         //if on edit state
-        if (movieId >= 0) {
-            if (!editState) {
-                enableEditables(true);
-                Toast.makeText(getApplicationContext(), "Cancel", Toast.LENGTH_SHORT).show();
-                editState = true;
-                model.movies.get(movieId).setScheduled(true);
-            } else {
-
-                enableEditables(false);
-                if (!model.movies.get(movieId).isScheduled()) {
-                    Toast.makeText(getApplicationContext(), "Create event", Toast.LENGTH_SHORT).show();
+        if (item.getItemId()== R.id.action_edit_event) {
+            if (movieId >= 0) {
+                if (!editState) {
+                    enableEditables(true);
+                    Toast.makeText(getApplicationContext(), "Cancel", Toast.LENGTH_SHORT).show();
+                    editState = true;
+                    model.movies.get(movieId).setScheduled(true);
                 } else {
-                    Toast.makeText(getApplicationContext(), "Edit event", Toast.LENGTH_SHORT).show();
+
+                    enableEditables(false);
+                    if (!model.movies.get(movieId).isScheduled()) {
+                        Toast.makeText(getApplicationContext(), "Create event", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(getApplicationContext(), "Edit event", Toast.LENGTH_SHORT).show();
+                    }
+                    editState = false;
                 }
-                editState = false;
+            } else {
+                Toast.makeText(getApplicationContext(), "Add Movie", Toast.LENGTH_SHORT).show();
+                //model.addSearchedMovie();
+                model.insertSearchedMovieIntoDatabase();
+                //this.finish();
+                //Intent i = new Intent(getApplicationContext(), MovieList.class);
+                //startActivity(i);
+                //Intent i = new Intent(getApplicationContext(), MovieList.class);
+                //i.putExtra("movieId", position + "");
+                //startActivity(i);
+                finish();
             }
-        } else {
-            Toast.makeText(getApplicationContext(), "Add Movie", Toast.LENGTH_SHORT).show();
-            addSearchedMovie();
+
         }
         return true;
 

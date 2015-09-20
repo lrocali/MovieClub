@@ -2,6 +2,7 @@ package com.example.rocali.movieclub.Models;
 
 import android.content.Context;
 import android.content.res.Resources;
+import android.database.Cursor;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
@@ -41,6 +42,8 @@ public class Model {
     //Firebase
     public Firebase firebaseRef;
 
+    //SQLite DB
+    SQLData DB;
     public static Model getInstance(Context _context){
         if (instance == null) {
             instance = new Model(_context);
@@ -187,6 +190,8 @@ public class Model {
         movies = new ArrayList<Movie>();
 
         context = _context;
+
+        DB = new SQLData(context);
         //Set context to firebase
         Firebase.setAndroidContext(context);
         firebaseRef = new Firebase("https://torrid-heat-8747.firebaseio.com/");
@@ -230,11 +235,41 @@ public class Model {
 
 */
     }
+
+    //DATABASE FUNCITONS
+
+    public void insertSearchedMovieIntoDatabase(){
+        boolean result = DB.insertData(searchedMovie.getId(), searchedMovie.getTitle(), searchedMovie.getYear(), searchedMovie.getPlot(), searchedMovie.getRuntime(), searchedMovie.getGenre(), searchedMovie.getCountry(), searchedMovie.getImdbVotes(), searchedMovie.getImdbRating(), searchedMovie.getImgURL(), getScheduledString(), getRatingSring());
+        if (result)
+            System.out.print("SENDED");
+        else
+            System.out.print("NOT SENDED");
+    }
+
+    public String getScheduledString() {
+        if (searchedMovie.isScheduled()) return "TRUE";
+        else return "FALSE";
+    }
+
+    public String getRatingSring() {
+        return Float.toString(searchedMovie.getRating());
+    }
+
+    public void getMoviesFromDatabase() {
+        Cursor res = DB.getAllData();
+        if (res.getCount() == 0)
+            return;
+        movies.clear();
+        while (res.moveToNext()) {
+            Movie movie = new Movie(res.getString(0),res.getString(1),res.getString(2),res.getString(3),res.getString(4),res.getString(5),res.getString(6),res.getString(7),res.getString(8),res.getString(9));
+            movies.add(movie);
+        }
+    }
+
+    //
     public void addKey(String key){
         keys.add(key);
     }
-
-
 
     public void setSearchedMovie(String _id,String _title, String _year, String _plot,String _runtime,String _genre,String _country,String _imdbVotes,String _imdbRating,String _imgURL){
         searchedMovie = new Movie(_id,_title,_year,_plot,_runtime,_genre,_country,_imdbVotes,_imdbRating,_imgURL);
@@ -245,14 +280,24 @@ public class Model {
         Firebase movieParty = firebaseRef.child("searchedMovies").child(keys.get(index));
         movieParty.child("rating").setValue(movies.get(index).getRating());
     }
+
     public void updateMovieParty(int index) {
-        Firebase movieParty = firebaseRef.child("searchedMovies").child(keys.get(index));
-        movieParty.child("scheduled").setValue(movies.get(index).isScheduled());
-        movieParty.child("date").setValue(movies.get(index).getDate());
-        movieParty.child("time").setValue(movies.get(index).getTime());
-        movieParty.child("venue").setValue(movies.get(index).getVenue());
-        movieParty.child("location").setValue(movies.get(index).getLocation());
-        movieParty.child("invitees").setValue(movies.get(index).getInvitees());
+        Firebase movieParty = firebaseRef.child("searchedMovies").child(keys.get(index)).child("party");
+
+        movieParty.child("date").setValue(movies.get(index).getParty().getDate());
+        movieParty.child("time").setValue(movies.get(index).getParty().getTime());
+        movieParty.child("venue").setValue(movies.get(index).getParty().getVenue());
+        movieParty.child("location").setValue(movies.get(index).getParty().getLocation());
+        movieParty.child("invitees").setValue(movies.get(index).getParty().getInvitees());
+
+        Firebase movieScheduled = firebaseRef.child("searchedMovies").child(keys.get(index));
+        movieScheduled.child("scheduled").setValue(movies.get(index).isScheduled());
+    }
+
+
+    public void addSearchedMovie() {
+        Firebase searchedRef = firebaseRef.child("searchedMovies");
+        searchedRef.push().setValue(searchedMovie);
     }
     /*
     //Get array of int of image resources

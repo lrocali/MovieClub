@@ -28,11 +28,7 @@ public class Movie {
     private Party party;
 
 
-    private String date;
-    private String time;
-    private String venue;
-    private String location;
-    private ArrayList<String> invitees;
+
 
 
     public Movie () {
@@ -52,17 +48,11 @@ public class Movie {
         imdbRating = _imdbRating;
         imgURL = _imgURL;
 
+        //Editable
         rating = 0;
         scheduled = false;
         party = new Party();
-        //Editable
-        date = " ";
-        time = " ";
-        venue = " ";
-        location = " ";
 
-        invitees = new ArrayList<String>();
-        invitees.add("user0");
     }
 
     //Non editables (just get, initialized just on creation)
@@ -99,60 +89,37 @@ public class Movie {
         return rating;
     }
 
+
     public void setRating(float rating) {
         this.rating = rating;
     }
 
-    public String getDate() {
-        return date;
-    }
 
-    public void setDate(String date) {
-        this.date = date;
-    }
-
-    public String getTime() {
-        return time;
-    }
-
-    public void setTime(String time) {
-        this.time = time;
-    }
-
-    public String getVenue() {
-        return venue;
-    }
-
-    public void setVenue(String venue) {
-        this.venue = venue;
-    }
-
-    public String getLocation() {
-        return location;
-    }
-
-    public void setLocation(String location) {
-        this.location = location;
-    }
-
-    public ArrayList<String> getInvitees() {
-        return invitees;
-    }
-
-    public void setInvitees(ArrayList<String> invitees) {
-        this.invitees = invitees;
-    }
-
-    public void addInvitees(String invited){
-        this.invitees.add(invited);
-    }
 
     public boolean isScheduled() {
         return scheduled;
     }
 
+
+
     public void setScheduled(boolean scheduled) {
         this.scheduled = scheduled;
+    }
+
+    public Party getParty() {
+        return party;
+    }
+
+    public void setParty(Party party) {
+        this.party = party;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
 
