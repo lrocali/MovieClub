@@ -275,9 +275,22 @@ public class Model {
             System.out.print("NOT SENDED");
     }
 
+    public void updateMovie(int index){
+        boolean result = DB.updatetMovie(movies.get(index).getId(), movies.get(index).getTitle(), movies.get(index).getYear(), movies.get(index).getPlot(), movies.get(index).getRuntime(), movies.get(index).getGenre(), movies.get(index).getCountry(), movies.get(index).getImdbVotes(), movies.get(index).getImdbRating(), movies.get(index).getImgURL(), getRatingSring(index));
+        if (result) {
+            System.out.print("UPDATED");
+            getMoviesFromDatabase();
+        }
+        else
+            System.out.print("NOT UPDATED");
+    }
+
 
     public String getRatingSring() {
         return Float.toString(searchedMovie.getRating());
+    }
+    public String getRatingSring(int index) {
+        return Float.toString(movies.get(index).getRating());
     }
 
     public void getMoviesFromDatabase() {
@@ -286,7 +299,7 @@ public class Model {
             return;
         movies.clear();
         while (res.moveToNext()) {
-            Movie movie = new Movie(res.getString(0),res.getString(1),res.getString(2),res.getString(3),res.getString(4),res.getString(5),res.getString(6),res.getString(7),res.getString(8),res.getString(9));
+            Movie movie = new Movie(res.getString(0),res.getString(1),res.getString(2),res.getString(3),res.getString(4),res.getString(5),res.getString(6),res.getString(7),res.getString(8),res.getString(9),res.getString(10));
             movies.add(movie);
         }
     }
@@ -297,7 +310,7 @@ public class Model {
     }
 
     public void setSearchedMovie(String _id,String _title, String _year, String _plot,String _runtime,String _genre,String _country,String _imdbVotes,String _imdbRating,String _imgURL){
-        searchedMovie = new Movie(_id,_title,_year,_plot,_runtime,_genre,_country,_imdbVotes,_imdbRating,_imgURL);
+        searchedMovie = new Movie(_id,_title,_year,_plot,_runtime,_genre,_country,_imdbVotes,_imdbRating,_imgURL,"0");
 
     }
 

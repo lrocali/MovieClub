@@ -139,7 +139,7 @@ public class MovieSelected extends Activity {
         edtLocation = (EditText) findViewById(R.id.edtLocation);
         edtInvited = (EditText) findViewById(R.id.edtInvited);
 
-        setPartyInfo();
+
 
         ///btnEditMovie = (Button) findViewById(R.id.btnEditMovie);
         btnAddInvited = (Button) findViewById(R.id.btnAddInvited);
@@ -147,6 +147,7 @@ public class MovieSelected extends Activity {
 
 
         if (movieId >= 0) {
+            setPartyInfo();
             //hide party button if they will create the event
             //if (!model.movies.get(movieId).isScheduled())
             //    btnParty.setVisibility(View.INVISIBLE);
@@ -246,12 +247,15 @@ public class MovieSelected extends Activity {
             rtbRating.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
                 public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
                     model.movies.get(movieId).setRating(rating);
-                    model.updateRatingMovie(movieId);
+                    //model.updateRatingMovie(movieId)
+                    // ;
+                    model.updateMovie(movieId);
 
                 }
             });
         } else {
             //disableEditables
+            btnParty.setVisibility(View.INVISIBLE);
             enableEditables(false);
 
             lblTitle.setText(model.searchedMovie.getTitle());

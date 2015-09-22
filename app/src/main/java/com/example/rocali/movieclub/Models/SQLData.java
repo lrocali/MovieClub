@@ -74,4 +74,27 @@ public class SQLData extends SQLiteOpenHelper{
         Cursor res = db.rawQuery("select * from "+TABLE_NAME,null);
         return res;
     }
+
+    public boolean updatetMovie(String _id,String _title, String _year, String _plot,String _runtime,String _genre,String _country,String _imdbVotes,String _imdbRating,String _imgURL,String _rating) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(COL_ID,_id);
+        contentValues.put(COL_TITLE,_title);
+        contentValues.put(COL_YEAR,_year);
+        contentValues.put(COL_PLOT,_plot);
+        contentValues.put(COL_RUNTIME,_runtime);
+        contentValues.put(COL_GENRE,_genre);
+        contentValues.put(COL_COUNTRY,_country);
+        contentValues.put(COL_VOTES,_imdbVotes);
+        contentValues.put(COL_IMDBRATING,_imdbRating);
+        contentValues.put(COL_IMGURL,_imgURL);
+        contentValues.put(COL_RATING, _rating);
+        long result = db.update(TABLE_NAME,contentValues,"ID = ?",new String [] {_id});
+        if (result == -1){
+            return false;
+        } else {
+            return true;
+        }
+    }
 }

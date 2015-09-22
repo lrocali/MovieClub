@@ -145,7 +145,8 @@ public class CustomAdapter extends BaseAdapter{
         rowInfo.rating.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
             public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
                 model.movies.get(position).setRating(rating);
-                model.updateRatingMovie(position);
+                model.updateMovie(position);
+                //model.updateRatingMovie(position);
 
 
             }

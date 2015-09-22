@@ -102,6 +102,7 @@ public class MovieList extends ListActivity {
         });
     }
 
+    /*
     //Firebase part
     public void fetchSearchedMovies(){
 
@@ -133,7 +134,7 @@ public class MovieList extends ListActivity {
                 System.out.println("The read failed: " + firebaseError.getMessage());
             }
         });
-    }
+    }*/
 
     @Override
     public void onResume() {
@@ -145,9 +146,12 @@ public class MovieList extends ListActivity {
         populateListView(searching);
     }
     public void populateListView(boolean searching) {
+        //get list view id
         ListView lv = getListView();
+
+        //if is in searching mode
         if (searching) {
-            //Toast.makeText(this, "SEARCHING", Toast.LENGTH_LONG).show();
+            //if search update array from movie search array list
             ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
                     android.R.layout.simple_list_item_1, android.R.id.text1, msArrayList);
 
@@ -162,7 +166,6 @@ public class MovieList extends ListActivity {
                     try {
                         JSONObject movieSelected = msJsonArray.getJSONObject(position);
                         String imdbID = movieSelected.getString("imdbID");
-                        //Toast.makeText(getApplicationContext(), imdbID, Toast.LENGTH_LONG).show();
 
                         fetchFromId = true;
                         String url = "http://www.omdbapi.com/?i="+imdbID+"&plot=short&r=json";
@@ -172,17 +175,9 @@ public class MovieList extends ListActivity {
                         Log.v(TAG,"Get imdbId Error");
                     }
 
-
-                   /* Intent i = new Intent(getApplicationContext(), MovieSelected.class);
-                    // sending movie id to new activity
-                    i.putExtra("movieId", position + "");
-                    startActivity(i);*/
-
                 }
             });
         } else {
-            //Toast.makeText(this, "NOT SEARCHING", Toast.LENGTH_LONG).show();
-
             lv.setAdapter(new CustomAdapter(this));
 
             lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -235,6 +230,7 @@ public class MovieList extends ListActivity {
                             msJsonObj.getString("Poster")
                     );
 
+                    populateListView(false);
                     Intent i = new Intent(getApplicationContext(), MovieSelected.class);
                     // sending movie id to new activity
                     i.putExtra("movieId", "-1");

@@ -28,7 +28,7 @@ public class Movie {
         //Firebase
     }
     //initialize movie with pre-defined and no editable atributes
-    public Movie (String _id,String _title, String _year, String _plot,String _runtime,String _genre,String _country,String _imdbVotes,String _imdbRating,String _imgURL) {
+    public Movie (String _id,String _title, String _year, String _plot,String _runtime,String _genre,String _country,String _imdbVotes,String _imdbRating,String _imgURL,String _rating) {
         //Non editable
         id = _id;
         title = _title;
@@ -42,7 +42,7 @@ public class Movie {
         imgURL = _imgURL;
 
         //Editable
-        rating = 0;
+        rating = Float.parseFloat(_rating);
 
     }
 
