@@ -13,7 +13,8 @@ import java.sql.SQLInput;
  */
 public class SQLData extends SQLiteOpenHelper{
     public static final String DATABASE_NAME = "movieclub.db";
-    public static final String TABLE_NAME = "movie_table";
+    public static final String MOVIE_TABLE_NAME = "movie_table";
+    public static final String PARTY_TABLE_NAME = "party_table";
     public static final String COL_ID = "ID";
     public static final String COL_TITLE = "TITLE";
     public static final String COL_YEAR = "YEAR";
@@ -26,6 +27,12 @@ public class SQLData extends SQLiteOpenHelper{
     public static final String COL_IMGURL = "IMGURL";
     public static final String COL_RATING = "RATING";
 
+    public static final String COL_DATE = "DATE";
+    public static final String COL_TIME = "TIME";
+    public static final String COL_VENUE = "VENUE";
+    public static final String COL_LOCATION = "LOCATION";
+    public static final String COL_INVITEES = "INVITEES";
+
 
     public SQLData(Context context) {
         super(context,DATABASE_NAME,null,1);
@@ -35,19 +42,21 @@ public class SQLData extends SQLiteOpenHelper{
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        db.execSQL("create table " + TABLE_NAME + " (ID TEXT PRIMARY KEY,TITLE TEXT,YEAR TEXT,PLOT TEXT,RUNTIME TEXT,GENRE TEXT,COUNTRY TEXT,VOTES TEXT,IMDBRATING TEXT,IMGURL TEXT,RATING TEXT)");
+        db.execSQL("create table " + MOVIE_TABLE_NAME + " (ID TEXT PRIMARY KEY,TITLE TEXT,YEAR TEXT,PLOT TEXT,RUNTIME TEXT,GENRE TEXT,COUNTRY TEXT,VOTES TEXT,IMDBRATING TEXT,IMGURL TEXT,RATING TEXT)");
+        db.execSQL("create table " + PARTY_TABLE_NAME + " (ID TEXT PRIMARY KEY,DATE TEXT,TIME TEXT,VENUE TEXT,LOCATION TEXT,INVITEES TEXT)");
 
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME);
+        db.execSQL("DROP TABLE IF EXISTS " + MOVIE_TABLE_NAME);
+        db.execSQL("DROP TABLE IF EXISTS " + PARTY_TABLE_NAME);
         onCreate(db);
     }
 
     public boolean insertMovie(String _id,String _title, String _year, String _plot,String _runtime,String _genre,String _country,String _imdbVotes,String _imdbRating,String _imgURL,String _rating) {
         SQLiteDatabase db = this.getWritableDatabase();
-        ///onUpgrade(db,0,0);
+        onUpgrade(db,0,0);
 
         ContentValues contentValues = new ContentValues();
         contentValues.put(COL_ID,_id);
@@ -61,7 +70,7 @@ public class SQLData extends SQLiteOpenHelper{
         contentValues.put(COL_IMDBRATING,_imdbRating);
         contentValues.put(COL_IMGURL,_imgURL);
         contentValues.put(COL_RATING,_rating);
-        long result = db.insert(TABLE_NAME,null,contentValues);
+        long result = db.insert(MOVIE_TABLE_NAME,null,contentValues);
         if (result == -1){
             return false;
         } else {
@@ -71,7 +80,7 @@ public class SQLData extends SQLiteOpenHelper{
 
     public Cursor getAllMovies(){
         SQLiteDatabase db = this.getWritableDatabase();
-        Cursor res = db.rawQuery("select * from "+TABLE_NAME,null);
+        Cursor res = db.rawQuery("select * from "+MOVIE_TABLE_NAME,null);
         return res;
     }
 
@@ -90,11 +99,37 @@ public class SQLData extends SQLiteOpenHelper{
         contentValues.put(COL_IMDBRATING,_imdbRating);
         contentValues.put(COL_IMGURL,_imgURL);
         contentValues.put(COL_RATING, _rating);
-        long result = db.update(TABLE_NAME,contentValues,"ID = ?",new String [] {_id});
+        long result = db.update(MOVIE_TABLE_NAME,contentValues,"ID = ?",new String [] {_id});
         if (result == -1){
             return false;
         } else {
             return true;
         }
     }
+
+    public boolean insertParty(String _id,String _date, String _time, String _venue,String _location,String _invitees) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ///onUpgrade(db,0,0);
+
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(COL_ID,_id);
+        contentValues.put(COL_DATE,_date);
+        contentValues.put(COL_TIME,_time);
+        contentValues.put(COL_VENUE,_venue);
+        contentValues.put(COL_LOCATION,_location);
+        contentValues.put(COL_INVITEES,_invitees);
+
+        long result = db.insert(PARTY_TABLE_NAME, null, contentValues);
+        if (result == -1){
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    //GET ALL PARTY FRMO DB
+
+    //UPDATE PARTY
+
+
 }

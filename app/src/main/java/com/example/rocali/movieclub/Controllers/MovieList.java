@@ -91,6 +91,7 @@ public class MovieList extends ListActivity {
                 for (DataSnapshot postSnapshot : snapshot.getChildren()) {
                     Party party = postSnapshot.getValue(Party.class);
                     model.parties.add(party);
+                    model.insertPartyIntoDatabase(party);
                 }
                 populateListView(false);
             }

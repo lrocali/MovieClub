@@ -304,6 +304,17 @@ public class Model {
         }
     }
 
+    public void insertPartyIntoDatabase(Party party){
+        //AD INVITEs SHOULD IMPRMEEN XXXXXXXXXX
+        boolean result = DB.insertParty(party.getId(),party.getDate(),party.getTime(),party.getVenue(),party.getLocation(),"X invites");
+        if (result) {
+            System.out.print("SENDED");
+            getMoviesFromDatabase();
+        }
+        else
+            System.out.print("NOT SENDED");
+    }
+
     //
     public void addKey(String key){
         keys.add(key);
