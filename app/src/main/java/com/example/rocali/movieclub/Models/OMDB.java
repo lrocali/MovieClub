@@ -11,6 +11,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+
 /**
  * Created by rocali on 9/23/15.
  */
@@ -33,16 +35,17 @@ public class OMDB implements MovieInfoChain{
     @Override
     public Movie getMovieInfo(String id) {
         String url = "http://www.omdbapi.com/?i="+id+"&plot=short&r=json";
-        new searchMovieThread().execute(url);
+        new searchMovieByIDThread().execute(url);
         return new Movie();
     }
 
     @Override
-    public Movie searchMovie(String title) {
-
-        return null;
+    public ArrayList<MovieMainInfo> searchMovie(String title) {
+        String url = "http://www.omdbapi.com/?s=" + title + "&y=&plot=short&r=json";
+        new searchMovieByTitleThread().execute(url);
+        return new ArrayList<MovieMainInfo>(){};
     }
-    class searchMovieThread extends AsyncTask<String, String, String> {
+    class searchMovieByIDThread extends AsyncTask<String, String, String> {
         @Override
         protected String doInBackground(String... f_url) {   //search via title or by id
             try {
@@ -72,30 +75,43 @@ public class OMDB implements MovieInfoChain{
                         msJsonObj.getString("Poster"),
                         "0"));
                 model.startActivity();
-                   /* model.setSearchedMovie(
-                            msJsonObj.getString("imdbID"),
-                            msJsonObj.getString("Title"),
-                            msJsonObj.getString("Year"),
-                            msJsonObj.getString("Plot"),
-                            msJsonObj.getString("Runtime"),
-                            msJsonObj.getString("Genre"),
-                            msJsonObj.getString("Country"),
-                            msJsonObj.getString("imdbVotes"),
-                            msJsonObj.getString("imdbRating"),
-                            msJsonObj.getString("Poster")
-                    );
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
 
-                    //Refresh the list view
-                    populateListView(false);
+        }
 
-                    //Call Movie selected activity to show movie details
-                    Intent i = new Intent(getApplicationContext(), MovieSelected.class);
-                    i.putExtra("movieId", "-1");
-                    startActivity(i);*/
+    }
+    class searchMovieByTitleThread extends AsyncTask<String, String, String> {
+        @Override
+        protected String doInBackground(String... f_url) {   //search via title or by id
+            try {
+                JsonClass json = new JsonClass();
+                msJsonObj = json.getJSONFromUrl(f_url[0]);
+
+            } catch (Exception e) {
+                Log.e("Error: ", e.getMessage());
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(String file_url) {
+            try {
+                Model model = Model.getInstance(context);
+                    msJsonArray = msJsonObj.getJSONArray("Search");
+                    ArrayList<MovieMainInfo> tempMovies = new ArrayList<MovieMainInfo>(){};
+                    for (int i = 0; i < msJsonArray.length(); i++) {
+                        JSONObject json_data = msJsonArray.getJSONObject(i);
+                        tempMovies.add(new MovieMainInfo(json_data.getString("imdbID"), json_data.getString("Title"), json_data.getString("Year"), "img", "0"));
+                       // msArrayList.add(json_data.getString("Title"));
+                    }
+                    model.setSearchedMovies(tempMovies);
+                    //populateListView(true);
 
             } catch (JSONException e) {
                 e.printStackTrace();
-                //Log.v(TAG,"ERROR NO JSONARRAY");
+               // Log.v(TAG, "ERROR NO JSONARRAY");
             }
 
         }

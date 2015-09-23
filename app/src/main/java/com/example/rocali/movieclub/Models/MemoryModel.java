@@ -2,6 +2,8 @@ package com.example.rocali.movieclub.Models;
 
 import android.content.Context;
 
+import java.util.ArrayList;
+
 /**
  * Created by rocali on 9/23/15.
  */
@@ -22,9 +24,8 @@ public class MemoryModel implements MovieInfoChain{
     @Override
     public Movie getMovieInfo(String id) {
         Model model = Model.getInstance(context);
-        String id1 = model.getMovie().getId();
-        String id2 = id;
-        if (id1.equals(id2)) {
+        String idModel = model.getMovie().getId();
+        if (idModel.equals(id)) {
             return model.getMovie();
         } else {
             return nextChain.getMovieInfo(id);
@@ -32,7 +33,15 @@ public class MemoryModel implements MovieInfoChain{
     }
 
     @Override
-    public Movie searchMovie(String title) {
-        return null;
+    public ArrayList<MovieMainInfo> searchMovie(String title) {
+        Model model = Model.getInstance(context);
+        String titleModel = model.getMovie().getTitle();
+        if (titleModel.equals(title)){
+            ArrayList<MovieMainInfo> movies = new ArrayList<MovieMainInfo>(){};
+            movies.add(model.getMovie());
+            return movies;
+        } else {
+            return nextChain.searchMovie(title);
+        }
     }
 }

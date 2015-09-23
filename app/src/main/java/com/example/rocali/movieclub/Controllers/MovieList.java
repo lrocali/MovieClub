@@ -4,10 +4,13 @@ import android.app.ActionBar;
 import android.app.ListActivity;
 import android.app.ProgressDialog;
 import android.app.SearchManager;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -23,6 +26,7 @@ import android.widget.Toast;
 import com.example.rocali.movieclub.Models.JsonClass;
 import com.example.rocali.movieclub.Models.Model;
 import com.example.rocali.movieclub.Models.Movie;
+import com.example.rocali.movieclub.Models.MovieMainInfo;
 import com.example.rocali.movieclub.Models.Party;
 import com.example.rocali.movieclub.R;
 import com.firebase.client.DataSnapshot;
@@ -58,9 +62,18 @@ public class MovieList extends ListActivity {
 
         model  = Model.getInstance(this);
 
-        model.getMoviesMainInfoFromDatabase();
+        model.getMoviesFromDB();
 
         fetchParties();
+
+        LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver,
+                new IntentFilter("my-event"));
+    }
+
+    @Override
+    protected  void onResume(){
+        super.onResume();
+        populateListView(false);
     }
 
 
@@ -70,6 +83,9 @@ public class MovieList extends ListActivity {
 
         //if is in searching mode
         if (searching) {
+            for(MovieMainInfo movie : model.searchedMovies){
+                msArrayList.add(movie.getTitle());
+            }
             //if search update array from movie search array list
             ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
                     android.R.layout.simple_list_item_1, android.R.id.text1, msArrayList);
@@ -81,25 +97,21 @@ public class MovieList extends ListActivity {
                 public void onItemClick(AdapterView<?> parent, View view,
                                         int position, long id) {
 
-                    //Get movie id on imdb which have been fetched from search
-                    try {
-                        JSONObject movieSelected = msJsonArray.getJSONObject(position);
-                        String imdbID = movieSelected.getString("imdbID");
+                        //JSONObject movieSelected = msJsonArray.getJSONObject(position);
+                        //String imdbID = movieSelected.getString("imdbID");
 
-                        fetchFromId = true;
+                        String imdbID = model.searchedMovies.get(position).getId();
+                        //fetchFromId = true;
                         model.getMovie(imdbID);
                         //String url = "http://www.omdbapi.com/?i="+imdbID+"&plot=short&r=json";
                         //new searchMovieThread().execute(url);
                         //populateListView(false);
 
-                        //Call Movie selected activity to show movie details
-                        //Intent i = new Intent(getApplicationContext(), MovieSelected.class);
-                        //i.putExtra("imdbID", imdbID);
-                        //startActivity(i);
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                        Log.v(TAG,"Get imdbId Error");
-                    }
+                    //Call Movie selected activity to show movie details
+                    Intent i = new Intent(getApplicationContext(), MovieSelected.class);
+                    i.putExtra("imdbID", imdbID);
+                    i.putExtra("state", "searching");
+                    startActivity(i);
 
                 }
             });
@@ -121,6 +133,7 @@ public class MovieList extends ListActivity {
     }
 
     // OMDB PART
+    /*
     class searchMovieThread extends AsyncTask<String, String, String> {
         @Override
         protected String doInBackground(String... f_url) {   //search via title or by id
@@ -151,7 +164,7 @@ public class MovieList extends ListActivity {
                             msJsonObj.getString("imdbVotes"),
                             msJsonObj.getString("imdbRating"),
                             msJsonObj.getString("Poster")
-                    );*/
+                    );
                     //Refresh the list view
                     //populateListView(false);
 
@@ -177,16 +190,28 @@ public class MovieList extends ListActivity {
 
         }
 
-    }
+    }*/
+    private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            // Extract data included in the Intent
+            String message = intent.getStringExtra("message");
+            Log.d("receiver", "Got message: " + message);
+            populateListView(true);
+        }
+    };
 
     public void handleSearch(String searchText,boolean submit) {
         if (searchText.length() != 0 && ( Character.isWhitespace(searchText.charAt(searchText.length() - 1)) || submit )) {
 
             if (model.isNetworkConnectionAvailable(this)) {
                 fetchFromId = false;
-                String url = "http://www.omdbapi.com/?s=" + model.getSearchableTitle(searchText) + "&y=&plot=short&r=json";
-                new searchMovieThread().execute(url);
-                populateListView(true);
+
+
+                //String url = "http://www.omdbapi.com/?s=" + model.getSearchableTitle(searchText) + "&y=&plot=short&r=json";
+                model.getSearchedMovies(model.getSearchableTitle(searchText));
+                //new searchMovieThread().execute(url);
+                //populateListView(true);
             } else {
 
             }
@@ -247,7 +272,7 @@ public class MovieList extends ListActivity {
                 for (DataSnapshot postSnapshot : snapshot.getChildren()) {
                     Party party = postSnapshot.getValue(Party.class);
                     model.parties.add(party);
-                    model.insertPartyIntoDatabase(party);
+                    model.savePartyIntoDB(party);
                 }
                 populateListView(false);
             }

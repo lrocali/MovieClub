@@ -134,7 +134,7 @@ public class MovieSelected extends Activity {
         btnParty = (Button) findViewById((R.id.btnParty));
 
 
-        if (state.equals("searching")) {
+        if (!state.equals("searching")) {
             setPartyInfo();
 
             enableEditables(false);
@@ -343,8 +343,8 @@ public class MovieSelected extends Activity {
             //If selected movie from Search
             else {
                 Toast.makeText(getApplicationContext(), "Add Movie", Toast.LENGTH_SHORT).show();
-                model.insertSearchedMovieIntoDatabase();
-                //finish();
+                model.insertMovie();
+                finish();
             }
 
         }

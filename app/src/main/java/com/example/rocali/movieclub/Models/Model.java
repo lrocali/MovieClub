@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.support.v4.content.LocalBroadcastManager;
 
 import com.example.rocali.movieclub.Controllers.MovieList;
 import com.example.rocali.movieclub.Controllers.MovieSelected;
@@ -23,6 +24,7 @@ public class Model {
 
     //Singleton Model
     public ArrayList<MovieMainInfo> movies;
+    public ArrayList<MovieMainInfo> searchedMovies;
     public ArrayList<Party> parties;
 
     //public Movie [] movies;
@@ -38,11 +40,13 @@ public class Model {
     public MovieInfoChain databaseChain;
     public MovieInfoChain OMDBChain;
 
+    public Database database;
+
     //Firebase
     public Firebase firebaseRef;
 
     //SQLite DB
-    SQLData DB;
+    //SQLData DB;
     public static Model getInstance(Context _context){
         if (instance == null) {
             instance = new Model(_context);
@@ -74,6 +78,24 @@ public class Model {
     public void getMovie(String id){
         movie = memoryModelChain.getMovieInfo(id);
         //return movie;
+    }
+
+    public void getSearchedMovies(String title){
+        searchedMovies = memoryModelChain.searchMovie(title);
+    }
+    public void setSearchedMovies(ArrayList<MovieMainInfo> searchedMovies){
+        this.searchedMovies = searchedMovies;
+        Intent intent = new Intent("my-event");
+        // add data
+        intent.putExtra("message", "data");
+        LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
+        //Intent intent = new Intent(this, MyBroadcastReceiver.class);
+        /*context.sendBroadcast();
+        Intent intent = new Intent(context);
+        intent.putExtra("imdbID", "0");
+        intent.putExtra("state", "searching");
+        context.startActivity(intent);*/
+
     }
 
     public Party checkForParty(String imdbID) {
@@ -128,9 +150,10 @@ public class Model {
         movies = new ArrayList<MovieMainInfo>();
         parties = new ArrayList<Party>();
 
+        searchedMovies = new ArrayList<MovieMainInfo>();
         context = _context;
 
-        DB = new SQLData(context);
+        //DB = new SQLData(context);
         //Set context to firebase
         Firebase.setAndroidContext(context);
         firebaseRef = new Firebase("https://torrid-heat-8747.firebaseio.com/");
@@ -138,10 +161,41 @@ public class Model {
         setChains(context);
         movie = new Movie();
 
+        database = new Database(context);
+
     }
 
-    //DATABASE FUNCITONS
+    public void getMoviesFromDB(){
+        String x = "x";
+        this.movies = database.getMoviesMainInfoFromDatabase();
+    }
+    public void updateMovie(){
+        database.updateMovie(movie);
+        getMoviesFromDB();
+        movie = memoryModelChain.getMovieInfo(movie.getId());
+    }
+    public void updateMovie(int index){
+        database.updateMovie(movies.get(index));
+        getMoviesFromDB();
+        movie = memoryModelChain.getMovieInfo(movies.get(index).getId());
+    }
 
+    public void insertMovie(){
+        database.insertSearchedMovieIntoDatabase(movie);
+        getMoviesFromDB();
+
+    }
+    public void getPartiesFromDB(){
+
+    }
+    public void savePartyIntoDB(Party party){
+
+    }
+
+
+
+    //DATABASE FUNCITONS
+/*
     public void insertSearchedMovieIntoDatabase(){
         boolean result = DB.insertMovie(movie.getId(), movie.getTitle(), movie.getYear(), movie.getPlot(), movie.getRuntime(), movie.getGenre(), movie.getCountry(), movie.getImdbVotes(), movie.getImdbRating(), movie.getImgURL(), "0");
         if (result) {
@@ -182,7 +236,7 @@ public class Model {
             MovieMainInfo movie = new MovieMainInfo(res.getString(0),res.getString(1),res.getString(2),res.getString(9),res.getString(10));
             movies.add(movie);
         }
-    }
+    }*/
 /*
     public Movie getMovieFromDatabase(int id) { //id of the list
         /*Cursor res = DB.getMovie(movies.get(id).getId());
@@ -196,14 +250,14 @@ public class Model {
         selectedMovie = new Movie(res.getString(0),res.getString(1),res.getString(2),res.getString(3),res.getString(4),res.getString(5),res.getString(6),res.getString(7),res.getString(8),res.getString(9),res.getString(10));
 
         return chain1.getMovieInfo(movies.get(id).getId());
-    }*/
+    }
 
     public void insertPartyIntoDatabase(Party party){
         //AD INVITEs SHOULD IMPRMEEN XXXXXXXXXX
         boolean result = DB.insertParty(party.getId(),party.getDate(),party.getTime(),party.getVenue(),party.getLocation(),"X invites");
         if (result) {
             System.out.print("SENDED");
-            getMoviesMainInfoFromDatabase();
+            //getMoviesMainInfoFromDatabase();
         }
         else
             System.out.print("NOT SENDED");
@@ -219,6 +273,13 @@ public class Model {
             Party party = new Party(res.getString(0),res.getString(1),res.getString(2),res.getString(3),res.getString(4),new ArrayList<String>(){});
             parties.add(party);
         }
+    }*/
+
+    public void setMovies(ArrayList<MovieMainInfo> movies){
+        this.movies = movies;
+    }
+    public void setParties(ArrayList<Party> parties){
+        this.parties = parties;
     }
 
     /*

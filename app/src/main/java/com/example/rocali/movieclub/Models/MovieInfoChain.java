@@ -2,6 +2,8 @@ package com.example.rocali.movieclub.Models;
 
 import android.content.Context;
 
+import java.util.ArrayList;
+
 /**
  * Created by rocali on 9/23/15.
  */
@@ -11,6 +13,6 @@ public interface MovieInfoChain {
 
     Movie getMovieInfo(String id);
 
-    Movie searchMovie(String title);
+    ArrayList<MovieMainInfo> searchMovie(String title);
 
 }
