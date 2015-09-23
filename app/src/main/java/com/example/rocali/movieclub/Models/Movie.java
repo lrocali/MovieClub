@@ -23,12 +23,24 @@ public class Movie {
 
     //editable atributes
     private float rating;
+    public Movie() {
+        id = " ";
+        title =  " ";
+        year = " ";
+        plot = " ";
+        runtime =  " ";
+        genre = " ";
+        country = " ";
+        imdbVotes = " ";
+        imdbRating = " ";
+        imgURL = " ";
 
-    public Movie () {
-        //Firebase
+        //Editable
+        rating = Float.parseFloat("0");
     }
+
     //initialize movie with pre-defined and no editable atributes
-    public Movie (String _id,String _title, String _year, String _plot,String _runtime,String _genre,String _country,String _imdbVotes,String _imdbRating,String _imgURL,String _rating) {
+    public Movie(String _id, String _title, String _year, String _plot, String _runtime, String _genre, String _country, String _imdbVotes, String _imdbRating, String _imgURL, String _rating) {
         //Non editable
         id = _id;
         title = _title;
@@ -47,44 +59,6 @@ public class Movie {
     }
 
     //Non editables (just get, initialized just on creation)
-    public String getTitle(){
-        return title;
-    }
-    public String getYear(){
-        return year;
-    }
-    public String getPlot(){
-        return plot;
-    }
-    public String getRuntime(){
-        return runtime;
-    }
-    public String getGenre(){
-        return genre;
-    }
-    public String getCountry(){
-        return country;
-    }
-    public String getImdbVotes(){
-        return imdbVotes;
-    }
-    public String getImdbRating(){
-        return imdbRating;
-    }
-    public String getImgURL(){
-        return imgURL;
-    }
-
-    //Editables
-    public float getRating() {
-        return rating;
-    }
-
-
-    public void setRating(float rating) {
-        this.rating = rating;
-    }
-
     public String getId() {
         return id;
     }
@@ -93,38 +67,50 @@ public class Movie {
         this.id = id;
     }
 
-
-    /*
-    //initialize movie with pre-defined and no editable atributes
-    public Movie () {
-        imgSrc = getImgName("fightclub");
-        rating = 0;
-    }*/
-
-    /*
-    //generate id of 10 letters based on the number of letters on title and number of the year
-    private String generateId(String title,String year) {
-        String alphabet = "0123456789ABCDEFGHIJKLMNOPQRSTUVXWYZ";
-        int n = alphabet.length();
-        int baseTitle = title.length();
-        int baseYear = Integer.parseInt(year);
-        int base = baseTitle % n;
-        String id = "";
-        for (int i = 0; i < 10; i++) {
-            id = id + alphabet.charAt(base);
-            base = (base  * i +  baseYear)  % n;
-        }
-
-        return id;
+    public String getTitle() {
+        return title;
     }
-*/
-    /*
-    //"Generate" the name of the img file, which is the title in lowercase and no spaces
-    private String getImgName(String title) {
-        String imgsrc = title.toLowerCase();
-        imgsrc = imgsrc.replaceAll(" ", "");
-        imgsrc = "cityofgod";
-        return imgsrc;
-    }*/
+
+    public String getYear() {
+        return year;
+    }
+
+    public String getPlot() {
+        return plot;
+    }
+
+    public String getRuntime() {
+        return runtime;
+    }
+
+    public String getGenre() {
+        return genre;
+    }
+
+    public String getCountry() {
+        return country;
+    }
+
+    public String getImdbVotes() {
+        return imdbVotes;
+    }
+
+    public String getImdbRating() {
+        return imdbRating;
+    }
+
+    public String getImgURL() {
+        return imgURL;
+    }
+
+    //Editables
+    public float getRating() {
+        return rating;
+    }
+
+    public void setRating(float rating) {
+        this.rating = rating;
+    }
 
 }
+

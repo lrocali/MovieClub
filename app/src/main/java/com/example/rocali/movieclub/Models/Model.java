@@ -1,22 +1,15 @@
 package com.example.rocali.movieclub.Models;
 
 import android.content.Context;
-import android.content.res.Resources;
+import android.content.Intent;
 import android.database.Cursor;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.os.AsyncTask;
-import android.util.Log;
-import android.widget.Toast;
-
 
 import com.example.rocali.movieclub.Controllers.MovieList;
-import com.firebase.client.DataSnapshot;
+import com.example.rocali.movieclub.Controllers.MovieSelected;
 import com.firebase.client.Firebase;
-import com.firebase.client.FirebaseError;
-import com.firebase.client.ValueEventListener;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -32,15 +25,18 @@ public class Model {
     public ArrayList<MovieMainInfo> movies;
     public ArrayList<Party> parties;
 
-
-    public ArrayList<String> keys;
     //public Movie [] movies;
-    public Movie searchedMovie;
+    //public Movie searchedMovie;
     public Movie selectedMovie;
+    private Movie movie;
     public static Model instance = null;
-    public JSONObject movie = null;
 
     private Context context;
+
+    //CHAIN OF RESPONSABILITY
+    public MovieInfoChain memoryModelChain;
+    public MovieInfoChain databaseChain;
+    public MovieInfoChain OMDBChain;
 
     //Firebase
     public Firebase firebaseRef;
@@ -55,9 +51,9 @@ public class Model {
     }
 
     //PARTY
-    public boolean hasParty(int index) {
+    public boolean hasParty(String id) {
         for (Party party : parties){
-            if (new String(party.getId()).equals(movies.get(index).getId())) {
+            if (new String(party.getId()).equals(id)) {
                 return true;
             }
         }
@@ -65,19 +61,37 @@ public class Model {
 
     }
 
-    public Party checkForParty(int index) {
+    //CHAIN OF RESPOSABILITY
+    public void setChains(Context context){
+        memoryModelChain = new MemoryModel(context);
+        databaseChain = new Database(context);
+        OMDBChain = new OMDB(context);
+
+        memoryModelChain.setNextChain(databaseChain);
+        databaseChain.setNextChain(OMDBChain);
+    }
+
+    public void getMovie(String id){
+        movie = memoryModelChain.getMovieInfo(id);
+        //return movie;
+    }
+
+    public Party checkForParty(String imdbID) {
         for (Party party : parties){
-            if (new String(party.getId()).equals(movies.get(index).getId())) {
+            if (new String(party.getId()).equals(imdbID)) {
                 return party;
             }
         }
-        Party p = null;
-        return p;
-
+        return null;
     }
-
-
     //
+
+    public void startActivity(){
+        Intent intent = new Intent(context, MovieSelected.class);
+        intent.putExtra("imdbID", "0");
+        intent.putExtra("state", "searching");
+        context.startActivity(intent);
+    }
 
     public boolean isNetworkConnectionAvailable(Context activity) {
         ConnectivityManager cm = (ConnectivityManager) activity.getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -87,6 +101,7 @@ public class Model {
         return (network == NetworkInfo.State.CONNECTED || network == NetworkInfo.State.CONNECTING);
     }
 
+    //SEARCH
     public String getSearchableTitle(String enteredText) {
 
         String searchableTitle = new String();
@@ -108,113 +123,8 @@ public class Model {
         return searchableTitle;
     }
 
-
-
-
-
-    /*
-    public void searchMovie(String url) {
-        new searchMovieThread().execute(url);
-    }
-
-    // Async Task Class
-    class searchMovieThread extends AsyncTask<String, String, String> {
-
-        // Show Progress bar before downloading Music
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            // Shows Progress Bar Dialog and then call doInBackground method
-            //showDialog(progress_bar_type);
-            Log.v(TAG,"PRE EXECUTE");
-        }
-
-        // Download Music File from Internet
-        @Override
-        protected String doInBackground(String... f_url) {
-            int count;
-            try {
-                JsonClass json = new JsonClass();
-                movie = json.getJSONFromUrl(f_url[0]);
-            } catch (Exception e) {
-                Log.e("Error: ", e.getMessage());
-            }
-            return null;
-        }
-
-        // While Downloading Music File
-        protected void onProgressUpdate(String... progress) {
-            // Set progress percentage
-            //prgDialog.setProgress(Integer.parseInt(progress[0]));
-        }
-
-        // Once Music File is downloaded
-        @Override
-        protected void onPostExecute(String file_url) {
-            // Dismiss the dialog after the Music file was downloaded
-            //dismissDialog(progress_bar_type);
-            //Toast.makeText(getApplicationContext(), "Download complete, playing Music", Toast.LENGTH_LONG).show();
-            // Play the music
-           // playMusic();
-            Log.v(TAG,"POST EXECUTE");
-            String title = null;
-            try {
-                title = movie.getString("Title");
-                Log.v(TAG,title);
-            } catch (JSONException e) {
-                e.printStackTrace();
-                Log.v(TAG,"ERROR NO TITLE");
-            }
-
-        }
-    }
-*/
-
-    /*
-     lblTitle.setText(model.searchedMovie.getTitle());
-            lblYear.setText("Year: "+model.searchedMovie.getYear());
-            lblGenre.setText("Genre: "+model.searchedMovie.getGenre());
-            lblRuntime.setText("Runtime: "+model.searchedMovie.getRuntime());
-            lblCountry.setText("Country: "+model.searchedMovie.getCountry());
-            lblVotes.setText("IMDB Votes: "+model.searchedMovie.getImdbVotes());
-            lblRating.setText("IMDB Rating: "+model.searchedMovie.getImdbRating());
-            lblPlot.setText(model.searchedMovie.getPlot());
-
-            new DownloadImageTask(imgPoster)
-                    .execute(model.searchedMovie.getImgURL());
-     */
-    /*
-    public String getMovieTitle(int index){
-        return movies.get(index).getTitle();
-    }
-    public String getMovieYear(int index){
-        return movies.get(index).getYear();
-    }
-    public String getMoviePlot(int index){
-        return movies.get(index).getPlot();
-    }
-    public String getMovieRuntime(int index){
-        return movies.get(index).getRuntime();
-    }
-    public String getMovieGenre(int index){
-        return movies.get(index).getGenre();
-    }
-    public String getMovieCountry(int index){
-        return movies.get(index).getCountry();
-    }
-    public String getMovieVotes(int index){
-        return movies.get(index).getImdbVotes();
-    }
-    public String getMovieRating(int index){
-        return movies.get(index).getImdbRating();
-    }
-    public String getMovieImgURL(int index){
-        return movies.get(index).getImgURL();
-    }
-    */
     public Model (Context _context) {
-        //List of movie
-
+        //List of movie and parties
         movies = new ArrayList<MovieMainInfo>();
         parties = new ArrayList<Party>();
 
@@ -225,50 +135,15 @@ public class Model {
         Firebase.setAndroidContext(context);
         firebaseRef = new Firebase("https://torrid-heat-8747.firebaseio.com/");
 
-        keys = new ArrayList<String>(){};
-/*
-        Movie m = new Movie("a","a","a","a","a","a","a","a","a","a","a");
-        movies.add(m);
+        setChains(context);
+        movie = new Movie();
 
-
-        movies.get(0).addInvitees("Ihuu1");
-        movies.get(0).addInvitees("Ihuu2");
-        movies.get(0).addInvitees("Ihuu3");
-
-        System.out.print(movies.get(0).getInvitees());
-        */
-/*
-
-        //Simulating pre-schedulled parties
-        movies[2].invitees.add("john@hotmail.com");
-        movies[2].invitees.add("katie@hotmail.com");
-        movies[2].invitees.add("charlie@hotmail.com");
-        movies[2].invitees.add("jack@hotmail.com");
-        movies[2].invitees.add("lucke@hotmail.com");
-        movies[2].date = "11/10/15";
-        movies[2].time = "08:00PM";
-        movies[2].venue = "Restaurant";
-        movies[2].location = "13 Queen St, Melbourne";
-        movies[2].rating = 4;
-        movies[2].scheduled = true;
-
-        movies[4].invitees.add("jackson@hotmail.com");
-        movies[4].invitees.add("hurley@hotmail.com");
-        movies[4].invitees.add("claire@hotmail.com");
-        movies[4].date = "10/15/15";
-        movies[4].time = "10:00PM";
-        movies[4].venue = "Cinema";
-        movies[4].location = "321 King St, Melbourne";
-        movies[4].rating = 2.5f;
-        movies[4].scheduled = true;
-
-*/
     }
 
     //DATABASE FUNCITONS
 
     public void insertSearchedMovieIntoDatabase(){
-        boolean result = DB.insertMovie(searchedMovie.getId(), searchedMovie.getTitle(), searchedMovie.getYear(), searchedMovie.getPlot(), searchedMovie.getRuntime(), searchedMovie.getGenre(), searchedMovie.getCountry(), searchedMovie.getImdbVotes(), searchedMovie.getImdbRating(), searchedMovie.getImgURL(), "0");
+        boolean result = DB.insertMovie(movie.getId(), movie.getTitle(), movie.getYear(), movie.getPlot(), movie.getRuntime(), movie.getGenre(), movie.getCountry(), movie.getImdbVotes(), movie.getImdbRating(), movie.getImgURL(), "0");
         if (result) {
             System.out.print("SENDED");
             getMoviesMainInfoFromDatabase();
@@ -278,7 +153,16 @@ public class Model {
     }
 
     public void updateMovie(int index){
-        boolean result = DB.updatetMovie(movies.get(index).getId(), getRatingSring(index));
+        boolean result = DB.updatetMovie(movies.get(index).getId(), Float.toString(movies.get(index).getRating()));
+        if (result) {
+            System.out.print("UPDATED");
+            getMoviesMainInfoFromDatabase();
+        }
+        else
+            System.out.print("NOT UPDATED");
+    }
+    public void updateMovie(){
+        boolean result = DB.updatetMovie(movie.getId(), Float.toString(movie.getRating()));
         if (result) {
             System.out.print("UPDATED");
             getMoviesMainInfoFromDatabase();
@@ -288,12 +172,6 @@ public class Model {
     }
 
 
-    public String getRatingSring(int index) {
-        return Float.toString(movies.get(index).getRating());
-    }/*
-    public String getRatingSring(int index) {
-        return Float.toString(movies.get(index).getRating());
-    }*/
 
     public void getMoviesMainInfoFromDatabase() {
         Cursor res = DB.getAllMovies();
@@ -305,20 +183,20 @@ public class Model {
             movies.add(movie);
         }
     }
-
-    public void getMovieFromDatabase(int id) { //id of the list
-
-        Cursor res = DB.getMovie(movies.get(id).getId());
+/*
+    public Movie getMovieFromDatabase(int id) { //id of the list
+        /*Cursor res = DB.getMovie(movies.get(id).getId());
         if (res.getCount() == 0)
-            return;
+            return null;
 
         if (res.moveToFirst()){
             String c = res.getString(0);
             String cc = res.getString(1);
         }
         selectedMovie = new Movie(res.getString(0),res.getString(1),res.getString(2),res.getString(3),res.getString(4),res.getString(5),res.getString(6),res.getString(7),res.getString(8),res.getString(9),res.getString(10));
-       // System.out.print(selectedMovie);
-    }
+
+        return chain1.getMovieInfo(movies.get(id).getId());
+    }*/
 
     public void insertPartyIntoDatabase(Party party){
         //AD INVITEs SHOULD IMPRMEEN XXXXXXXXXX
@@ -342,56 +220,23 @@ public class Model {
             parties.add(party);
         }
     }
-    //
-    public void addKey(String key){
-        keys.add(key);
-    }
 
+    /*
     public void setSearchedMovie(String _id,String _title, String _year, String _plot,String _runtime,String _genre,String _country,String _imdbVotes,String _imdbRating,String _imgURL){
         searchedMovie = new Movie(_id,_title,_year,_plot,_runtime,_genre,_country,_imdbVotes,_imdbRating,_imgURL,"0");
 
-    }
+    }*/
 
-    public void updateRatingMovie(int index){
-        //SET FOR DB
-    }
-/*
-    public void updateMovieParty(int index) {
-        Firebase movieParty = firebaseRef.child("searchedMovies").child(keys.get(index)).child("party");
 
-        movieParty.child("date").setValue(selectedMovie.getParty().getDate());
-        movieParty.child("time").setValue(movies.get(index).getParty().getTime());
-        movieParty.child("venue").setValue(movies.get(index).getParty().getVenue());
-        movieParty.child("location").setValue(movies.get(index).getParty().getLocation());
-        movieParty.child("invitees").setValue(movies.get(index).getParty().getInvitees());
-
-        Firebase movieScheduled = firebaseRef.child("searchedMovies").child(keys.get(index));
-        movieScheduled.child("scheduled").setValue(movies.get(index).isScheduled());
-    }
-
-*/
-    public void addSearchedMovie() {
-        Firebase searchedRef = firebaseRef.child("searchedMovies");
-        searchedRef.push().setValue(searchedMovie);
-    }
     public void addPartyToCloud(Party party) {
         Firebase searchedRef = firebaseRef.child("Parties");
         searchedRef.push().setValue(party);
     }
 
-
-    /*
-    //Get array of int of image resources
-    public int [] getImgResources(Context context) {
-        int numOfMovies = movies.length;
-        int [] imgs = new int[numOfMovies];
-        int i;
-        for(i = 0; i<numOfMovies; i++) {
-            Resources res = context.getResources();
-            String mDrawableName = movies[i].imgSrc;
-            imgs[i]  = res.getIdentifier(mDrawableName , "drawable", context.getPackageName());
-        }
-        return  imgs;
+    public Movie getMovie(){
+        return movie;
     }
-    */
+    public void setMovie(Movie movie){
+        this.movie = movie;
+    }
 }

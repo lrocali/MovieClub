@@ -39,114 +39,31 @@ import java.util.ArrayList;
 
 public class MovieList extends ListActivity {
 
+    //Model
     public Model model;
+
+    //Just for debug
     private static final String TAG = "MyActivity";
+
+    //Variables to fetch JSON from OMDB
     public JSONObject msJsonObj = null;
     public JSONArray msJsonArray = null;
-    ArrayList<String>  msArrayList =new ArrayList<String>();
-
-
-
-    //Fetch frmo OMDB
+    ArrayList<String>  msArrayList = new ArrayList<String>();
     boolean fetchFromId = false;
-
-    // Progress Dialog Object
-    private ProgressDialog prgDialog;
-    // Progress Dialog type (0 - for Horizontal progress bar)
-    public static final int progress_bar_type = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_movie_list);
 
-
-
         model  = Model.getInstance(this);
 
-        //Firebase part
-        /*
-        if (model.movies.size() == 0)
-           fetchSearchedMovies();
-        */
         model.getMoviesMainInfoFromDatabase();
 
         fetchParties();
-        //populateListView(false);
-
-        if (model.isNetworkConnectionAvailable(this)) {
-            //Toast.makeText(this, "CONECTED", Toast.LENGTH_LONG).show();
-            //Log.v(TAG, "CONECTED");
-            //model.searchMovie("http://www.omdbapi.com/?t=Fight+Club&y=&plot=short&r=json");
-            //Toast.makeText(getApplicationContext(), "File already exist under SD card, playing Music", Toast.LENGTH_LONG).show();
-        } else {
-            Toast.makeText(this, "NOT CONECTED", Toast.LENGTH_LONG).show();
-        }
-
-    }
-    public void fetchParties(){
-        Firebase searchedRef = model.firebaseRef.child("Parties");
-        searchedRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot snapshot) {
-                for (DataSnapshot postSnapshot : snapshot.getChildren()) {
-                    Party party = postSnapshot.getValue(Party.class);
-                    model.parties.add(party);
-                    model.insertPartyIntoDatabase(party);
-                }
-                populateListView(false);
-            }
-
-            @Override
-            public void onCancelled(FirebaseError firebaseError) {
-                System.out.println("The read failed: " + firebaseError.getMessage());
-            }
-        });
     }
 
-    /*
-    //Firebase part
-    public void fetchSearchedMovies(){
 
-        Firebase searchedRef = model.firebaseRef.child("searchedMovies");
-        searchedRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot snapshot) {
-                System.out.println("There are " + snapshot.getChildrenCount() + " blog posts");
-                model.movies.clear();
-                model.keys.clear();
-                if (snapshot.getChildrenCount() != model.movies.size()) {
-                    for (DataSnapshot postSnapshot : snapshot.getChildren()) {
-                        // Toast.makeText(getApplicationContext(),"BY ID :" +  "Fetching", Toast.LENGTH_SHORT).show();
-                        model.addKey(postSnapshot.getKey());
-                        Movie movie = postSnapshot.getValue(Movie.class);
-
-                        model.movies.add(movie);
-                    }
-                    populateListView(false);
-
-
-                } else {
-                    //Toast.makeText(getApplicationContext(),"BY ID :" +  "NOT Fetching", Toast.LENGTH_SHORT).show();
-                }
-            }
-
-            @Override
-            public void onCancelled(FirebaseError firebaseError) {
-                System.out.println("The read failed: " + firebaseError.getMessage());
-            }
-        });
-    }*/
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        //populateListView(false);
-    }
-
-    public void refreshListView(boolean searching){
-        populateListView(searching);
-    }
     public void populateListView(boolean searching) {
         //get list view id
         ListView lv = getListView();
@@ -170,8 +87,15 @@ public class MovieList extends ListActivity {
                         String imdbID = movieSelected.getString("imdbID");
 
                         fetchFromId = true;
-                        String url = "http://www.omdbapi.com/?i="+imdbID+"&plot=short&r=json";
-                        new searchMovieThread().execute(url);
+                        model.getMovie(imdbID);
+                        //String url = "http://www.omdbapi.com/?i="+imdbID+"&plot=short&r=json";
+                        //new searchMovieThread().execute(url);
+                        //populateListView(false);
+
+                        //Call Movie selected activity to show movie details
+                        //Intent i = new Intent(getApplicationContext(), MovieSelected.class);
+                        //i.putExtra("imdbID", imdbID);
+                        //startActivity(i);
                     } catch (JSONException e) {
                         e.printStackTrace();
                         Log.v(TAG,"Get imdbId Error");
@@ -185,10 +109,10 @@ public class MovieList extends ListActivity {
             lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 public void onItemClick(AdapterView<?> parent, View view,
                                         int position, long id) {
-                    Intent i = new Intent(getApplicationContext(), MovieSelected.class);
+                    //Intent i = new Intent(getApplicationContext(), MovieSelected.class);
                     // sending movie id to new activity
-                    i.putExtra("movieId", position + "");
-                    startActivity(i);
+                    //i.putExtra("imdbID", model.movies.get(position).getId());
+                    //startActivity(i);
 
                 }
             });
@@ -196,7 +120,7 @@ public class MovieList extends ListActivity {
 
     }
 
-    // Async Task Class
+    // OMDB PART
     class searchMovieThread extends AsyncTask<String, String, String> {
         @Override
         protected String doInBackground(String... f_url) {   //search via title or by id
@@ -212,14 +136,11 @@ public class MovieList extends ListActivity {
 
         @Override
         protected void onPostExecute(String file_url) {
-            //Toast.makeText(getApplicationContext(),"POST EXECUTE", Toast.LENGTH_SHORT).show();
             try {
-
+                //If is requesting the movie details
                 if (fetchFromId) {
-                    //Toast.makeText(getApplicationContext(),"BY ID :" +  msJsonObj.getString("imdbID"), Toast.LENGTH_SHORT).show();
-
-
-                    model.setSearchedMovie(
+                    //Set requested info into the model
+                    /*model.setSearchedMovie(
                             msJsonObj.getString("imdbID"),
                             msJsonObj.getString("Title"),
                             msJsonObj.getString("Year"),
@@ -230,22 +151,21 @@ public class MovieList extends ListActivity {
                             msJsonObj.getString("imdbVotes"),
                             msJsonObj.getString("imdbRating"),
                             msJsonObj.getString("Poster")
-                    );
+                    );*/
+                    //Refresh the list view
+                    //populateListView(false);
 
-                    populateListView(false);
-                    Intent i = new Intent(getApplicationContext(), MovieSelected.class);
-                    // sending movie id to new activity
-                    i.putExtra("movieId", "-1");
-                    startActivity(i);
-                    //addSearchedMovie();
-
-                } else {
+                    //Call Movie selected activity to show movie details
+                    //Intent i = new Intent(getApplicationContext(), MovieSelected.class);
+                    //i.putExtra("movieId", "-1");
+                    //startActivity(i);
+                }
+                //If is searching all the movies with an specific name
+                else {
                     msArrayList.clear();
                     msJsonArray = msJsonObj.getJSONArray("Search");
-                    Log.v(TAG, "LENGHT" + msJsonArray.length());
                     for (int i = 0; i < msJsonArray.length(); i++) {
                         JSONObject json_data = msJsonArray.getJSONObject(i);
-
                         msArrayList.add(json_data.getString("Title"));
                     }
                     populateListView(true);
@@ -259,21 +179,16 @@ public class MovieList extends ListActivity {
 
     }
 
-
-
-
     public void handleSearch(String searchText,boolean submit) {
         if (searchText.length() != 0 && ( Character.isWhitespace(searchText.charAt(searchText.length() - 1)) || submit )) {
 
             if (model.isNetworkConnectionAvailable(this)) {
-                //Toast.makeText(getApplicationContext(), model.getSearchableTitle(searchText), Toast.LENGTH_SHORT).show();
-
                 fetchFromId = false;
                 String url = "http://www.omdbapi.com/?s=" + model.getSearchableTitle(searchText) + "&y=&plot=short&r=json";
                 new searchMovieThread().execute(url);
                 populateListView(true);
             } else {
-             //   Toast.makeText(getApplicationContext(),"NO INTERNET CONECTION", Toast.LENGTH_SHORT).show();
+
             }
         } else {
             msArrayList = new ArrayList<String>();
@@ -313,7 +228,6 @@ public class MovieList extends ListActivity {
             @Override
             public boolean onClose() {
                 populateListView(false);
-                //Toast.makeText(getApplicationContext(), "Cancel", Toast.LENGTH_SHORT).show();
                 return false;
             }
         });
@@ -321,6 +235,28 @@ public class MovieList extends ListActivity {
         searchView.setOnQueryTextListener(textChangeListener);
 
         return super.onCreateOptionsMenu(menu);
+    }
+
+
+    //FIREBASE PART
+    public void fetchParties(){
+        Firebase searchedRef = model.firebaseRef.child("Parties");
+        searchedRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot snapshot) {
+                for (DataSnapshot postSnapshot : snapshot.getChildren()) {
+                    Party party = postSnapshot.getValue(Party.class);
+                    model.parties.add(party);
+                    model.insertPartyIntoDatabase(party);
+                }
+                populateListView(false);
+            }
+
+            @Override
+            public void onCancelled(FirebaseError firebaseError) {
+                System.out.println("The read failed: " + firebaseError.getMessage());
+            }
+        });
     }
 
 

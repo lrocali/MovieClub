@@ -19,8 +19,6 @@ public class CustomAdapter extends BaseAdapter{
     //model
     public Model model ;
 
-    //array of img resources
-    //int [] movieImgSrcs;
     Context context;    //To be sent to get the img resource
 
 
@@ -99,7 +97,7 @@ public class CustomAdapter extends BaseAdapter{
         }
 
         //Check Party
-        Party party = model.checkForParty(position);
+        Party party = model.checkForParty(model.movies.get(position).getId());
 
         //If the function return a party
         if (party != null) {
@@ -137,7 +135,8 @@ public class CustomAdapter extends BaseAdapter{
             public void onClick(View v) {
                 // TODO Auto-generated method stub
                 Intent i = new Intent(context.getApplicationContext(), MovieSelected.class);
-                i.putExtra("movieId", position + "");
+                i.putExtra("imdbID", model.movies.get(position).getId());
+                i.putExtra("state","not searching");
                 context.startActivity(i);
             }
         });
