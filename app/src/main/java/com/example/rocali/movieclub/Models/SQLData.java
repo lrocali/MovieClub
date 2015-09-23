@@ -56,7 +56,7 @@ public class SQLData extends SQLiteOpenHelper{
 
     public boolean insertMovie(String _id,String _title, String _year, String _plot,String _runtime,String _genre,String _country,String _imdbVotes,String _imdbRating,String _imgURL,String _rating) {
         SQLiteDatabase db = this.getWritableDatabase();
-        onUpgrade(db,0,0);
+        //onUpgrade(db,0,0);
 
         ContentValues contentValues = new ContentValues();
         contentValues.put(COL_ID,_id);
@@ -78,33 +78,37 @@ public class SQLData extends SQLiteOpenHelper{
         }
     }
 
+    public Cursor getMovie(String _id){
+        SQLiteDatabase db = this.getWritableDatabase();
+        //Cursor res = db.query(COL_ID,
+               // allColumns, MySQLiteHelper.COLUMN_ID + " = " + insertId, null,
+                //null, null, null);
+        String query = "SELECT * FROM " + MOVIE_TABLE_NAME + " WHERE " + COL_ID + " = '" + _id+"'";
+        Cursor res = db.rawQuery(query,null);
+        return res;
+
+
+    }
+
     public Cursor getAllMovies(){
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor res = db.rawQuery("select * from "+MOVIE_TABLE_NAME,null);
         return res;
     }
 
-    public boolean updatetMovie(String _id,String _title, String _year, String _plot,String _runtime,String _genre,String _country,String _imdbVotes,String _imdbRating,String _imgURL,String _rating) {
+
+    public boolean updatetMovie(String _id,String _rating) {
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues contentValues = new ContentValues();
         contentValues.put(COL_ID,_id);
-        contentValues.put(COL_TITLE,_title);
-        contentValues.put(COL_YEAR,_year);
-        contentValues.put(COL_PLOT,_plot);
-        contentValues.put(COL_RUNTIME,_runtime);
-        contentValues.put(COL_GENRE,_genre);
-        contentValues.put(COL_COUNTRY,_country);
-        contentValues.put(COL_VOTES,_imdbVotes);
-        contentValues.put(COL_IMDBRATING,_imdbRating);
-        contentValues.put(COL_IMGURL,_imgURL);
+
         contentValues.put(COL_RATING, _rating);
-        long result = db.update(MOVIE_TABLE_NAME,contentValues,"ID = ?",new String [] {_id});
-        if (result == -1){
-            return false;
-        } else {
+        String query = "UPDATE " + MOVIE_TABLE_NAME + " SET " + COL_RATING + "='"+_rating+"' WHERE " + COL_ID + " = '" + _id+"';";
+        db.execSQL(query);
+
             return true;
-        }
+
     }
 
     public boolean insertParty(String _id,String _date, String _time, String _venue,String _location,String _invitees) {
@@ -128,6 +132,11 @@ public class SQLData extends SQLiteOpenHelper{
     }
 
     //GET ALL PARTY FRMO DB
+    public Cursor getAllParties(){
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor res = db.rawQuery("select * from " + PARTY_TABLE_NAME, null);
+        return res;
+    }
 
     //UPDATE PARTY
 

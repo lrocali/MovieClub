@@ -69,7 +69,8 @@ public class MovieList extends ListActivity {
         if (model.movies.size() == 0)
            fetchSearchedMovies();
         */
-        model.getMoviesFromDatabase();
+        model.getMoviesMainInfoFromDatabase();
+
         fetchParties();
         //populateListView(false);
 

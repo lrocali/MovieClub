@@ -29,12 +29,14 @@ public class Model {
     private static final String TAG = "TAG";
 
     //Singleton Model
-    public ArrayList<Movie> movies;
+    public ArrayList<MovieMainInfo> movies;
     public ArrayList<Party> parties;
+
 
     public ArrayList<String> keys;
     //public Movie [] movies;
     public Movie searchedMovie;
+    public Movie selectedMovie;
     public static Model instance = null;
     public JSONObject movie = null;
 
@@ -213,7 +215,7 @@ public class Model {
     public Model (Context _context) {
         //List of movie
 
-        movies = new ArrayList<Movie>();
+        movies = new ArrayList<MovieMainInfo>();
         parties = new ArrayList<Party>();
 
         context = _context;
@@ -266,42 +268,56 @@ public class Model {
     //DATABASE FUNCITONS
 
     public void insertSearchedMovieIntoDatabase(){
-        boolean result = DB.insertMovie(searchedMovie.getId(), searchedMovie.getTitle(), searchedMovie.getYear(), searchedMovie.getPlot(), searchedMovie.getRuntime(), searchedMovie.getGenre(), searchedMovie.getCountry(), searchedMovie.getImdbVotes(), searchedMovie.getImdbRating(), searchedMovie.getImgURL(), getRatingSring());
+        boolean result = DB.insertMovie(searchedMovie.getId(), searchedMovie.getTitle(), searchedMovie.getYear(), searchedMovie.getPlot(), searchedMovie.getRuntime(), searchedMovie.getGenre(), searchedMovie.getCountry(), searchedMovie.getImdbVotes(), searchedMovie.getImdbRating(), searchedMovie.getImgURL(), "0");
         if (result) {
             System.out.print("SENDED");
-            getMoviesFromDatabase();
+            getMoviesMainInfoFromDatabase();
         }
         else
             System.out.print("NOT SENDED");
     }
 
     public void updateMovie(int index){
-        boolean result = DB.updatetMovie(movies.get(index).getId(), movies.get(index).getTitle(), movies.get(index).getYear(), movies.get(index).getPlot(), movies.get(index).getRuntime(), movies.get(index).getGenre(), movies.get(index).getCountry(), movies.get(index).getImdbVotes(), movies.get(index).getImdbRating(), movies.get(index).getImgURL(), getRatingSring(index));
+        boolean result = DB.updatetMovie(movies.get(index).getId(), getRatingSring(index));
         if (result) {
             System.out.print("UPDATED");
-            getMoviesFromDatabase();
+            getMoviesMainInfoFromDatabase();
         }
         else
             System.out.print("NOT UPDATED");
     }
 
 
-    public String getRatingSring() {
-        return Float.toString(searchedMovie.getRating());
-    }
     public String getRatingSring(int index) {
         return Float.toString(movies.get(index).getRating());
-    }
+    }/*
+    public String getRatingSring(int index) {
+        return Float.toString(movies.get(index).getRating());
+    }*/
 
-    public void getMoviesFromDatabase() {
+    public void getMoviesMainInfoFromDatabase() {
         Cursor res = DB.getAllMovies();
         if (res.getCount() == 0)
             return;
         movies.clear();
         while (res.moveToNext()) {
-            Movie movie = new Movie(res.getString(0),res.getString(1),res.getString(2),res.getString(3),res.getString(4),res.getString(5),res.getString(6),res.getString(7),res.getString(8),res.getString(9),res.getString(10));
+            MovieMainInfo movie = new MovieMainInfo(res.getString(0),res.getString(1),res.getString(2),res.getString(9),res.getString(10));
             movies.add(movie);
         }
+    }
+
+    public void getMovieFromDatabase(int id) { //id of the list
+
+        Cursor res = DB.getMovie(movies.get(id).getId());
+        if (res.getCount() == 0)
+            return;
+
+        if (res.moveToFirst()){
+            String c = res.getString(0);
+            String cc = res.getString(1);
+        }
+        selectedMovie = new Movie(res.getString(0),res.getString(1),res.getString(2),res.getString(3),res.getString(4),res.getString(5),res.getString(6),res.getString(7),res.getString(8),res.getString(9),res.getString(10));
+       // System.out.print(selectedMovie);
     }
 
     public void insertPartyIntoDatabase(Party party){
@@ -309,12 +325,23 @@ public class Model {
         boolean result = DB.insertParty(party.getId(),party.getDate(),party.getTime(),party.getVenue(),party.getLocation(),"X invites");
         if (result) {
             System.out.print("SENDED");
-            getMoviesFromDatabase();
+            getMoviesMainInfoFromDatabase();
         }
         else
             System.out.print("NOT SENDED");
     }
 
+    public void getPartiesFromDatabase() {
+        Cursor res = DB.getAllParties();
+        if (res.getCount() == 0)
+            return;
+        movies.clear();
+        parties.clear();
+        while (res.moveToNext()) {
+            Party party = new Party(res.getString(0),res.getString(1),res.getString(2),res.getString(3),res.getString(4),new ArrayList<String>(){});
+            parties.add(party);
+        }
+    }
     //
     public void addKey(String key){
         keys.add(key);
@@ -332,7 +359,7 @@ public class Model {
     public void updateMovieParty(int index) {
         Firebase movieParty = firebaseRef.child("searchedMovies").child(keys.get(index)).child("party");
 
-        movieParty.child("date").setValue(movies.get(index).getParty().getDate());
+        movieParty.child("date").setValue(selectedMovie.getParty().getDate());
         movieParty.child("time").setValue(movies.get(index).getParty().getTime());
         movieParty.child("venue").setValue(movies.get(index).getParty().getVenue());
         movieParty.child("location").setValue(movies.get(index).getParty().getLocation());

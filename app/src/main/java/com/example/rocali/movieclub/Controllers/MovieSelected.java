@@ -110,6 +110,7 @@ public class MovieSelected extends Activity {
 
         inviteesList = new ArrayList<String>(){};
 
+
         //initial
         super.onCreate(savedInstanceState);
         this.setContentView(R.layout.selected_movie);
@@ -118,6 +119,10 @@ public class MovieSelected extends Activity {
         Intent i = getIntent();
         String movieIdStr = i.getStringExtra("movieId");
         movieId = Integer.parseInt(movieIdStr);
+
+        //Get Movie from DB
+        model.getMovieFromDatabase(movieId);
+       // String t = model.selectedMovie.getTitle();
 
         //find noneditables
         lblTitle = (TextView) findViewById(R.id.lblTitle);
@@ -156,27 +161,27 @@ public class MovieSelected extends Activity {
             enableEditables(false);
 
             //set noneditable information
-            lblTitle.setText(model.movies.get(movieId).getTitle());
-            lblYear.setText("Year: "+model.movies.get(movieId).getYear());
-            lblGenre.setText("Genre: "+model.movies.get(movieId).getGenre());
-            lblRuntime.setText("Runtime: "+model.movies.get(movieId).getRuntime());
-            lblCountry.setText("Country: " + model.movies.get(movieId).getCountry());
-            lblVotes.setText("IMDB Votes: "+model.movies.get(movieId).getImdbVotes());
-            lblRating.setText("IMDB Rating: "+model.movies.get(movieId).getImdbRating());
-            lblPlot.setText(model.movies.get(movieId).getPlot());
+            lblTitle.setText(model.selectedMovie.getTitle());
+            lblYear.setText("Year: "+model.selectedMovie.getYear());
+            lblGenre.setText("Genre: "+model.selectedMovie.getGenre());
+            lblRuntime.setText("Runtime: "+model.selectedMovie.getRuntime());
+            lblCountry.setText("Country: " + model.selectedMovie.getCountry());
+            lblVotes.setText("IMDB Votes: "+model.selectedMovie.getImdbVotes());
+            lblRating.setText("IMDB Rating: "+model.selectedMovie.getImdbRating());
+            lblPlot.setText(model.selectedMovie.getPlot());
 
-            rtbRating.setRating(model.movies.get(movieId).getRating());
+            rtbRating.setRating(model.selectedMovie.getRating());
 
             // -------------
-            new DownloadImageTask(imgPoster).execute(model.movies.get(movieId).getImgURL());
+            new DownloadImageTask(imgPoster).execute(model.selectedMovie.getImgURL());
 
             //set editable/party information if it has created
            /*
-            if (model.movies.get(movieId).isScheduled()) {
-                edtDate.setText(model.movies.get(movieId).getParty().getDate());
-                edtTime.setText(model.movies.get(movieId).getParty().getTime());
-                edtVenue.setText(model.movies.get(movieId).getParty().getVenue());
-                edtLocation.setText(model.movies.get(movieId).getParty().getLocation());
+            if (model.selectedMovie.isScheduled()) {
+                edtDate.setText(model.selectedMovie.getParty().getDate());
+                edtTime.setText(model.selectedMovie.getParty().getTime());
+                edtVenue.setText(model.selectedMovie.getParty().getVenue());
+                edtLocation.setText(model.selectedMovie.getParty().getLocation());
             }*/
 
             //Set image
@@ -191,7 +196,7 @@ public class MovieSelected extends Activity {
 
 /*
             //if the movie has no scheduled party
-            if (!model.movies.get(movieId).isScheduled()) {
+            if (!model.selectedMovie.isScheduled()) {
                 Toast.makeText(getApplicationContext(), "Create an event", Toast.LENGTH_SHORT).show();
             }
 */
@@ -202,7 +207,7 @@ public class MovieSelected extends Activity {
                     Toast.makeText(getApplicationContext(), edtInvited.getText().toString(), Toast.LENGTH_SHORT).show();
 
 
-                    //model.movies.get(movieId).getParty().addInvitees(edtInvited.getText().toString());
+                    //model.selectedMovie.getParty().addInvitees(edtInvited.getText().toString());
 
                     inviteesList.add(edtInvited.getText().toString());
 
@@ -224,14 +229,14 @@ public class MovieSelected extends Activity {
             btnParty.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
 
-                    Party newparty = new Party(model.movies.get(movieId).getId(),edtDate.getText().toString(),edtTime.getText().toString(),edtVenue.getText().toString(),edtLocation.getText().toString(),inviteesList);
+                    Party newparty = new Party(model.selectedMovie.getId(),edtDate.getText().toString(),edtTime.getText().toString(),edtVenue.getText().toString(),edtLocation.getText().toString(),inviteesList);
                     model.addPartyToCloud(newparty);
                     //set information on FIREBASE
                     /*
-                    model.movies.get(movieId).getParty().setDate(edtDate.getText().toString());
-                    model.movies.get(movieId).getParty().setTime(edtTime.getText().toString());
-                    model.movies.get(movieId).getParty().setVenue(edtVenue.getText().toString());
-                    model.movies.get(movieId).getParty().setLocation(edtLocation.getText().toString());
+                    model.selectedMovie.getParty().setDate(edtDate.getText().toString());
+                    model.selectedMovie.getParty().setTime(edtTime.getText().toString());
+                    model.selectedMovie.getParty().setVenue(edtVenue.getText().toString());
+                    model.selectedMovie.getParty().setLocation(edtLocation.getText().toString());
 */
                     //model.updateMovieParty(movieId);
                     //disable editables
@@ -246,7 +251,7 @@ public class MovieSelected extends Activity {
             //set action to rating bar
             rtbRating.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
                 public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
-                    model.movies.get(movieId).setRating(rating);
+                    model.selectedMovie.setRating(rating);
                     //model.updateRatingMovie(movieId)
                     // ;
                     model.updateMovie(movieId);
@@ -328,7 +333,7 @@ public class MovieSelected extends Activity {
 
     //Function to get/refresh the list of invitess when a new invited is added
     public void getListElements() {
-        //inviteesList = null; // model.movies.get(movieId).getParty().getInvitees();
+        //inviteesList = null; // model.selectedMovie.getParty().getInvitees();
         if (inviteesList != null) {
             listViewInvitees = (ListView) findViewById(R.id.listInvitees);
             adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, inviteesList);

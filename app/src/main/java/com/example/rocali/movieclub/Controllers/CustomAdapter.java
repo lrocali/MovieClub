@@ -90,7 +90,8 @@ public class CustomAdapter extends BaseAdapter{
         new DownloadImageTask(rowInfo.poster).execute(model.movies.get(position).getImgURL());
         rowInfo.title.setText(model.movies.get(position).getTitle());
         rowInfo.year.setText(model.movies.get(position).getYear());
-        rowInfo.shortPlot.setText(model.movies.get(position).getPlot());
+        //rowInfo.shortPlot.setText(model.movies.get(position).getPlot());
+        rowInfo.shortPlot.setText(" ");
 
         //Set ratting in case of the user had ratted the movie before
         if (model.movies.get(position).getRating() != 0) {
@@ -111,7 +112,7 @@ public class CustomAdapter extends BaseAdapter{
         //If there is no party
         else {
             //In case of there is no schedulled party for the movie
-            rowInfo.dateAndTime.setText("Movie not scheduled yet, be the first!");
+            rowInfo.dateAndTime.setText("This movie has no party.");
             rowInfo.location.setText(" ");
             rowInfo.nInvitees.setText(" ");
 
