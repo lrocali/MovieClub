@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.support.v4.content.LocalBroadcastManager;
+import android.util.Log;
 
 import com.example.rocali.movieclub.Controllers.MovieList;
 import com.example.rocali.movieclub.Controllers.MovieSelected;
@@ -20,7 +21,7 @@ import java.util.ArrayList;
  */
 public class Model {
 
-    private static final String TAG = "TAG";
+    public static final String TAG = "TAG";
 
     //Singleton Model
     public ArrayList<MovieMainInfo> movies;
@@ -84,18 +85,11 @@ public class Model {
         searchedMovies = memoryModelChain.searchMovie(title);
     }
     public void setSearchedMovies(ArrayList<MovieMainInfo> searchedMovies){
+        Log.v(TAG,"SET SEARCHMOVIES ANDR SENT INTENTION TO REFRESH LIST VIEW");
         this.searchedMovies = searchedMovies;
-        Intent intent = new Intent("my-event");
-        // add data
-        intent.putExtra("message", "data");
+        Intent intent = new Intent("refreshListView");
+        intent.putExtra("searching", "true");
         LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
-        //Intent intent = new Intent(this, MyBroadcastReceiver.class);
-        /*context.sendBroadcast();
-        Intent intent = new Intent(context);
-        intent.putExtra("imdbID", "0");
-        intent.putExtra("state", "searching");
-        context.startActivity(intent);*/
-
     }
 
     public Party checkForParty(String imdbID) {
@@ -160,6 +154,8 @@ public class Model {
 
         setChains(context);
         movie = new Movie();
+
+        Log.v(TAG,"CREATING MODEL");
 
         database = new Database(context);
 
@@ -277,6 +273,7 @@ public class Model {
 
     public void setMovies(ArrayList<MovieMainInfo> movies){
         this.movies = movies;
+
     }
     public void setParties(ArrayList<Party> parties){
         this.parties = parties;
@@ -298,6 +295,10 @@ public class Model {
         return movie;
     }
     public void setMovie(Movie movie){
+        Log.v(TAG,"SET MOVIE AND SENT INTENTION START MOVIESELECTED ACTIVITY");
         this.movie = movie;
+        Intent intent = new Intent("refreshMovieSelected");
+        intent.putExtra("source", "omdb");
+        LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
     }
 }

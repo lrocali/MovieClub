@@ -1,6 +1,7 @@
 package com.example.rocali.movieclub.Models;
 
 import android.content.Context;
+import android.util.Log;
 
 import java.util.ArrayList;
 
@@ -26,6 +27,7 @@ public class MemoryModel implements MovieInfoChain{
         Model model = Model.getInstance(context);
         String idModel = model.getMovie().getId();
         if (idModel.equals(id)) {
+            Log.v(model.TAG, "GET MOVIE FROM MEMORY MODEL");
             return model.getMovie();
         } else {
             return nextChain.getMovieInfo(id);
@@ -39,6 +41,7 @@ public class MemoryModel implements MovieInfoChain{
         if (titleModel.equals(title)){
             ArrayList<MovieMainInfo> movies = new ArrayList<MovieMainInfo>(){};
             movies.add(model.getMovie());
+            Log.v(model.TAG, "GET MOVIE LIST FROM MEMORY MODEL");
             return movies;
         } else {
             return nextChain.searchMovie(title);

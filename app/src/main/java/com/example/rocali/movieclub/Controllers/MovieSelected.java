@@ -3,8 +3,13 @@ package com.example.rocali.movieclub.Controllers;
 import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
+import android.support.v4.content.LocalBroadcastManager;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -82,12 +87,24 @@ public class MovieSelected extends Activity {
     private boolean editState = false;
 
     //Movie model.movie;
-
+    private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            // Extract data included in the Intent
+            String source = intent.getStringExtra("source");
+            // Log.d("receiver", "Got message: " + message);
+            Log.v(model.TAG, "MOVIE GETTED FROM " + source + "NO IS JUST REFRESH INFO");
+            setMovieInfo();
+        }
+    };
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
 
         model = Model.getInstance(this);
+
+        LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver,
+                new IntentFilter("refreshMovieSelected"));
 
         inviteesList = new ArrayList<String>(){};
 
@@ -101,13 +118,14 @@ public class MovieSelected extends Activity {
         state = i.getStringExtra("state");
 
 
+        model.getMovie(imdbID);
         //Get Movie from DB
         //0 means the movie has alreaday been fetched and is on the model
-        if (!imdbID.equals("0")) {
-            model.getMovie(imdbID);
-        } else {
-            imdbID = model.getMovie().getId();
-        }
+       // if (!imdbID.equals("0")) {
+        //    model.getMovie(imdbID);
+        //} else {
+         //   imdbID = model.getMovie().getId();
+       // }
 
         //String title = model.getMovie().getTitle();
         //find noneditables
@@ -139,6 +157,8 @@ public class MovieSelected extends Activity {
 
             enableEditables(false);
 
+            setMovieInfo();
+            /*
             //set noneditable information
             lblTitle.setText(model.getMovie().getTitle());
             lblYear.setText("Year: "+ model.getMovie().getYear());
@@ -152,7 +172,7 @@ public class MovieSelected extends Activity {
             rtbRating.setRating(model.getMovie().getRating());
 
             new DownloadImageTask(imgPoster).execute(model.getMovie().getImgURL());
-
+*/
             getListElements();
 
             btnAddInvited.setOnClickListener(new View.OnClickListener() {
@@ -214,6 +234,20 @@ public class MovieSelected extends Activity {
         }
     }
 
+    public void setMovieInfo(){
+        //set noneditable information
+        lblTitle.setText(model.getMovie().getTitle());
+        lblYear.setText("Year: "+ model.getMovie().getYear());
+        lblGenre.setText("Genre: "+ model.getMovie().getGenre());
+        lblRuntime.setText("Runtime: "+ model.getMovie().getRuntime());
+        lblCountry.setText("Country: " + model.getMovie().getCountry());
+        lblVotes.setText("IMDB Votes: "+ model.getMovie().getImdbVotes());
+        lblRating.setText("IMDB Rating: "+ model.getMovie().getImdbRating());
+        lblPlot.setText(model.getMovie().getPlot());
+
+        rtbRating.setRating(model.getMovie().getRating());
+        new DownloadImageTask(imgPoster).execute(model.getMovie().getImgURL());
+    }
 
     public void setPartyInfo(){
         Party party = model.checkForParty(imdbID);

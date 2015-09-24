@@ -55,6 +55,15 @@ public class MovieList extends ListActivity {
     ArrayList<String>  msArrayList = new ArrayList<String>();
     boolean fetchFromId = false;
 
+    private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            // Extract data included in the Intent
+            String searching = intent.getStringExtra("searching");
+            // Log.d("receiver", "Got message: " + message);
+            populateListView(true);
+        }
+    };
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -67,7 +76,7 @@ public class MovieList extends ListActivity {
         fetchParties();
 
         LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver,
-                new IntentFilter("my-event"));
+                new IntentFilter("refreshListView"));
     }
 
     @Override
@@ -102,7 +111,7 @@ public class MovieList extends ListActivity {
 
                         String imdbID = model.searchedMovies.get(position).getId();
                         //fetchFromId = true;
-                        model.getMovie(imdbID);
+                        //model.getMovie(imdbID);
                         //String url = "http://www.omdbapi.com/?i="+imdbID+"&plot=short&r=json";
                         //new searchMovieThread().execute(url);
                         //populateListView(false);
@@ -191,15 +200,7 @@ public class MovieList extends ListActivity {
         }
 
     }*/
-    private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            // Extract data included in the Intent
-            String message = intent.getStringExtra("message");
-            Log.d("receiver", "Got message: " + message);
-            populateListView(true);
-        }
-    };
+
 
     public void handleSearch(String searchText,boolean submit) {
         if (searchText.length() != 0 && ( Character.isWhitespace(searchText.charAt(searchText.length() - 1)) || submit )) {

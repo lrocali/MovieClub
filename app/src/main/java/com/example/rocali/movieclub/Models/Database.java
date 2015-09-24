@@ -2,6 +2,7 @@ package com.example.rocali.movieclub.Models;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.util.Log;
 
 import java.util.ArrayList;
 
@@ -27,7 +28,9 @@ public class Database implements MovieInfoChain{
     @Override
     public Movie getMovieInfo(String id) {
         Cursor res = DB.getMovie(id);
+        Model model = Model.getInstance(context);
         if (res.getCount() != 0 && res.moveToFirst()) {
+            Log.v(model.TAG, "GET MOVIE FROM DATABASE");
             return new Movie(res.getString(0),res.getString(1),res.getString(2),res.getString(3),res.getString(4),res.getString(5),res.getString(6),res.getString(7),res.getString(8),res.getString(9),res.getString(10));
         }
         else {
@@ -50,6 +53,8 @@ public class Database implements MovieInfoChain{
         if (movies.size() == 0){
             return nextChain.searchMovie(title);
         } else {
+            Model model = Model.getInstance(context);
+            Log.v(model.TAG, "GET MOVIE LIST FROM DATABASE");
             return movies;
         }
     }

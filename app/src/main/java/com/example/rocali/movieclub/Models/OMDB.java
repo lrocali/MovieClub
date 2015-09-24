@@ -74,7 +74,8 @@ public class OMDB implements MovieInfoChain{
                         msJsonObj.getString("imdbRating"),
                         msJsonObj.getString("Poster"),
                         "0"));
-                model.startActivity();
+                Log.v(model.TAG, "GET MOVIE FROM OMDB");
+                //model.startActivity();
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -99,15 +100,16 @@ public class OMDB implements MovieInfoChain{
         protected void onPostExecute(String file_url) {
             try {
                 Model model = Model.getInstance(context);
-                    msJsonArray = msJsonObj.getJSONArray("Search");
-                    ArrayList<MovieMainInfo> tempMovies = new ArrayList<MovieMainInfo>(){};
-                    for (int i = 0; i < msJsonArray.length(); i++) {
-                        JSONObject json_data = msJsonArray.getJSONObject(i);
-                        tempMovies.add(new MovieMainInfo(json_data.getString("imdbID"), json_data.getString("Title"), json_data.getString("Year"), "img", "0"));
-                       // msArrayList.add(json_data.getString("Title"));
-                    }
-                    model.setSearchedMovies(tempMovies);
-                    //populateListView(true);
+                msJsonArray = msJsonObj.getJSONArray("Search");
+                ArrayList<MovieMainInfo> tempMovies = new ArrayList<MovieMainInfo>(){};
+                for (int i = 0; i < msJsonArray.length(); i++) {
+                    JSONObject json_data = msJsonArray.getJSONObject(i);
+                    tempMovies.add(new MovieMainInfo(json_data.getString("imdbID"), json_data.getString("Title"), json_data.getString("Year"), "img", "0"));
+                    // msArrayList.add(json_data.getString("Title"));
+                }
+                Log.v(model.TAG, "GET MOVIE LIST FROM OMDB");
+                model.setSearchedMovies(tempMovies);
+                //populateListView(true);
 
             } catch (JSONException e) {
                 e.printStackTrace();
