@@ -91,7 +91,7 @@ public class Database implements MovieInfoChain{
         return movies;
     }
 
-    public void insertPartyIntoDatabase(Party party){
+    public void addPartyToDB(Party party){
         //AD INVITEs SHOULD IMPRMEEN XXXXXXXXXX
         boolean result = DB.insertParty(party.getId(), party.getDate(), party.getTime(), party.getVenue(), party.getLocation(), "X invites");
         if (result) {

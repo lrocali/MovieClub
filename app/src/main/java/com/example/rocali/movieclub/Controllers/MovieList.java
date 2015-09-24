@@ -58,10 +58,12 @@ public class MovieList extends ListActivity {
     private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            // Extract data included in the Intent
             String searching = intent.getStringExtra("searching");
-            // Log.d("receiver", "Got message: " + message);
-            populateListView(true);
+            if (searching.equals("true")){
+                populateListView(true);
+            } else {
+                populateListView(false);
+            }
         }
     };
     @Override
@@ -71,9 +73,9 @@ public class MovieList extends ListActivity {
 
         model  = Model.getInstance(this);
 
-        model.getMoviesFromDB();
+        model.getMovies();
 
-        fetchParties();
+        model.getParties();
 
         LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver,
                 new IntentFilter("refreshListView"));
@@ -264,26 +266,7 @@ public class MovieList extends ListActivity {
     }
 
 
-    //FIREBASE PART
-    public void fetchParties(){
-        Firebase searchedRef = model.firebaseRef.child("Parties");
-        searchedRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot snapshot) {
-                for (DataSnapshot postSnapshot : snapshot.getChildren()) {
-                    Party party = postSnapshot.getValue(Party.class);
-                    model.parties.add(party);
-                    model.savePartyIntoDB(party);
-                }
-                populateListView(false);
-            }
 
-            @Override
-            public void onCancelled(FirebaseError firebaseError) {
-                System.out.println("The read failed: " + firebaseError.getMessage());
-            }
-        });
-    }
 
 
 }

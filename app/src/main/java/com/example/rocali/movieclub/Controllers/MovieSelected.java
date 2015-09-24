@@ -156,23 +156,7 @@ public class MovieSelected extends Activity {
             setPartyInfo();
 
             enableEditables(false);
-
             setMovieInfo();
-            /*
-            //set noneditable information
-            lblTitle.setText(model.getMovie().getTitle());
-            lblYear.setText("Year: "+ model.getMovie().getYear());
-            lblGenre.setText("Genre: "+ model.getMovie().getGenre());
-            lblRuntime.setText("Runtime: "+ model.getMovie().getRuntime());
-            lblCountry.setText("Country: " + model.getMovie().getCountry());
-            lblVotes.setText("IMDB Votes: "+ model.getMovie().getImdbVotes());
-            lblRating.setText("IMDB Rating: "+ model.getMovie().getImdbRating());
-            lblPlot.setText(model.getMovie().getPlot());
-
-            rtbRating.setRating(model.getMovie().getRating());
-
-            new DownloadImageTask(imgPoster).execute(model.getMovie().getImgURL());
-*/
             getListElements();
 
             btnAddInvited.setOnClickListener(new View.OnClickListener() {
@@ -184,30 +168,33 @@ public class MovieSelected extends Activity {
 
                     getListElements();
                     //if all the field had been entered the party button is visible
-                    if (edtDate.getText().toString() != null &&
-                            edtTime.getText().toString() != null &&
-                            edtVenue.getText().toString() != null &&
-                            edtLocation.getText().toString() != null) {
 
-                        btnParty.setVisibility(View.VISIBLE);
-                    }
+
+                        //btnParty.setVisibility(View.VISIBLE);
+
                     edtInvited.setText("");
                 }
             });
-
             //party/create event button
             btnParty.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
 
-                    Party newparty = new Party(model.getMovie().getId(),edtDate.getText().toString(),edtTime.getText().toString(),edtVenue.getText().toString(),edtLocation.getText().toString(),inviteesList);
-                    model.addPartyToCloud(newparty);
 
-                    enableEditables(false);
+                    if (edtDate.getText().toString() != null &&
+                            edtTime.getText().toString() != null &&
+                            edtVenue.getText().toString() != null &&
+                            edtLocation.getText().toString() != null) {
+                        Party newparty = new Party(model.getMovie().getId(), edtDate.getText().toString(), edtTime.getText().toString(), edtVenue.getText().toString(), edtLocation.getText().toString(), inviteesList);
+                        //model.addPartyToCloud(newparty);
+                        //WORK ON IT
+                        model.addParty(newparty);
 
-                    editState = false;
+                        enableEditables(false);
+
+                        editState = false;
+                    }
                 }
             });
-
             //set action to rating bar
             rtbRating.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
                 public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
@@ -218,19 +205,9 @@ public class MovieSelected extends Activity {
             });
         } else {
             //disableEditables
-            btnParty.setVisibility(View.INVISIBLE);
+           // btnParty.setVisibility(View.INVISIBLE);
             enableEditables(false);
-
-            lblTitle.setText(model.getMovie().getTitle());
-            lblYear.setText("Year: "+model.getMovie().getYear());
-            lblGenre.setText("Genre: "+model.getMovie().getGenre());
-            lblRuntime.setText("Runtime: "+model.getMovie().getRuntime());
-            lblCountry.setText("Country: "+model.getMovie().getCountry());
-            lblVotes.setText("IMDB Votes: "+model.getMovie().getImdbVotes());
-            lblRating.setText("IMDB Rating: "+model.getMovie().getImdbRating());
-            lblPlot.setText(model.getMovie().getPlot());
-
-            new DownloadImageTask(imgPoster).execute(model.getMovie().getImgURL());
+            setMovieInfo();
         }
     }
 
@@ -357,7 +334,8 @@ public class MovieSelected extends Activity {
                 //First click (to edit)
                 if (!editState) {
                     enableEditables(true);
-                    if (!model.hasParty(imdbID)) {
+                    Party party = model.checkForParty(imdbID);
+                    if (party == null) {
                         Toast.makeText(getApplicationContext(), "Create event", Toast.LENGTH_SHORT).show();
                         inviteesList.add("User 0");
                         getListElements();
