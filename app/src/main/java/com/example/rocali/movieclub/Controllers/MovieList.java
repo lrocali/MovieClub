@@ -8,6 +8,8 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
@@ -38,6 +40,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.net.InetSocketAddress;
+import java.net.Socket;
+import java.net.SocketAddress;
 import java.util.ArrayList;
 
 
@@ -52,8 +57,10 @@ public class MovieList extends ListActivity {
     //Variables to fetch JSON from OMDB
     public JSONObject msJsonObj = null;
     public JSONArray msJsonArray = null;
-    ArrayList<String>  msArrayList = new ArrayList<String>();
+    ArrayList<String>  searchedTitles = new ArrayList<String>();
     boolean fetchFromId = false;
+
+    final String CONNECTIVITY_CHANGE_ACTION = "android.net.conn.CONNECTIVITY_CHANGE";
 
     private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
         @Override
@@ -63,6 +70,17 @@ public class MovieList extends ListActivity {
                 populateListView(true);
             } else {
                 populateListView(false);
+            }
+        }
+    };
+    private final BroadcastReceiver changeWifiReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String action = intent.getAction();
+
+            if (CONNECTIVITY_CHANGE_ACTION.equals(action)) {
+                //read the network state and update toolbar status bar
+                //use the isConnected() method below
             }
         }
     };
@@ -79,6 +97,15 @@ public class MovieList extends ListActivity {
 
         LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver,
                 new IntentFilter("refreshListView"));
+        IntentFilter filter = new IntentFilter(CONNECTIVITY_CHANGE_ACTION);
+        this.registerReceiver(changeWifiReceiver, filter);
+    }
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if(changeWifiReceiver != null) {
+            unregisterReceiver(changeWifiReceiver);
+        }
     }
 
     @Override
@@ -94,12 +121,11 @@ public class MovieList extends ListActivity {
 
         //if is in searching mode
         if (searching) {
-            for(MovieMainInfo movie : model.searchedMovies){
-                msArrayList.add(movie.getTitle());
-            }
+            searchedTitles = model.getSearchedTitles();
+
             //if search update array from movie search array list
             ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
-                    android.R.layout.simple_list_item_1, android.R.id.text1, msArrayList);
+                    android.R.layout.simple_list_item_1, android.R.id.text1, searchedTitles);
 
             // Assign adapter to ListView
             lv.setAdapter(adapter);
@@ -129,7 +155,7 @@ public class MovieList extends ListActivity {
         } else {
             lv.setAdapter(new CustomAdapter(this));
 
-            lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            /*lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 public void onItemClick(AdapterView<?> parent, View view,
                                         int position, long id) {
                     //Intent i = new Intent(getApplicationContext(), MovieSelected.class);
@@ -138,7 +164,7 @@ public class MovieList extends ListActivity {
                     //startActivity(i);
 
                 }
-            });
+            });*/
         }
 
     }
@@ -186,11 +212,11 @@ public class MovieList extends ListActivity {
                 }
                 //If is searching all the movies with an specific name
                 else {
-                    msArrayList.clear();
+                    searchedTitles.clear();
                     msJsonArray = msJsonObj.getJSONArray("Search");
                     for (int i = 0; i < msJsonArray.length(); i++) {
                         JSONObject json_data = msJsonArray.getJSONObject(i);
-                        msArrayList.add(json_data.getString("Title"));
+                        searchedTitles.add(json_data.getString("Title"));
                     }
                     populateListView(true);
                 }
@@ -203,25 +229,35 @@ public class MovieList extends ListActivity {
 
     }*/
 
+    public boolean issNetworkConnectionAvailable() {
+        try{
+            // ping to googe to check internet connectivity
+            Socket socket = new Socket();
+            SocketAddress socketAddress = new InetSocketAddress("8.8.8.8", 80);
+            socket.connect(socketAddress, 3000);
+            socket.close();
+            Log.v(TAG, "CONECTED");
+            return true;
+
+        } catch (Exception e) {
+            Log.v(TAG,"NOT CONECTED");
+            return false;
+        }
+    }
 
     public void handleSearch(String searchText,boolean submit) {
+        Log.v(model.TAG,"HANDLE SEARCH");
         if (searchText.length() != 0 && ( Character.isWhitespace(searchText.charAt(searchText.length() - 1)) || submit )) {
-
-            if (model.isNetworkConnectionAvailable(this)) {
-                fetchFromId = false;
-
-
-                //String url = "http://www.omdbapi.com/?s=" + model.getSearchableTitle(searchText) + "&y=&plot=short&r=json";
-                model.getSearchedMovies(model.getSearchableTitle(searchText));
-                //new searchMovieThread().execute(url);
-                //populateListView(true);
-            } else {
+            Log.v(model.TAG,"SEARCH");
+            model.getSearchedMovies(searchText);
+            if (!issNetworkConnectionAvailable()) {
+                Toast.makeText(getApplicationContext(),"No internet connection", Toast.LENGTH_SHORT).show();
 
             }
-        } else {
-            msArrayList = new ArrayList<String>();
         }
-
+        if(searchText.length() == 0){
+            populateListView(false);
+        }
 
     }
 

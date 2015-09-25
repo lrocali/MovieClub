@@ -41,19 +41,33 @@ public class Database implements MovieInfoChain{
     @Override
     public ArrayList<MovieMainInfo> searchMovie(String title) {
         Cursor res = DB.getAllMovies();
-        if (res.getCount() == 0)
+        Model model = Model.getInstance(context);
+        if (res.getCount() == 0) {
+            Log.v(model.TAG, "NOT IN DB LETS SEE OMDB (RES.COUNT = 0)");
             return nextChain.searchMovie(title);
+        }
         ArrayList<MovieMainInfo> movies = new ArrayList<MovieMainInfo>(){};
+        //Log.v(model.TAG, "TITTLE :" + title);
+        boolean connected = model.isNetworkConnectionAvailable(context);
         while (res.moveToNext()) {
-            if(res.getString(1) == title) {
-                MovieMainInfo movie = new MovieMainInfo(res.getString(0), res.getString(1), res.getString(2), res.getString(9), res.getString(10));
-                movies.add(movie);
+            //Log.v(model.TAG, res.getString(1));
+
+            if (connected){
+                if (res.getString(1).equals(title)) {
+                    MovieMainInfo movie = new MovieMainInfo(res.getString(0), res.getString(1), res.getString(2), res.getString(9), res.getString(10));
+                    movies.add(movie);
+                }
+            } else {
+                if (res.getString(1).contains(title)) {
+                    MovieMainInfo movie = new MovieMainInfo(res.getString(0), res.getString(1), res.getString(2), res.getString(9), res.getString(10));
+                    movies.add(movie);
+                }
             }
         }
         if (movies.size() == 0){
+            Log.v(model.TAG, "NOT IN DB LETS SEE OMDB (MOVIES.SIZE = 0)");
             return nextChain.searchMovie(title);
         } else {
-            Model model = Model.getInstance(context);
             Log.v(model.TAG, "GET MOVIE LIST FROM DATABASE");
             return movies;
         }

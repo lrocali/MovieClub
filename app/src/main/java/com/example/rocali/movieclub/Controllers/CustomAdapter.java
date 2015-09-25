@@ -58,11 +58,12 @@ public class CustomAdapter extends BaseAdapter{
         ImageView poster;
         TextView title;
         TextView year;
-        TextView shortPlot;
+        RatingBar rating;
+        TextView party;
         TextView dateAndTime;
         TextView location;
         TextView nInvitees;
-        RatingBar rating;
+
     }
 
     @Override
@@ -77,7 +78,7 @@ public class CustomAdapter extends BaseAdapter{
         rowInfo.poster = (ImageView) rowView.findViewById(R.id.imgPosterList);
         rowInfo.title = (TextView) rowView.findViewById(R.id.txtTitle);
         rowInfo.year = (TextView) rowView.findViewById(R.id.txtYear);
-        rowInfo.shortPlot = (TextView) rowView.findViewById(R.id.txtShortPlot);
+        rowInfo.party = (TextView) rowView.findViewById(R.id.txtParty);
         rowInfo.dateAndTime = (TextView) rowView.findViewById(R.id.txtDateTime);
         rowInfo.location = (TextView) rowView.findViewById(R.id.txtLocation);
         rowInfo.nInvitees = (TextView) rowView.findViewById(R.id.txtNInvitees);
@@ -89,7 +90,7 @@ public class CustomAdapter extends BaseAdapter{
         rowInfo.title.setText(model.movies.get(position).getTitle());
         rowInfo.year.setText(model.movies.get(position).getYear());
         //rowInfo.shortPlot.setText(model.movies.get(position).getPlot());
-        rowInfo.shortPlot.setText(" ");
+        //rowInfo.shortPlot.setText(" ");
 
         //Set ratting in case of the user had ratted the movie before
         if (model.movies.get(position).getRating() != 0) {
@@ -101,6 +102,9 @@ public class CustomAdapter extends BaseAdapter{
 
         //If the function return a party
         if (party != null) {
+            rowInfo.dateAndTime.setVisibility(View.VISIBLE);
+            rowInfo.location.setVisibility(View.VISIBLE);
+            rowInfo.nInvitees.setVisibility(View.VISIBLE);
             rowInfo.dateAndTime.setText(party.getDate() + " - " + party.getTime());
             rowInfo.location.setText("At " + party.getLocation());
             int nInv = party.getInvitees().size();
@@ -110,9 +114,10 @@ public class CustomAdapter extends BaseAdapter{
         //If there is no party
         else {
             //In case of there is no schedulled party for the movie
-            rowInfo.dateAndTime.setText("This movie has no party.");
-            rowInfo.location.setText(" ");
-            rowInfo.nInvitees.setText(" ");
+            rowInfo.party.setText("No party yet");
+            rowInfo.dateAndTime.setVisibility(View.GONE);
+            rowInfo.location.setVisibility(View.GONE);
+            rowInfo.nInvitees.setVisibility(View.GONE);
 
         }
 

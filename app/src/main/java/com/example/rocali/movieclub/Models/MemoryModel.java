@@ -44,6 +44,7 @@ public class MemoryModel implements MovieInfoChain{
             Log.v(model.TAG, "GET MOVIE LIST FROM MEMORY MODEL");
             return movies;
         } else {
+            Log.v(model.TAG, "NOT IN MODEL LETS SEE DB");
             return nextChain.searchMovie(title);
         }
     }

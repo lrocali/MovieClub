@@ -206,7 +206,8 @@ public class MovieSelected extends Activity {
         } else {
             //disableEditables
            // btnParty.setVisibility(View.INVISIBLE);
-            enableEditables(false);
+           // enableEditables(false);
+            removePartyEletements();
             setMovieInfo();
         }
     }
@@ -249,6 +250,24 @@ public class MovieSelected extends Activity {
         edtLocation.setEnabled(trueOrFalse);
         edtInvited.setEnabled(trueOrFalse);
         btnAddInvited.setEnabled(trueOrFalse);
+    }
+
+    //Remove party part
+    public void removePartyEletements(){
+        edtDate.setVisibility(View.GONE);
+        edtTime.setVisibility(View.GONE);
+        edtVenue.setVisibility(View.GONE);
+        edtLocation.setVisibility(View.GONE);
+        edtInvited.setVisibility(View.GONE);
+        btnAddInvited.setVisibility(View.GONE);
+        btnParty.setVisibility(View.GONE);
+
+        findViewById(R.id.txtedtDate).setVisibility(View.GONE);
+        findViewById(R.id.txtedtTime).setVisibility(View.GONE);
+        findViewById(R.id.txtedtVenue).setVisibility(View.GONE);
+        findViewById(R.id.txtedtLocation).setVisibility(View.GONE);
+        findViewById(R.id.txtedtInvitees).setVisibility(View.GONE);
+
     }
 
     //Function to get/refresh the list of invitess when a new invited is added

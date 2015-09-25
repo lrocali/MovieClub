@@ -14,6 +14,9 @@ import com.firebase.client.Firebase;
 
 import org.json.JSONObject;
 
+import java.net.InetSocketAddress;
+import java.net.Socket;
+import java.net.SocketAddress;
 import java.util.ArrayList;
 
 /**
@@ -67,8 +70,10 @@ public class Model {
     //PARTY
     public void getParties(){
         if(isNetworkConnectionAvailable(context)){
+            Log.v(TAG, "GET PARTY FROM FIREBASE");
            firebase.fetchParties();
         } else {
+            Log.v(TAG, "GET PARTY FROM DATABASE");
             parties = database.getPartiesFromDatabase();
         }
     }
@@ -112,24 +117,60 @@ public class Model {
     }
 
     public void getSearchedMovies(String title){
+        Log.v(TAG,"GET SEARCHED MOVIES");
         searchedMovies = memoryModelChain.searchMovie(title);
+        if(searchedMovies!=null){
+            sendBroadCastToListView("true");
+        } else {
+            sendBroadCastToListView("false");
+        }
     }
         //only called frmo the thread of OMDB fetching
     public void setSearchedMovies(ArrayList<MovieMainInfo> searchedMovies){
-        Log.v(TAG,"SET SEARCHMOVIES ANDR SENT INTENTION TO REFRESH LIST VIEW");
+        Log.v(TAG, "SET SEARCHMOVIES ANDR SENT INTENTION TO REFRESH LIST VIEW");
         this.searchedMovies = searchedMovies;
-        Intent intent = new Intent("refreshListView");
-        intent.putExtra("searching", "true");
-        LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
+        sendBroadCastToListView("true");
     }
 
+    public void sendBroadCastToListView(String searching){
+        Intent intent = new Intent("refreshListView");
+        intent.putExtra("searching", searching);
+        LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
+    }
     //
-    public boolean isNetworkConnectionAvailable(Context activity) {
-        ConnectivityManager cm = (ConnectivityManager) activity.getSystemService(Context.CONNECTIVITY_SERVICE);
+
+    public boolean isNetworkConnectionAvailable(Context cntxt) {
+        ConnectivityManager cm =(ConnectivityManager) cntxt.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+        boolean isConnected = activeNetwork != null && activeNetwork.isConnected();
+        if (isConnected) {
+           // Log.v(TAG, "CONECTED");
+            return true;
+        } else {
+            //Log.v(TAG,"NOT CONECTED");
+            return  false;
+        }
+        /*try{
+            // ping to googlevto check internet connectivity
+            Socket socket = new Socket();
+            SocketAddress socketAddress = new InetSocketAddress("8.8.8.8", 80);
+            socket.connect(socketAddress, 3000);
+            socket.close();
+            Log.v(TAG, "CONECTED");
+            return true;
+
+        } catch (Exception e) {
+            Log.v(TAG,"NOT CONECTED");
+            return false;
+        }
+        /*
+        ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo info = cm.getActiveNetworkInfo();
         if (info == null) return false;
         NetworkInfo.State network = info.getState();
+        Log.v(TAG,network.toString());
         return (network == NetworkInfo.State.CONNECTED || network == NetworkInfo.State.CONNECTING);
+        */
     }
 
     //SEARCH
@@ -179,6 +220,14 @@ public class Model {
         this.movies = movies;
 
     }*/
+
+    public ArrayList<String> getSearchedTitles(){
+        ArrayList<String> searchedTitles = new ArrayList<String>(){};
+        for(MovieMainInfo movie : searchedMovies){
+            searchedTitles.add(movie.getTitle());
+        }
+        return searchedTitles;
+    }
 
 
     public Movie getMovie(){

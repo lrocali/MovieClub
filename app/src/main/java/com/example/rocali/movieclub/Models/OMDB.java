@@ -35,15 +35,24 @@ public class OMDB implements MovieInfoChain{
     @Override
     public Movie getMovieInfo(String id) {
         String url = "http://www.omdbapi.com/?i="+id+"&plot=short&r=json";
-        new searchMovieByIDThread().execute(url);
+        Model model = Model.getInstance(context);
+        if (model.isNetworkConnectionAvailable(context))
+            new searchMovieByIDThread().execute(url);
         return new Movie();
     }
 
     @Override
     public ArrayList<MovieMainInfo> searchMovie(String title) {
-        String url = "http://www.omdbapi.com/?s=" + title + "&y=&plot=short&r=json";
-        new searchMovieByTitleThread().execute(url);
-        return new ArrayList<MovieMainInfo>(){};
+        Model model = Model.getInstance(context);
+        String url = "http://www.omdbapi.com/?s=" + model.getSearchableTitle(title) + "&y=&plot=short&r=json";
+        if (model.isNetworkConnectionAvailable(context)) {
+            new searchMovieByTitleThread().execute(url);
+            return new ArrayList<MovieMainInfo>(){};
+        } else {
+            Log.v(model.TAG, "NOT POSSIBLE SEARCH IN OMDB");
+            return null;
+        }
+
     }
     class searchMovieByIDThread extends AsyncTask<String, String, String> {
         @Override
@@ -62,7 +71,7 @@ public class OMDB implements MovieInfoChain{
         protected void onPostExecute(String file_url) {
             try {
                 Model model = Model.getInstance(context);
-                model.setMovie( new Movie(
+                model.setMovie(new Movie(
                         msJsonObj.getString("imdbID"),
                         msJsonObj.getString("Title"),
                         msJsonObj.getString("Year"),

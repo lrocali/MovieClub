@@ -115,7 +115,7 @@ default_height_material"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:id="@+id/listInvitees"
-            android:layout_below="@+id/lblInvitees"
+            android:layout_below="@+id/txtedtInvitees"
             android:layout_alignStart="@+id/imgPoster"
             android:layout_marginTop="20dp" />
 
@@ -124,7 +124,7 @@ default_height_material"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:text="Date"
-            android:id="@+id/textView"
+            android:id="@+id/txtedtDate"
             android:layout_above="@+id/edtTime"
             android:layout_below="@+id/movieRatingBar"
             android:layout_toLeftOf="@+id/edtDate" />
@@ -134,9 +134,9 @@ default_height_material"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:text="Time"
-            android:id="@+id/textView2"
+            android:id="@+id/txtedtTime"
             android:layout_alignBottom="@+id/edtTime"
-            android:layout_below="@+id/textView"
+            android:layout_below="@+id/txtedtDate"
             android:layout_toLeftOf="@+id/edtTime" />
 
         <TextView
@@ -144,8 +144,8 @@ default_height_material"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:text="Venue"
-            android:id="@+id/textView3"
-            android:layout_below="@+id/textView2"
+            android:id="@+id/txtedtVenue"
+            android:layout_below="@+id/txtedtTime"
             android:layout_toLeftOf="@+id/edtVenue"
             android:layout_alignBottom="@+id/edtVenue" />
 
@@ -154,8 +154,8 @@ default_height_material"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:text="Location"
-            android:id="@+id/textView4"
-            android:layout_below="@+id/textView3"
+            android:id="@+id/txtedtLocation"
+            android:layout_below="@+id/txtedtVenue"
             android:layout_toLeftOf="@+id/edtLocation"
             android:layout_alignBottom="@+id/edtLocation" />
 
@@ -164,8 +164,8 @@ default_height_material"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:text="List of invitees"
-            android:id="@+id/lblInvitees"
-            android:layout_below="@+id/textView4"
+            android:id="@+id/txtedtInvitees"
+            android:layout_below="@+id/txtedtLocation"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="10dp" />
 
@@ -184,7 +184,7 @@ default_height_material"
             android:layout_height="wrap_content"
             android:text="Add Invited"
             android:id="@+id/btnAddInvited"
-            android:layout_alignEnd="@+id/textView"
+            android:layout_alignEnd="@+id/txtedtDate"
             android:layout_below="@+id/listInvitees"/>
 
         <Button
@@ -194,8 +194,9 @@ default_height_material"
             android:id="@+id/btnParty"
             android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true"
-            android:layout_margin="5dp"
-            android:layout_below="@+id/btnAddInvited" />
+            android:layout_margin="0dp"
+            android:layout_below="@+id/btnAddInvited"
+            android:layout_marginTop="20dp" />
 
         <TextView
             android:layout_width="wrap_content"
