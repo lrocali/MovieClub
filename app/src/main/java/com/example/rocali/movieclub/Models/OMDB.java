@@ -36,8 +36,7 @@ public class OMDB implements MovieInfoChain{
     public Movie getMovieInfo(String id) {
         String url = "http://www.omdbapi.com/?i="+id+"&plot=short&r=json";
         Model model = Model.getInstance(context);
-        if (model.isNetworkConnectionAvailable(context))
-            new searchMovieByIDThread().execute(url);
+        new searchMovieByIDThread().execute(url);
         return new Movie();
     }
 
@@ -45,13 +44,8 @@ public class OMDB implements MovieInfoChain{
     public ArrayList<MovieMainInfo> searchMovie(String title) {
         Model model = Model.getInstance(context);
         String url = "http://www.omdbapi.com/?s=" + model.getSearchableTitle(title) + "&y=&plot=short&r=json";
-        if (model.isNetworkConnectionAvailable(context)) {
             new searchMovieByTitleThread().execute(url);
             return new ArrayList<MovieMainInfo>(){};
-        } else {
-            Log.v(model.TAG, "NOT POSSIBLE SEARCH IN OMDB");
-            return null;
-        }
 
     }
     class searchMovieByIDThread extends AsyncTask<String, String, String> {

@@ -24,7 +24,7 @@ import android.widget.ListView;
 import android.support.v7.app.ActionBarActivity;
 import android.widget.SearchView;
 import android.widget.Toast;
-
+import com.example.rocali.movieclub.Models.CheckInternetConnection;
 import com.example.rocali.movieclub.Models.JsonClass;
 import com.example.rocali.movieclub.Models.Model;
 import com.example.rocali.movieclub.Models.Movie;
@@ -40,9 +40,13 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketAddress;
+import java.net.URL;
 import java.util.ArrayList;
 
 
@@ -73,17 +77,6 @@ public class MovieList extends ListActivity {
             }
         }
     };
-    private final BroadcastReceiver changeWifiReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            String action = intent.getAction();
-
-            if (CONNECTIVITY_CHANGE_ACTION.equals(action)) {
-                //read the network state and update toolbar status bar
-                //use the isConnected() method below
-            }
-        }
-    };
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -91,26 +84,23 @@ public class MovieList extends ListActivity {
 
         model  = Model.getInstance(this);
 
+        new CheckInternetConnection(this).execute("x");
+
         model.getMovies();
 
         model.getParties();
 
         LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver,
                 new IntentFilter("refreshListView"));
-        IntentFilter filter = new IntentFilter(CONNECTIVITY_CHANGE_ACTION);
-        this.registerReceiver(changeWifiReceiver, filter);
-    }
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        if(changeWifiReceiver != null) {
-            unregisterReceiver(changeWifiReceiver);
-        }
+
+        //IntentFilter filter = new IntentFilter(CONNECTIVITY_CHANGE_ACTION);
+        //this.registerReceiver(changeWifiReceiver, filter);
     }
 
     @Override
     protected  void onResume(){
         super.onResume();
+
         populateListView(false);
     }
 
@@ -154,82 +144,24 @@ public class MovieList extends ListActivity {
             });
         } else {
             lv.setAdapter(new CustomAdapter(this));
-
-            /*lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                public void onItemClick(AdapterView<?> parent, View view,
-                                        int position, long id) {
-                    //Intent i = new Intent(getApplicationContext(), MovieSelected.class);
-                    // sending movie id to new activity
-                    //i.putExtra("imdbID", model.movies.get(position).getId());
-                    //startActivity(i);
-
-                }
-            });*/
         }
 
     }
 
-    // OMDB PART
-    /*
-    class searchMovieThread extends AsyncTask<String, String, String> {
-        @Override
-        protected String doInBackground(String... f_url) {   //search via title or by id
-            try {
-                JsonClass json = new JsonClass();
-                msJsonObj = json.getJSONFromUrl(f_url[0]);
 
-            } catch (Exception e) {
-                Log.e("Error: ", e.getMessage());
-            }
-            return null;
-        }
+    /*public boolean issNetworkConnectionAvailable() {
+        try {
+            InetAddress ipAddr = InetAddress.getByName("google.com"); //You can replace it with your name
 
-        @Override
-        protected void onPostExecute(String file_url) {
-            try {
-                //If is requesting the movie details
-                if (fetchFromId) {
-                    //Set requested info into the model
-                    /*model.setSearchedMovie(
-                            msJsonObj.getString("imdbID"),
-                            msJsonObj.getString("Title"),
-                            msJsonObj.getString("Year"),
-                            msJsonObj.getString("Plot"),
-                            msJsonObj.getString("Runtime"),
-                            msJsonObj.getString("Genre"),
-                            msJsonObj.getString("Country"),
-                            msJsonObj.getString("imdbVotes"),
-                            msJsonObj.getString("imdbRating"),
-                            msJsonObj.getString("Poster")
-                    );
-                    //Refresh the list view
-                    //populateListView(false);
-
-                    //Call Movie selected activity to show movie details
-                    //Intent i = new Intent(getApplicationContext(), MovieSelected.class);
-                    //i.putExtra("movieId", "-1");
-                    //startActivity(i);
-                }
-                //If is searching all the movies with an specific name
-                else {
-                    searchedTitles.clear();
-                    msJsonArray = msJsonObj.getJSONArray("Search");
-                    for (int i = 0; i < msJsonArray.length(); i++) {
-                        JSONObject json_data = msJsonArray.getJSONObject(i);
-                        searchedTitles.add(json_data.getString("Title"));
-                    }
-                    populateListView(true);
-                }
-            } catch (JSONException e) {
-                e.printStackTrace();
-                Log.v(TAG,"ERROR NO JSONARRAY");
+            if (ipAddr.equals("")) {
+                return false;
+            } else {
+                return true;
             }
 
+        } catch (Exception e) {
+            return false;
         }
-
-    }*/
-
-    public boolean issNetworkConnectionAvailable() {
         try{
             // ping to googe to check internet connectivity
             Socket socket = new Socket();
@@ -242,16 +174,20 @@ public class MovieList extends ListActivity {
         } catch (Exception e) {
             Log.v(TAG,"NOT CONECTED");
             return false;
-        }
-    }
+        }/
+    }*/
 
     public void handleSearch(String searchText,boolean submit) {
         Log.v(model.TAG,"HANDLE SEARCH");
+        new CheckInternetConnection(this).execute("x");
         if (searchText.length() != 0 && ( Character.isWhitespace(searchText.charAt(searchText.length() - 1)) || submit )) {
-            Log.v(model.TAG,"SEARCH");
+            Log.v(model.TAG, "SEARCH");
             model.getSearchedMovies(searchText);
-            if (!issNetworkConnectionAvailable()) {
-                Toast.makeText(getApplicationContext(),"No internet connection", Toast.LENGTH_SHORT).show();
+            if (model.internetConnection) {
+                Toast.makeText(getApplicationContext(),"Internet connection", Toast.LENGTH_SHORT).show();
+
+            } else {
+                Toast.makeText(getApplicationContext(),"NO Internet connection", Toast.LENGTH_SHORT).show();
 
             }
         }

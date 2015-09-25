@@ -1,6 +1,7 @@
 package com.example.rocali.movieclub.Models;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
@@ -19,7 +20,7 @@ public class Fbase {
 
     public Fbase(Context context){
         this.context = context;
-        com.firebase.client.Firebase.setAndroidContext(context);
+        Firebase.setAndroidContext(context);
         firebaseRef = new com.firebase.client.Firebase("https://torrid-heat-8747.firebaseio.com/");
     }
     public void addPartyToCloud(Party party) {
@@ -27,27 +28,33 @@ public class Fbase {
         searchedRef.push().setValue(party);
     }
     //FIREBASE PART
-    public void fetchParties(){
+    public void fetchParties() {
         final Model model = Model.getInstance(context);
-        Firebase searchedRef = firebaseRef.child("Parties");
-        searchedRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot snapshot) {
-                ArrayList<Party> parties = new ArrayList<Party>(){};
-                for (DataSnapshot postSnapshot : snapshot.getChildren()) {
-                    Party party = postSnapshot.getValue(Party.class);
-                    parties.add(party);
-                    //model.savePartyIntoDB(party);
+        try {
+            Firebase searchedRef = firebaseRef.child("Parties");
+            searchedRef.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot snapshot) {
+                    ArrayList<Party> parties = new ArrayList<Party>() {
+                    };
+                    for (DataSnapshot postSnapshot : snapshot.getChildren()) {
+                        Party party = postSnapshot.getValue(Party.class);
+                        parties.add(party);
+                        //model.savePartyIntoDB(party);
+                    }
+                    model.setParties(parties);
+
+                    //populateListView(false);
                 }
-                model.setParties(parties);
 
-                //populateListView(false);
-            }
+                @Override
+                public void onCancelled(FirebaseError firebaseError) {
+                    System.out.println("The read failed: " + firebaseError.getMessage());
+                }
+            });
 
-            @Override
-            public void onCancelled(FirebaseError firebaseError) {
-                System.out.println("The read failed: " + firebaseError.getMessage());
-            }
-        });
+        } catch (Exception e) {
+            Log.v(model.TAG, "NOT CONECTED");
+        }
     }
 }

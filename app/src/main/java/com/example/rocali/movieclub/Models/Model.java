@@ -44,6 +44,8 @@ public class Model {
     public Database database;
     public Fbase firebase;
 
+    public boolean internetConnection;
+
     public static Model getInstance(Context _context){
         if (instance == null) {
             instance = new Model(_context);
@@ -51,9 +53,14 @@ public class Model {
         return instance;
     }
 
+    public void setConnection(boolean status){
+        this.internetConnection = status;
+    }
+
     public Model (Context _context) {
         context = _context;
 
+        internetConnection = true;
         movie = new Movie();
         movies = new ArrayList<MovieMainInfo>();
         searchedMovies = new ArrayList<MovieMainInfo>();
@@ -69,16 +76,14 @@ public class Model {
 
     //PARTY
     public void getParties(){
-        if(isNetworkConnectionAvailable(context)){
-            Log.v(TAG, "GET PARTY FROM FIREBASE");
-           firebase.fetchParties();
-        } else {
-            Log.v(TAG, "GET PARTY FROM DATABASE");
-            parties = database.getPartiesFromDatabase();
-        }
+        parties = database.getPartiesFromDatabase();
+        firebase.fetchParties();
+
+
     }
         //This function is called just on thread of firebase
     public void setParties(ArrayList<Party> parties){
+        this.parties = new ArrayList<Party>(){};
         this.parties = parties;
         Intent intent = new Intent("refreshListView");
         intent.putExtra("searching", "false");
@@ -139,7 +144,7 @@ public class Model {
     }
     //
 
-    public boolean isNetworkConnectionAvailable(Context cntxt) {
+    /*public boolean isNetworkConnectionAvailable(Context cntxt) {
         ConnectivityManager cm =(ConnectivityManager) cntxt.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
         boolean isConnected = activeNetwork != null && activeNetwork.isConnected();
@@ -170,8 +175,8 @@ public class Model {
         NetworkInfo.State network = info.getState();
         Log.v(TAG,network.toString());
         return (network == NetworkInfo.State.CONNECTED || network == NetworkInfo.State.CONNECTING);
-        */
-    }
+
+    }*/
 
     //SEARCH
     public String getSearchableTitle(String enteredText) {

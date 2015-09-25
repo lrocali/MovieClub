@@ -48,21 +48,14 @@ public class Database implements MovieInfoChain{
         }
         ArrayList<MovieMainInfo> movies = new ArrayList<MovieMainInfo>(){};
         //Log.v(model.TAG, "TITTLE :" + title);
-        boolean connected = model.isNetworkConnectionAvailable(context);
+       // boolean connected = model.isNetworkConnectionAvailable(context);
         while (res.moveToNext()) {
             //Log.v(model.TAG, res.getString(1));
-
-            if (connected){
-                if (res.getString(1).equals(title)) {
-                    MovieMainInfo movie = new MovieMainInfo(res.getString(0), res.getString(1), res.getString(2), res.getString(9), res.getString(10));
-                    movies.add(movie);
-                }
-            } else {
                 if (res.getString(1).contains(title)) {
                     MovieMainInfo movie = new MovieMainInfo(res.getString(0), res.getString(1), res.getString(2), res.getString(9), res.getString(10));
                     movies.add(movie);
                 }
-            }
+
         }
         if (movies.size() == 0){
             Log.v(model.TAG, "NOT IN DB LETS SEE OMDB (MOVIES.SIZE = 0)");
