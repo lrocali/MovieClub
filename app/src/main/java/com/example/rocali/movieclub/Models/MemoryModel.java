@@ -27,7 +27,7 @@ public class MemoryModel implements MovieInfoChain{
         Model model = Model.getInstance(context);
         String idModel = model.getMovie().getId();
         if (idModel.equals(id)) {
-            Log.v(model.TAG, "GET MOVIE FROM MEMORY MODEL");
+            Log.v("TAG", "GET MOVIE FROM MEMORY MODEL");
             return model.getMovie();
         } else {
             return nextChain.getMovieInfo(id);
@@ -41,10 +41,10 @@ public class MemoryModel implements MovieInfoChain{
         if (titleModel.equals(title)){
             ArrayList<MovieMainInfo> movies = new ArrayList<MovieMainInfo>(){};
             movies.add(model.getMovie());
-            Log.v(model.TAG, "GET MOVIE LIST FROM MEMORY MODEL");
+            Log.v("TAG", "GET MOVIE LIST FROM MEMORY MODEL");
             return movies;
         } else {
-            Log.v(model.TAG, "NOT IN MODEL LETS SEE DB");
+            Log.v("TAG", "NOT IN MODEL LETS SEE DB");
             return nextChain.searchMovie(title);
         }
     }

@@ -85,12 +85,9 @@ public class CustomAdapter extends BaseAdapter{
         rowInfo.rating = (RatingBar) rowView.findViewById(R.id.rtbListMovie);
 
         //Seting information of the movie (never change)
-       // rowInfo.poster.setImageResource(movieImgSrcs[position]);
         new DownloadImageTask(rowInfo.poster).execute(model.movies.get(position).getImgURL());
         rowInfo.title.setText(model.movies.get(position).getTitle());
         rowInfo.year.setText(model.movies.get(position).getYear());
-        //rowInfo.shortPlot.setText(model.movies.get(position).getPlot());
-        //rowInfo.shortPlot.setText(" ");
 
         //Set ratting in case of the user had ratted the movie before
         if (model.movies.get(position).getRating() != 0) {
@@ -121,19 +118,6 @@ public class CustomAdapter extends BaseAdapter{
 
         }
 
-        /*
-        if (model.movies.get(position).isScheduled()) {
-            rowInfo.dateAndTime.setText(model.movies.get(position).getParty().getDate() + " - " + model.movies.get(position).getParty().getTime());
-            rowInfo.location.setText("At " + model.movies.get(position).getParty().getLocation());
-            int nInv = model.movies.get(position).getParty().getInvitees().size();
-            rowInfo.nInvitees.setText("Invitees: " + String.valueOf(nInv));
-
-        } else {*/
-            //In case of there is no schedulled party for the movie
-
-
-        //}
-
         //If the user click on the row, its called the new view with the movie details
         rowView.setOnClickListener(new OnClickListener() {
             @Override
@@ -151,7 +135,6 @@ public class CustomAdapter extends BaseAdapter{
             public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
                 model.movies.get(position).setRating(rating);
                 model.updateMovie(position);
-                //model.updateRatingMovie(position);
 
 
             }

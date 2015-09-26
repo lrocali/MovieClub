@@ -43,11 +43,9 @@ public class Fbase {
                     for (DataSnapshot postSnapshot : snapshot.getChildren()) {
                         Party party = postSnapshot.getValue(Party.class);
                         parties.add(party);
-                        //model.savePartyIntoDB(party);
                     }
                     model.setParties(parties);
 
-                    //populateListView(false);
                 }
 
                 @Override
@@ -57,7 +55,7 @@ public class Fbase {
             });
 
         } catch (Exception e) {
-            Log.v(model.TAG, "NOT CONECTED");
+            Log.v("TAG", "NOT CONECTED");
         }
     }
 

@@ -35,7 +35,6 @@ public class OMDB implements MovieInfoChain{
     @Override
     public Movie getMovieInfo(String id) {
         String url = "http://www.omdbapi.com/?i="+id+"&plot=short&r=json";
-        Model model = Model.getInstance(context);
         new searchMovieByIDThread().execute(url);
         return new Movie();
     }
@@ -77,7 +76,7 @@ public class OMDB implements MovieInfoChain{
                         msJsonObj.getString("imdbRating"),
                         msJsonObj.getString("Poster"),
                         "0"));
-                Log.v(model.TAG, "GET MOVIE FROM OMDB");
+                Log.v("TAG", "GET MOVIE FROM OMDB");
                 //model.startActivity();
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -110,7 +109,7 @@ public class OMDB implements MovieInfoChain{
                     tempMovies.add(new MovieMainInfo(json_data.getString("imdbID"), json_data.getString("Title"), json_data.getString("Year"), "img", "0"));
                     // msArrayList.add(json_data.getString("Title"));
                 }
-                Log.v(model.TAG, "GET MOVIE LIST FROM OMDB");
+                Log.v("TAG", "GET MOVIE LIST FROM OMDB");
                 model.setSearchedMovies(tempMovies);
                 //populateListView(true);
 

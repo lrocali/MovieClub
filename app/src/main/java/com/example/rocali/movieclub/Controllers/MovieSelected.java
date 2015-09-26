@@ -119,15 +119,7 @@ public class MovieSelected extends Activity {
 
 
         model.getMovie(imdbID);
-        //Get Movie from DB
-        //0 means the movie has alreaday been fetched and is on the model
-       // if (!imdbID.equals("0")) {
-        //    model.getMovie(imdbID);
-        //} else {
-         //   imdbID = model.getMovie().getId();
-       // }
 
-        //String title = model.getMovie().getTitle();
         //find noneditables
         lblTitle = (TextView) findViewById(R.id.lblTitle);
         lblYear = (TextView) findViewById(R.id.lblYear);
@@ -167,11 +159,6 @@ public class MovieSelected extends Activity {
                     inviteesList.add(edtInvited.getText().toString());
 
                     getListElements();
-                    //if all the field had been entered the party button is visible
-
-
-                        //btnParty.setVisibility(View.VISIBLE);
-
                     edtInvited.setText("");
                 }
             });
@@ -204,9 +191,6 @@ public class MovieSelected extends Activity {
                 }
             });
         } else {
-            //disableEditables
-           // btnParty.setVisibility(View.INVISIBLE);
-           // enableEditables(false);
             removePartyEletements();
             setMovieInfo();
         }
@@ -285,8 +269,6 @@ public class MovieSelected extends Activity {
             listViewInvitees.requestLayout();
         }
     }
-
-
 
     DatePickerDialog.OnDateSetListener date
         = new DatePickerDialog.OnDateSetListener() {
