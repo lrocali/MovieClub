@@ -64,8 +64,6 @@ public class MovieList extends ListActivity {
     ArrayList<String>  searchedTitles = new ArrayList<String>();
     boolean fetchFromId = false;
 
-    final String CONNECTIVITY_CHANGE_ACTION = "android.net.conn.CONNECTIVITY_CHANGE";
-
     private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -93,6 +91,8 @@ public class MovieList extends ListActivity {
         LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver,
                 new IntentFilter("refreshListView"));
 
+
+        new CheckInternetConnection(this).execute("x");
         //IntentFilter filter = new IntentFilter(CONNECTIVITY_CHANGE_ACTION);
         //this.registerReceiver(changeWifiReceiver, filter);
     }
@@ -178,10 +178,10 @@ public class MovieList extends ListActivity {
     }*/
 
     public void handleSearch(String searchText,boolean submit) {
-        Log.v(model.TAG,"HANDLE SEARCH");
-        new CheckInternetConnection(this).execute("x");
+        Log.v(model.TAG, "HANDLE SEARCH");
         if (searchText.length() != 0 && ( Character.isWhitespace(searchText.charAt(searchText.length() - 1)) || submit )) {
             Log.v(model.TAG, "SEARCH");
+            new CheckInternetConnection(this).execute("x");
             model.getSearchedMovies(searchText);
             if (model.internetConnection) {
                 Toast.makeText(getApplicationContext(),"Internet connection", Toast.LENGTH_SHORT).show();

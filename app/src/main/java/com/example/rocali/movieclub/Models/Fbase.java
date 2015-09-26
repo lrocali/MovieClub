@@ -20,7 +20,9 @@ public class Fbase {
 
     public Fbase(Context context){
         this.context = context;
+        Firebase.getDefaultConfig().setPersistenceEnabled(true);
         Firebase.setAndroidContext(context);
+
         firebaseRef = new com.firebase.client.Firebase("https://torrid-heat-8747.firebaseio.com/");
     }
     public void addPartyToCloud(Party party) {
@@ -32,6 +34,7 @@ public class Fbase {
         final Model model = Model.getInstance(context);
         try {
             Firebase searchedRef = firebaseRef.child("Parties");
+            searchedRef.keepSynced(true);
             searchedRef.addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot snapshot) {
@@ -57,4 +60,6 @@ public class Fbase {
             Log.v(model.TAG, "NOT CONECTED");
         }
     }
+
+
 }

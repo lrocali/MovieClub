@@ -56,7 +56,7 @@ public class CheckInternetConnection extends AsyncTask<String, String, String> {
         Model model = Model.getInstance(context);
         if (result.equals("true")){
             model.setConnection(true);
-            Log.v("TAG","CONNECTED");
+           Log.v("TAG","CONNECTED");
         } else {
             model.setConnection(false);
             Log.v("TAG","NOT CONNECTED");
