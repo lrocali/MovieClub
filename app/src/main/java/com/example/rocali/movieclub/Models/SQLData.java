@@ -56,7 +56,7 @@ public class SQLData extends SQLiteOpenHelper{
 
     public boolean insertMovie(String _id,String _title, String _year, String _plot,String _runtime,String _genre,String _country,String _imdbVotes,String _imdbRating,String _imgURL,String _rating) {
         SQLiteDatabase db = this.getWritableDatabase();
-        //onUpgrade(db,0,0);
+       // onUpgrade(db,0,0);
 
         ContentValues contentValues = new ContentValues();
         contentValues.put(COL_ID,_id);
@@ -79,12 +79,13 @@ public class SQLData extends SQLiteOpenHelper{
     }
 
     public Cursor getMovie(String _id){
+
         SQLiteDatabase db = this.getWritableDatabase();
         //Cursor res = db.query(COL_ID,
                // allColumns, MySQLiteHelper.COLUMN_ID + " = " + insertId, null,
                 //null, null, null);
         String query = "SELECT * FROM " + MOVIE_TABLE_NAME + " WHERE " + COL_ID + " = '" + _id+"'";
-        Cursor res = db.rawQuery(query,null);
+        Cursor res = db.rawQuery(query, null);
         return res;
 
 
@@ -92,6 +93,7 @@ public class SQLData extends SQLiteOpenHelper{
 
     public Cursor getAllMovies(){
         SQLiteDatabase db = this.getWritableDatabase();
+        //onUpgrade(db,0,0);
         Cursor res = db.rawQuery("select * from "+MOVIE_TABLE_NAME,null);
         return res;
     }
@@ -101,16 +103,36 @@ public class SQLData extends SQLiteOpenHelper{
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues contentValues = new ContentValues();
-        contentValues.put(COL_ID,_id);
+        //contentValues.put(COL_ID,_id);
 
         contentValues.put(COL_RATING, _rating);
-        String query = "UPDATE " + MOVIE_TABLE_NAME + " SET " + COL_RATING + "='"+_rating+"' WHERE " + COL_ID + " = '" + _id+"';";
-        db.execSQL(query);
+        db.update(MOVIE_TABLE_NAME, contentValues, COL_ID+"="+"'"+_id+"'", null);
+        //String query = "UPDATE " + MOVIE_TABLE_NAME + " SET " + COL_RATING + "='"+_rating+"' WHERE " + COL_ID + " = '" + _id+"';";
+        //db.execSQL(query);
 
-            return true;
+        return true;
 
     }
 
+    public boolean updateParty(String _id,String _date, String _time, String _venue,String _location,String _invitees){
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues contentValues = new ContentValues();
+        //contentValues.put(COL_ID,_id);
+        contentValues.put(COL_DATE,_date);
+        contentValues.put(COL_TIME,_time);
+        contentValues.put(COL_VENUE,_venue);
+        contentValues.put(COL_LOCATION, _location);
+        contentValues.put(COL_INVITEES,_invitees);
+
+        db.update(PARTY_TABLE_NAME, contentValues, COL_ID+"="+"'"+_id+"'", null);
+
+        //return true;
+        //String query = "UPDATE " + PARTY_TABLE_NAME + " SET " + COL_RATING + "='"+_rating+"' WHERE " + COL_ID + " = '" + _id+"';";
+        //db.execSQL(query);
+
+        return true;
+    }
     public boolean insertParty(String _id,String _date, String _time, String _venue,String _location,String _invitees) {
         SQLiteDatabase db = this.getWritableDatabase();
         ///onUpgrade(db,0,0);

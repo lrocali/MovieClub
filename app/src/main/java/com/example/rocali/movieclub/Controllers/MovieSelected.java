@@ -171,10 +171,26 @@ public class MovieSelected extends Activity {
                             edtTime.getText().toString() != null &&
                             edtVenue.getText().toString() != null &&
                             edtLocation.getText().toString() != null) {
-                        Party newparty = new Party(model.getMovie().getId(), edtDate.getText().toString(), edtTime.getText().toString(), edtVenue.getText().toString(), edtLocation.getText().toString(), inviteesList);
                         //model.addPartyToCloud(newparty);
                         //WORK ON IT
-                        model.addParty(newparty);
+                        Party party = model.checkForParty(imdbID);
+                        if (party == null) {
+                            Toast.makeText(getApplicationContext(), "CREATE PARTY", Toast.LENGTH_SHORT).show();
+                            Party newparty = new Party(model.getMovie().getId(), edtDate.getText().toString(), edtTime.getText().toString(), edtVenue.getText().toString(), edtLocation.getText().toString(), inviteesList);
+                            model.addParty(newparty);
+                            finish();
+                        } else {
+                            Toast.makeText(getApplicationContext(), "EDIT PARTY", Toast.LENGTH_SHORT).show();
+                            party.setDate(edtDate.getText().toString());
+                            party.setTime(edtTime.getText().toString());
+                            party.setVenue(edtVenue.getText().toString());
+                            party.setLocation(edtLocation.getText().toString());
+                            party.setInvitees(inviteesList);
+
+
+                            model.updateParty(party);
+                            finish();
+                        }
 
                         enableEditables(false);
 

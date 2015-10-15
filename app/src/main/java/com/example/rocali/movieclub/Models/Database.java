@@ -63,6 +63,7 @@ public class Database implements MovieInfoChain{
     }
 
     public void insertSearchedMovieIntoDatabase(Movie movie){
+
         boolean result = DB.insertMovie(movie.getId(), movie.getTitle(), movie.getYear(), movie.getPlot(), movie.getRuntime(), movie.getGenre(), movie.getCountry(), movie.getImdbVotes(), movie.getImdbRating(), movie.getImgURL(), "0");
         if (result) {
             getMoviesMainInfoFromDatabase();
@@ -75,7 +76,17 @@ public class Database implements MovieInfoChain{
     public void updateMovie(MovieMainInfo movie){
         boolean result = DB.updatetMovie(movie.getId(), Float.toString(movie.getRating()));
         if (result) {
-            Log.v("TAG", "UPDATED TO DB");
+            Log.v("TAG", "UPDATED MOVIE TO DB");
+            getMoviesMainInfoFromDatabase();
+        }
+        else
+            Log.v("TAG", "NOT UPDATED TO DB");
+    }
+
+    public void updateParty(Party party){
+        boolean result = DB.updateParty(party.getId(), party.getDate(), party.getTime(), party.getVenue(), party.getLocation(), " ");
+        if (result) {
+            Log.v("TAG", "UPDATED PARTY TO DB");
             getMoviesMainInfoFromDatabase();
         }
         else
@@ -84,9 +95,12 @@ public class Database implements MovieInfoChain{
 
     public ArrayList<MovieMainInfo> getMoviesMainInfoFromDatabase() {
         Cursor res = DB.getAllMovies();
-        if (res.getCount() == 0)
-           return null; //model.setMovies(null);
         ArrayList<MovieMainInfo> movies = new ArrayList<MovieMainInfo>(){};
+        if (res.getCount() == 0) {
+            movies.add(new MovieMainInfo());
+            return movies; //model.setMovies(null);
+        }
+
         while (res.moveToNext()) {
             MovieMainInfo movie = new MovieMainInfo(res.getString(0),res.getString(1),res.getString(2),res.getString(9),res.getString(10));
             movies.add(movie);

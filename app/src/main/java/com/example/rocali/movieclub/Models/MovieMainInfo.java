@@ -10,6 +10,14 @@ public class MovieMainInfo {
     private String imgURL;
     private float rating;
 
+    public MovieMainInfo (){
+        this.id = "x";
+        this.title = "x";
+        this.year = "x";
+        this.imgURL = "x";
+        this.rating = 2;
+    }
+
     public MovieMainInfo(String _id,String _title,String _year,String _imgURL,String _rating){
         id = _id;
         title = _title;

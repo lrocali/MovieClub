@@ -63,21 +63,23 @@ public class OMDB implements MovieInfoChain{
         @Override
         protected void onPostExecute(String file_url) {
             try {
-                Model model = Model.getInstance(context);
-                model.setMovie(new Movie(
-                        msJsonObj.getString("imdbID"),
-                        msJsonObj.getString("Title"),
-                        msJsonObj.getString("Year"),
-                        msJsonObj.getString("Plot"),
-                        msJsonObj.getString("Runtime"),
-                        msJsonObj.getString("Genre"),
-                        msJsonObj.getString("Country"),
-                        msJsonObj.getString("imdbVotes"),
-                        msJsonObj.getString("imdbRating"),
-                        msJsonObj.getString("Poster"),
-                        "0"));
-                Log.v("TAG", "GET MOVIE FROM OMDB");
-                //model.startActivity();
+                if(msJsonObj != null) {
+                    Model model = Model.getInstance(context);
+                    model.setMovie(new Movie(
+                            msJsonObj.getString("imdbID"),
+                            msJsonObj.getString("Title"),
+                            msJsonObj.getString("Year"),
+                            msJsonObj.getString("Plot"),
+                            msJsonObj.getString("Runtime"),
+                            msJsonObj.getString("Genre"),
+                            msJsonObj.getString("Country"),
+                            msJsonObj.getString("imdbVotes"),
+                            msJsonObj.getString("imdbRating"),
+                            msJsonObj.getString("Poster"),
+                            "0"));
+                    Log.v("TAG", "GET MOVIE FROM OMDB");
+                    //model.startActivity();
+                }
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -101,18 +103,20 @@ public class OMDB implements MovieInfoChain{
         @Override
         protected void onPostExecute(String file_url) {
             try {
-                Model model = Model.getInstance(context);
-                msJsonArray = msJsonObj.getJSONArray("Search");
-                ArrayList<MovieMainInfo> tempMovies = new ArrayList<MovieMainInfo>(){};
-                for (int i = 0; i < msJsonArray.length(); i++) {
-                    JSONObject json_data = msJsonArray.getJSONObject(i);
-                    tempMovies.add(new MovieMainInfo(json_data.getString("imdbID"), json_data.getString("Title"), json_data.getString("Year"), "img", "0"));
-                    // msArrayList.add(json_data.getString("Title"));
+                if(msJsonObj != null) {
+                    Model model = Model.getInstance(context);
+                    msJsonArray = msJsonObj.getJSONArray("Search");
+                    ArrayList<MovieMainInfo> tempMovies = new ArrayList<MovieMainInfo>() {
+                    };
+                    for (int i = 0; i < msJsonArray.length(); i++) {
+                        JSONObject json_data = msJsonArray.getJSONObject(i);
+                        tempMovies.add(new MovieMainInfo(json_data.getString("imdbID"), json_data.getString("Title"), json_data.getString("Year"), "img", "0"));
+                        // msArrayList.add(json_data.getString("Title"));
+                    }
+                    Log.v("TAG", "GET MOVIE LIST FROM OMDB");
+                    model.setSearchedMovies(tempMovies);
+                    //populateListView(true);
                 }
-                Log.v("TAG", "GET MOVIE LIST FROM OMDB");
-                model.setSearchedMovies(tempMovies);
-                //populateListView(true);
-
             } catch (JSONException e) {
                 e.printStackTrace();
                // Log.v(TAG, "ERROR NO JSONARRAY");

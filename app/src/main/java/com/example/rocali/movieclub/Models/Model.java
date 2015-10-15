@@ -63,6 +63,7 @@ public class Model {
         internetConnection = true;
         movie = new Movie();
         movies = new ArrayList<MovieMainInfo>();
+
         searchedMovies = new ArrayList<MovieMainInfo>();
         parties = new ArrayList<Party>();
 
@@ -92,15 +93,23 @@ public class Model {
     }
 
     public void addParty(Party party){
+        firebase.addPartyToCloud(party);
         this.parties.add(party);
         database.addPartyToDB(party);
-        firebase.addPartyToCloud(party);
+
+    }
+
+    public void updateParty(Party party){
+        database.updateParty(party);
+       firebase.updatePartyInCloud(party);
     }
 
     public Party checkForParty(String imdbID) {
-        for (Party party : parties){
-            if (new String(party.getId()).equals(imdbID)) {
-                return party;
+        if (parties != null) {
+            for (Party party : parties) {
+                if (new String(party.getId()).equals(imdbID)) {
+                    return party;
+                }
             }
         }
         return null;

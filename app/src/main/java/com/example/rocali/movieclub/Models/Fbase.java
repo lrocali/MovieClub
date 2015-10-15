@@ -9,7 +9,9 @@ import com.firebase.client.FirebaseError;
 import com.firebase.client.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by rocali on 9/25/15.
@@ -26,8 +28,18 @@ public class Fbase {
         firebaseRef = new com.firebase.client.Firebase("https://torrid-heat-8747.firebaseio.com/");
     }
     public void addPartyToCloud(Party party) {
+        Firebase addPartyRef= firebaseRef.child("Parties").child(party.getId());
+        //String newID = addPartyRef.getKey();
+        //party.setFBkey(newID);
+        addPartyRef.setValue(party);
+    }
+    public void updatePartyInCloud(Party party) {
+        Log.v("TAG", "UPDATING TO FIREBASE" + party.getId());
         Firebase searchedRef = firebaseRef.child("Parties");
-        searchedRef.push().setValue(party);
+        searchedRef.child(party.getId()).setValue(party);
+        //Map<String, Object> upp = new HashMap<String, Object>();
+        //upp.put(party.getFBkey(),party);
+        //searchedRef.child();
     }
     //FIREBASE PART
     public void fetchParties() {
