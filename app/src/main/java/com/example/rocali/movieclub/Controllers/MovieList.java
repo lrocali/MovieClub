@@ -173,9 +173,4 @@ public class MovieList extends ListActivity {
 
         return super.onCreateOptionsMenu(menu);
     }
-
-
-
-
-
 }

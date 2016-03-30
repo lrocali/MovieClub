@@ -56,7 +56,7 @@ public class SQLData extends SQLiteOpenHelper{
 
     public boolean insertMovie(String _id,String _title, String _year, String _plot,String _runtime,String _genre,String _country,String _imdbVotes,String _imdbRating,String _imgURL,String _rating) {
         SQLiteDatabase db = this.getWritableDatabase();
-       // onUpgrade(db,0,0);
+        onUpgrade(db,0,0);
 
         ContentValues contentValues = new ContentValues();
         contentValues.put(COL_ID,_id);
@@ -82,8 +82,8 @@ public class SQLData extends SQLiteOpenHelper{
 
         SQLiteDatabase db = this.getWritableDatabase();
         //Cursor res = db.query(COL_ID,
-               // allColumns, MySQLiteHelper.COLUMN_ID + " = " + insertId, null,
-                //null, null, null);
+        // allColumns, MySQLiteHelper.COLUMN_ID + " = " + insertId, null,
+        //null, null, null);
         String query = "SELECT * FROM " + MOVIE_TABLE_NAME + " WHERE " + COL_ID + " = '" + _id+"'";
         Cursor res = db.rawQuery(query, null);
         return res;
